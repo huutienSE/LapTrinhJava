@@ -1,18 +1,26 @@
-# ===== BUILD =====
+# =========================
+# BUILD (JAVA / MAVEN)
+# =========================
 target/
 build/
 
-# ===== MAVEN =====
+# =========================
+# MAVEN WRAPPER
+# =========================
 .mvn/wrapper/maven-wrapper.jar
 
-# ===== IDE =====
-.idea
-*.iws
+# =========================
+# IDE (INTELLIJ, VSCODE)
+# =========================
+.idea/
 *.iml
+*.iws
 *.ipr
 .vscode/
 
-# ===== STS =====
+# =========================
+# STS / ECLIPSE
+# =========================
 .apt_generated
 .classpath
 .factorypath
@@ -21,21 +29,36 @@ build/
 .springBeans
 .sts4-cache
 
-# ===== NETBEANS =====
+# =========================
+# NETBEANS
+# =========================
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-# ===== FRONTEND =====
+# =========================
+# FRONTEND (REACT / VITE)
+# =========================
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
-# ===== ENV =====
+# =========================
+# ENV (BẢO MẬT)
+# =========================
 .env
 .env.*
+*.env
 
-# ===== OS =====
+# =========================
+# LOG FILES
+# =========================
+*.log
+
+# =========================
+# OS FILES
+# =========================
 .DS_Store
+Thumbs.db
