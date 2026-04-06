@@ -4,14 +4,11 @@ import com.englishapp.entity.enums.Level;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "assessment")
-@Getter
-@Setter
 public class Assessment {
 
     @Id
@@ -23,6 +20,7 @@ public class Assessment {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column
     private Integer score;
 
     @Enumerated(EnumType.STRING)
