@@ -14,12 +14,12 @@ export const authService = {
       setTimeout(() => {
 
         const user = mockData.find((u) => 
-           {return u.email === credentials.email && u.password === credentials.password}
+          {return u.email === credentials.email && u.password === credentials.password}
         )
 
         console.log(user)
         if (user) {
-          resolve({ success: true, message: "Đăng nhập thành công!"});
+          resolve({ success: true, message: "Đăng nhập thành công!", user: user});
         } else {
           reject({ success: false, message: "Email hoặc mật khẩu không đúng!" });
         }

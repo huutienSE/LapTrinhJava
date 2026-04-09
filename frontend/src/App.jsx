@@ -14,11 +14,21 @@ function App () {
     password: "",
   })
 
+  const [currentUSer, setCurrentUSer] = useState(null) 
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogin = () => {setIsLoggedIn(true)}
+  const handleLogin = (userData) => {
+    setIsLoggedIn(true);
+    // thêm khi cần thêm tính năng thêm role, rule
+    setCurrentUSer(userData)
+  }
   
-  const handleLogOut = () => {setIsLoggedIn(false)}
+  const handleLogOut = () => {
+    setIsLoggedIn(false)
+    // thêm khi cần thêm tính năng thêm role, rule
+    setCurrentUSer(null)
+  }
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans selection:bg-indigo-500/30">
       <Navbar/>
