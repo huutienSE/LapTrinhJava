@@ -40,7 +40,7 @@ const Register = () => {
         setIsLoading(false);
     }
 
-    navigate("/Home");
+    navigate("/");
   };
 
   const { firstName, lastName, tel, email, password } = formData;
