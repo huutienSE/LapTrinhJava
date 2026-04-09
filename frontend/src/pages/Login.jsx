@@ -2,7 +2,7 @@ import { useState } from "react"
 import {Link, useNavigate} from "react-router-dom"
 import { authService } from "../services/api";
 
-const Login = () =>{
+const Login = (props) =>{
 
     const navigate = useNavigate();
 
@@ -43,7 +43,9 @@ const Login = () =>{
         try {
             const response = await authService.login(formData)
             alert(response.message);
-            navigate("/home")
+            props.handleLogin();
+            console.log("dm")
+            navigate("/")
         } catch (err) {
             setError(err.message);
         } finally {
