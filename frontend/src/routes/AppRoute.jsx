@@ -10,7 +10,7 @@ const AppRouter = (props) => {
         <Routes>
             <Route path="/History" element={props.isLoggedIn ? <History/> : <Navigate to="/Login"/>} />
             <Route path="/Login" element={<Login isLoggedIn={props.isLoggedIn} handleLogOut={props.handleLogOut} handleLogin={props.handleLogin} />}/>
-            <Route path="/Register" element={<Register/>}/>
+            <Route path="/Register" element={<Register setRegister={props.setRegister} registerData={props.registerData} />}/>
             <Route path="/Speaking" element={props.isLoggedIn ? <Speaking/> : <Navigate to="/Login"/>} />
             <Route path="/" element={<Home/>}/>
             <Route path="#" element={<Home/>}/>

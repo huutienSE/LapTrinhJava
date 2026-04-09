@@ -44,7 +44,7 @@ const Login = ({isLoggedIn, handleLogin, handleLogOut}) =>{
             const response = await authService.login(formData)
             alert(response.message);
             handleLogin();
-            console.log("dm")
+            
             navigate("/")
         } catch (err) {
             setError(err.message);

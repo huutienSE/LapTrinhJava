@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate  } from "react-router-dom";
 import { authService } from "../services/api";
 
-const Register = () => {
+const Register = ({setRegister}) => {
   const initialValue = {
     firstName: "",
     lastName: "",
@@ -34,6 +34,7 @@ const Register = () => {
     try {
         const response = await authService.register(formData);
         alert(response.message);
+        setRegister(formData);
     } catch (err) {
         setError(err.message);
     } finally {
