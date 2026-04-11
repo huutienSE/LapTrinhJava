@@ -37,7 +37,7 @@ BEGIN
         SET MESSAGE_TEXT = "Vui lòng nhập email";
 	END IF;
     
-    IF in_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+    IF in_email NOT REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
     THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'email không hợp lệ';
