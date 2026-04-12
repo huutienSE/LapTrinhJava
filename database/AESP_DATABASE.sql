@@ -166,3 +166,10 @@ CREATE TABLE IF NOT EXISTS admin_log(
 		REFERENCES user(user_id)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+DESCRIBE user;
+
+INSERT INTO role (role_name) VALUES 
+('LEARNER'),
+('MENTOR'),
+('ADMIN');
