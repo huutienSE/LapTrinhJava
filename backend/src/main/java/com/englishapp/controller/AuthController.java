@@ -2,8 +2,10 @@ package com.englishapp.controller;
 
 import com.englishapp.dto.auth.RegisterRequest;
 import com.englishapp.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +17,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public String register(RegisterRequest request){
+    public String register(@Valid @RequestBody RegisterRequest request){
         authService.register(request);
         return "Register success";
     }
