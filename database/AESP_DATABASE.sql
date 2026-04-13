@@ -304,14 +304,14 @@ BEGIN
 
 		INSERT INTO practice_question(topic_id , creator_id , description)
 		VALUES
-		(1 , 2 , "What do you usually do in the morning ?"),
-		(1 , 2 , "What time do you wake up every day ?"),
-		(1 , 2 , "Do you like cooking at home ?"),
-		(1 , 2 , "What do you do in your free time ?"),
-		(1 , 2 , "Do you prefer coffee or tea ?"),
-		(1 , 2 , "How do you go to school or work ?"),
-		(1 , 2 , "What is your favorite food ?"),
-		(1 , 2 , "Do you like listening to music ?");
+		(1 , 2 , 'What do you usually do in the morning ?'),
+		(1 , 2 , 'What time do you wake up every day ?'),
+		(1 , 2 , 'Do you like cooking at home ?'),
+		(1 , 2 , 'What do you do in your free time ?'),
+		(1 , 2 , 'Do you prefer coffee or tea ?'),
+		(1 , 2 , 'How do you go to school or work ?'),
+		(1 , 2 , 'What is your favorite food ?'),
+		(1 , 2 , 'Do you like listening to music ?');
 
 		INSERT INTO practice_answer (session_id, question_id, user_answer)
 		VALUES
