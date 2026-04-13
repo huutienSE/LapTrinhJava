@@ -37,7 +37,7 @@ BEGIN
         SET MESSAGE_TEXT = "Vui lòng nhập email";
 	END IF;
     
-    IF in_email NOT REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+    IF i_email REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
     THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'email không hợp lệ';
@@ -62,7 +62,7 @@ END \\
 
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS sp_changepassword_user
+DROP PROCEDURE IF EXISTS sp_changepassword_user;
 DELIMITER \\
 CREATE PROCEDURE sp_changepassword_user(IN i_userid_user INT , IN i_password VARCHAR(255))
 BEGIN 
@@ -131,7 +131,7 @@ BEGIN
     
     UPDATE user 
     SET 
-		status = "DISABLE"
+		status = 'DISABLE'
 	WHERE user_id = i_userid_user;
     
     COMMIT;
