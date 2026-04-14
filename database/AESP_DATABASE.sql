@@ -20,15 +20,15 @@ CREATE TABLE IF NOT EXISTS role(
 
 DROP TABLE IF EXISTS user_role;
 CREATE TABLE user_role(
-	role_id INT,
+	role_id INT DEFAULT 1,
 	user_id INT,
-    
+
     PRIMARY KEY (role_id , user_id),
-    
+
     FOREIGN KEY (role_id)
         REFERENCES role(role_id)
         ON DELETE CASCADE,
-        
+
     FOREIGN KEY (user_id)
         REFERENCES user(user_id)
         ON DELETE CASCADE
@@ -229,14 +229,14 @@ BEGIN
 						 
 
 		INSERT INTO role (role_name)
-		VALUES 
+		VALUES
 		('LEARNER'),
 		('MENTOR'),
 		('ADMIN');
 			   
 
 		INSERT INTO user_role (role_id , user_id)
-		VALUES				  
+		VALUES
 		(3 , 1),
 		(3 , 2),
 		(3 , 3),
@@ -360,6 +360,19 @@ BEGIN
 		(1 , 'DISABLE_USER' , 11 , 'USER');
 	COMMIT;
 END \\
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER after_user_insert
+    AFTER INSERT ON user
+    FOR EACH ROW
+BEGIN
+    -- Mặc định gán role_id = 1 (LEARNER) cho mỗi user mới
+    INSERT INTO user_role (user_id, role_id)
+    VALUES (NEW.user_id, 1);
+END //
+
 DELIMITER ;
 
 CALL procedure_insert();
