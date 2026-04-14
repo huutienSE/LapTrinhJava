@@ -1,12 +1,16 @@
 package com.englishapp.service.impl;
 
+import com.englishapp.dto.auth.LoginRequest;
+import com.englishapp.dto.auth.LoginResponse;
 import com.englishapp.dto.auth.RegisterRequest;
+import com.englishapp.dto.auth.RegisterResponse;
 import com.englishapp.entity.Role;
 import com.englishapp.entity.User;
 import com.englishapp.entity.UserRole;
 import com.englishapp.entity.enums.RoleName;
 import com.englishapp.entity.enums.UserStatus;
 import com.englishapp.exception.EmailAlreadyExistsException;
+import com.englishapp.exception.InvalidCredentialsException;
 import com.englishapp.exception.RoleNotFoundException;
 import com.englishapp.repositoty.RoleRepository;
 import com.englishapp.repositoty.UserRepository;
@@ -36,10 +40,12 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         // check email ton tai
-        if(userRepository.existsByEmail(request.getEmail())){
-            throw new EmailAlreadyExistsException(request.getEmail());
+
+        String email = request.getEmail().toLowerCase().trim();
+        if(userRepository.existsByEmail(email)){
+            throw new EmailAlreadyExistsException(email);
         }
         // tao moi user
         // enccode password
@@ -52,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
 
         newUser.setUserName(request.getUserName());
 
-        newUser.setEmail(request.getEmail().toLowerCase().trim());
+        newUser.setEmail(email);
 
         newUser.setPasswordHash(passwordEncoder.encode(request.getPassword())); // injection PasswordEndcoder
 
@@ -77,5 +83,38 @@ public class AuthServiceImpl implements AuthService {
 
         userRoleRepository.save(userRole);
 
+        RegisterResponse response = new RegisterResponse();
+        response.setUserId(newUser.getUserId());
+        response.setUserName(newUser.getUserName());
+        response.setEmail(newUser.getEmail());
+
+        return response;
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+        // tim kiem user
+        // check password
+        // nếu sai
+        // nếu đúng
+        User user = userRepository.findByEmail(request.getEmail().toLowerCase().trim())
+                .orElseThrow(InvalidCredentialsException::new);
+
+        if(user.getStatus() != UserStatus.ACTIVE){
+            throw new RuntimeException("User is disabled");
+        }
+
+        boolean isMatch = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
+
+        if(!isMatch){
+            throw new InvalidCredentialsException();
+        }
+
+        LoginResponse response = new LoginResponse();
+        response.setUserId(user.getUserId());
+        response.setUserName(user.getUserName());
+        response.setEmail(user.getEmail());
+
+        return response;
     }
 }
