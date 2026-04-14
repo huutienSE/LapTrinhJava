@@ -5,11 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class RegisterResponse {
-    private String userId;
+    private Integer userId;
+
+    private String userName;
 
     private String email;
-
-    private String message;
 }
