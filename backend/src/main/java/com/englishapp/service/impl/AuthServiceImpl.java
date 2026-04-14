@@ -1,6 +1,7 @@
 package com.englishapp.service.impl;
 
 import com.englishapp.dto.auth.LoginRequest;
+import com.englishapp.dto.auth.LoginResponse;
 import com.englishapp.dto.auth.RegisterRequest;
 import com.englishapp.entity.Role;
 import com.englishapp.entity.User;
@@ -81,18 +82,25 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         // tim kiem user
         // check password
         // nếu sai
         // nếu đúng
         User user = userRepository.findByEmail(request.getEmail().toLowerCase().trim())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> new RuntimeException("Email not found"));
 
         boolean isMatch = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
 
         if(!isMatch){
-            throw new RuntimeException("Invalid email or password");
+            throw new RuntimeException("Wrong password");
         }
+
+        LoginResponse response = new LoginResponse();
+        response.setUserId(user.getUserId());
+        response.setUserName(user.getUserName());
+        response.setEmail(user.getEmail());
+
+        return response;
     }
 }
