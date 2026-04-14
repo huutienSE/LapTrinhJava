@@ -1,5 +1,6 @@
 package com.englishapp.controller;
 
+import com.englishapp.dto.auth.LoginRequest;
 import com.englishapp.dto.auth.RegisterRequest;
 import com.englishapp.service.AuthService;
 import jakarta.validation.Valid;
@@ -22,4 +23,9 @@ public class AuthController {
         return "Register success";
     }
 
+    @PostMapping("/login")
+    public String login(@Valid @RequestBody LoginRequest request){
+        authService.login(request);
+        return "Login success";
+    }
 }
