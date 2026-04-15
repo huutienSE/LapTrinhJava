@@ -12,6 +12,7 @@ import com.englishapp.entity.enums.UserStatus;
 import com.englishapp.exception.EmailAlreadyExistsException;
 import com.englishapp.exception.InvalidCredentialsException;
 import com.englishapp.exception.RoleNotFoundException;
+import com.englishapp.exception.UserDisabledException;
 import com.englishapp.repositoty.RoleRepository;
 import com.englishapp.repositoty.UserRepository;
 import com.englishapp.repositoty.UserRoleRepository;
@@ -97,11 +98,13 @@ public class AuthServiceImpl implements AuthService {
         // check password
         // nếu sai
         // nếu đúng
-        User user = userRepository.findByEmail(request.getEmail().toLowerCase().trim())
+
+        String email = request.getEmail().toLowerCase().trim();
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(InvalidCredentialsException::new);
 
         if(user.getStatus() != UserStatus.ACTIVE){
-            throw new RuntimeException("User is disabled");
+            throw new UserDisabledException();
         }
 
         boolean isMatch = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
