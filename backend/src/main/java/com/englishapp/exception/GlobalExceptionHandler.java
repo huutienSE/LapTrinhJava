@@ -34,6 +34,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RoleNotFoundException.class)
     public ResponseEntity<?> handleRoleNotFound(RoleNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Role not found");
+                .body(ex.getMessage());
     }
+
+    // sai email / password
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<?> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Invalid email or password");
+    }
+
+    // user bị disable
+    @ExceptionHandler(UserDisabledException.class)
+    public ResponseEntity<?> handleUserDisabled(UserDisabledException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("User account is disabled");
+    }
+    
+
 }
