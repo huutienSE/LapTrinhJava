@@ -42,19 +42,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        // check email ton tai
 
         String email = request.getEmail().toLowerCase().trim();
+
         if(userRepository.existsByEmail(email)){
             throw new EmailAlreadyExistsException(email);
         }
-        // tao moi user
-        // enccode password
-        // save db
-        // lấy role
-        // map user --> role
-        // tao moi UserRole , save DB
-        //
+
         User newUser = new User();
 
         newUser.setUserName(request.getUserName());
@@ -69,18 +63,11 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(newUser);
 
-        // get reol user
-        // injection
-
         Role role = roleRepository.findByRoleName(RoleName.LEARNER)
                 .orElseThrow(RoleNotFoundException::new);  // method reference, java 8 lambda
 
         // UserRole
         UserRole userRole = new UserRole(newUser, role);
-
-//        userRole.setUser(newUser);
-//
-//        userRole.setRole(role);
 
         userRoleRepository.save(userRole);
 
@@ -94,12 +81,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        // tim kiem user
-        // check password
-        // nếu sai
-        // nếu đúng
 
         String email = request.getEmail().toLowerCase().trim();
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(InvalidCredentialsException::new);
 

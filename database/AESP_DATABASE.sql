@@ -363,4 +363,3 @@ BEGIN
 END \\
 DELIMITER ;
 
-CALL procedure_insert();
