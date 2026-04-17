@@ -1,5 +1,6 @@
 package com.englishapp.controller;
 
+import com.englishapp.common.ApiResponse;
 import com.englishapp.dto.topic.TopicResponse;
 import com.englishapp.service.TopicService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,8 @@ public class TopicController {
     private final TopicService topicService ;
 
     @GetMapping
-    public List<TopicResponse> getAllTopics() {
-        return topicService.getAllTopics();
+    public ApiResponse<List<TopicResponse>> getAllTopics() {
+        List<TopicResponse> topicResponse = topicService.getAllTopics();
+        return new ApiResponse<>(true, topicResponse, "get AllTopics successfully");
     }
 }
