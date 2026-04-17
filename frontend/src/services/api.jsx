@@ -10,24 +10,46 @@ const API_BASE_URL = "http://localhost:8080/api/auth";
 
 export const authService = {
   // Giả lập API Đăng nhập
-  login: async (credentials) => {
-    return new Promise((resolve, reject) => {
-      console.log("Calling API Login với dữ liệu:", credentials);
-      
-      setTimeout(() => {
+  login: async (credentials) => {        
+      try {
+        console.log("Calling API Login với dữ liệu:", credentials);
 
-        const user = MOCK_USER.find((u) => 
-          {return u.email === credentials.email && u.password === credentials.password}
-        )
+        const response = await axios.post(`${API_BASE_URL}/login`,{ email: credentials.email, password: credentials.password});
+        return {
+          success: true,
+          message: `Đăng nhập thành công, chào ${response.data.userName}!`,
+          user: response.data,
+        };
+      } catch (error) {
+        if (error.response) {
+        const status = error.response.status;
+        const data = error.response.data;
+        let message = "Đăng nhập thất bại";
 
-        console.log(user)
-        if (user) {
-          resolve({ success: true, message: "Đăng nhập thành công!", user: user});
-        } else {
-          reject({ success: false, message: "Email hoặc mật khẩu không đúng!" });
+        // Xử lý theo status code
+        if (status === 400) {
+          if (data?.message === "User is disabled") {
+            message = "Tài khoản của bạn đã bị khóa";
+          } else if (data?.message === "Invalid email or password") {
+            message = "Email hoặc mật khẩu không chính xác";
+          } else {
+            message = data?.message || message;
+          }
+        } else if (status === 500) {
+          message = "Lỗi server, vui lòng thử lại sau";
         }
-      }, 1000);
-    });
+
+        throw new Error(message);
+        }
+        // Xử lý lỗi network hoặc timeout
+        else if (error.request) {
+          throw new Error("Không thể kết nối tới server. Kiểm tra kết nối mạng!");
+        }
+        // Lỗi khác
+        else {
+          throw new Error(error.message || "Lỗi không xác định");
+        }
+      }
   },
 
   // Giả lập API Đăng ký
@@ -41,7 +63,7 @@ export const authService = {
       console.log("Calling api register with dataL: ", payload);
 
       const response = await axios.post(`${API_BASE_URL}/register`, payload);
-      return {message: response.data}
+      return {message: response.data.userName}
 
     } catch (error) {
       const data = error?.response?.data
