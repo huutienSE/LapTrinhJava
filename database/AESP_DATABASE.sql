@@ -70,7 +70,8 @@ CREATE TABLE IF NOT EXISTS profile (
 	profile_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT ,
     email VARCHAR(50) UNIQUE KEY ,
-	full_name VARCHAR(50),
+	first_name VARCHAR(50),
+    last_name VARCHAR(50),
     birth_date DATE,
     level ENUM('BEGINNER' , 'INTERMEDIATE' , 'ADVANCED'),
     target_goal VARCHAR(50),
@@ -262,19 +263,19 @@ BEGIN
 		(7 , 2 , CURRENT_DATE + INTERVAL 30 DAY , 'ACTIVE'),
 		(8 , 3 , CURRENT_DATE + INTERVAL 30 DAY , 'ACTIVE');
 
-		INSERT INTO profile(user_id , email , full_name , birth_date , level)
+		INSERT INTO profile(user_id , email , first_name , last_name , birth_date , level)
 		VALUES 
-		(1 , 'huutien@gmail.com' , 'Huynh Phan Huu Tien', '2001-01-01' , 'ADVANCED'),
-		(2 , 'nhannguyen@gmail.com' , 'Nguyen Thien Nhan' ,'2002-02-02' , 'ADVANCED'),
-		(3 , 'tientuiteen@gmail.com' , 'Phan Van Tien' , '1999-05-14' , 'ADVANCED'),
-		(4 , 'benten@gmail.com' , 'Nhan Tre Trau' , '2000-05-14' , 'ADVANCED'),
-		(5 , 'siuvipro@gmail.com' , 'sieu vip promax' ,'2003-03-03' , 'BEGINNER'),
-		(6 , 'khondunghoi@gmail.com' , 'Dung Hoi Anh Tai Sao' , '2020-04-04' , 'INTERMEDIATE'),
-		(7 , 'timvenoianh@gmail.com' , 'Tim Ve Noi Anh' ,'2015-06-06' , 'BEGINNER'),
-		(8 , 'jack5cu@gmail.com' , 'Phuong Tuan' ,'1997-07-07' , 'INTERMEDIATE'),
-		(9 , 'skibidi@gmail.com' , 'Nguyen Van Skibidi' , '2015-06-06' , 'ADVANCED'),
-		(10 , 'toilet@gmail.com' , 'Nguyen Van Toilet' ,'2012-05-02' , 'ADVANCED');
-
+		(1 , 'huutien@gmail.com' , 'Huynh Phan Huu' , 'Tien', '2001-01-01' , 'ADVANCED'),
+		(2 , 'nhannguyen@gmail.com' , 'Nguyen Thien' , 'Nhan' ,'2002-02-02' , 'ADVANCED'),
+		(3 , 'tientuiteen@gmail.com' , 'Phan Van' ,  'Tien' , '1999-05-14' , 'ADVANCED'),
+		(4 , 'benten@gmail.com' , 'Nhan Tre' , 'Trau' , '2000-05-14' , 'ADVANCED'),
+		(5 , 'siuvipro@gmail.com' , 'sieu vip' , 'promax' ,'2003-03-03' , 'BEGINNER'),
+		(6 , 'khondunghoi@gmail.com' , 'Dung Hoi Anh' , 'Tai Sao' , '2020-04-04' , 'INTERMEDIATE'),
+		(7 , 'timvenoianh@gmail.com' , 'Tim Ve Noi' , 'Anh' ,'2015-06-06' , 'BEGINNER'),
+		(8 , 'jack5cu@gmail.com' , 'Trinh Tran Phuong' , 'Tuan' ,'1997-07-07' , 'INTERMEDIATE'),
+		(9 , 'skibidi@gmail.com' , 'Nguyen Van' , 'Skibidi' , '2015-06-06' , 'ADVANCED'),
+		(10 , 'toilet@gmail.com' , 'Nguyen Van' , 'Toilet' ,'2012-05-02' , 'ADVANCED');
+ 
 
 		INSERT INTO assessment (user_id , score , level_assigned)
 		VALUES
@@ -304,14 +305,14 @@ BEGIN
 
 		INSERT INTO practice_question(topic_id , creator_id , description)
 		VALUES
-		(1 , 2 , 'What do you usually do in the morning ?'),
-		(1 , 2 , 'What time do you wake up every day ?'),
-		(1 , 2 , 'Do you like cooking at home ?'),
-		(1 , 2 , 'What do you do in your free time ?'),
-		(1 , 2 , 'Do you prefer coffee or tea ?'),
-		(1 , 2 , 'How do you go to school or work ?'),
-		(1 , 2 , 'What is your favorite food ?'),
-		(1 , 2 , 'Do you like listening to music ?');
+		(1 , 2 , "What do you usually do in the morning ?"),
+		(1 , 2 , "What time do you wake up every day ?"),
+		(1 , 2 , "Do you like cooking at home ?"),
+		(1 , 2 , "What do you do in your free time ?"),
+		(1 , 2 , "Do you prefer coffee or tea ?"),
+		(1 , 2 , "How do you go to school or work ?"),
+		(1 , 2 , "What is your favorite food ?"),
+		(1 , 2 , "Do you like listening to music ?");
 
 		INSERT INTO practice_answer (session_id, question_id, user_answer)
 		VALUES
