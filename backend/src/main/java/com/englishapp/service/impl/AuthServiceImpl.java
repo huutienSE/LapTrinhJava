@@ -43,65 +43,114 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
 
-        String email = request.getEmail().toLowerCase().trim();
+        String email = normalizeEmail(request.getEmail());
 
-        if(userRepository.existsByEmail(email)){
-            throw new EmailAlreadyExistsException(email);
-        }
+        validateEmailNotExists(email);
 
-        User newUser = new User();
+        User user = createUser(request, email);
 
-        newUser.setUserName(request.getUserName());
+        Role role = getDefaultRole();
 
-        newUser.setEmail(email);
+        saveUserRole(user, role);
 
-        newUser.setPasswordHash(passwordEncoder.encode(request.getPassword())); // injection PasswordEndcoder
-
-        newUser.setStatus(UserStatus.ACTIVE);
-
-        newUser.setCreatedDate(LocalDateTime.now());
-
-        userRepository.save(newUser);
-
-        Role role = roleRepository.findByRoleName(RoleName.LEARNER)
-                .orElseThrow(RoleNotFoundException::new);  // method reference, java 8 lambda
-
-        // UserRole
-        UserRole userRole = new UserRole(newUser, role);
-
-        userRoleRepository.save(userRole);
-
-        RegisterResponse response = new RegisterResponse();
-        response.setUserId(newUser.getUserId());
-        response.setUserName(newUser.getUserName());
-        response.setEmail(newUser.getEmail());
-
-        return response;
+        return mapToRegisterResponse(user);
     }
 
     @Override
     public LoginResponse login(LoginRequest request) {
 
-        String email = request.getEmail().toLowerCase().trim();
+        String email = normalizeEmail(request.getEmail());
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(InvalidCredentialsException::new);
+        User user = getUserByEmail(email);
 
-        if(user.getStatus() != UserStatus.ACTIVE){
+        validateUserActive(user);
+
+        validatePassword(request.getPassword(), user.getPasswordHash());
+
+        return mapToLoginResponse(user);
+    }
+
+    // Register method
+
+    private String normalizeEmail(String email) {
+        return email == null ? null : email.toLowerCase().trim();
+    }
+
+    private void validateEmailNotExists(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new EmailAlreadyExistsException(email);
+        }
+    }
+
+    private User createUser(RegisterRequest request, String email) {
+
+        User user = new User();
+
+        user.setUserName(request.getUserName());
+
+        user.setEmail(email);
+
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+
+        user.setStatus(UserStatus.ACTIVE);
+
+        user.setCreatedDate(LocalDateTime.now());
+
+        return userRepository.save(user);
+    }
+
+    private Role getDefaultRole() {
+        return roleRepository.findByRoleName(RoleName.LEARNER).orElseThrow(RoleNotFoundException::new);
+    }
+
+    private void saveUserRole(User user, Role role) {
+        UserRole userRole = new UserRole(user, role);
+        userRoleRepository.save(userRole);
+    }
+
+    private RegisterResponse mapToRegisterResponse(User user) {
+
+        RegisterResponse response = new RegisterResponse();
+
+        response.setUserId(user.getUserId());
+
+        response.setUserName(user.getUserName());
+
+        response.setEmail(user.getEmail());
+
+        return response;
+    }
+
+
+    // Login method
+
+    private User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(InvalidCredentialsException::new);
+    }
+
+    private void validateUserActive(User user) {
+        if (user.getStatus() != UserStatus.ACTIVE) {
             throw new UserDisabledException();
         }
+    }
 
-        boolean isMatch = passwordEncoder.matches(request.getPassword(), user.getPasswordHash());
-
-        if(!isMatch){
+    private void validatePassword(String rawPassword, String encodedPassword) {
+        if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
             throw new InvalidCredentialsException();
         }
+    }
+
+    private LoginResponse mapToLoginResponse(User user) {
 
         LoginResponse response = new LoginResponse();
+
         response.setUserId(user.getUserId());
+
         response.setUserName(user.getUserName());
+
         response.setEmail(user.getEmail());
 
         return response;
     }
 }
+
