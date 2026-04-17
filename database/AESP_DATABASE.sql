@@ -69,7 +69,6 @@ DROP TABLE IF EXISTS profile;
 CREATE TABLE IF NOT EXISTS profile (
 	profile_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT ,
-    email VARCHAR(50) UNIQUE KEY ,
 	first_name VARCHAR(50),
     last_name VARCHAR(50),
     birth_date DATE,
