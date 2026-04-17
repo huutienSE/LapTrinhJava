@@ -1,5 +1,6 @@
 package com.englishapp.controller;
 
+import com.englishapp.common.ApiResponse;
 import com.englishapp.dto.auth.LoginRequest;
 import com.englishapp.dto.auth.LoginResponse;
 import com.englishapp.dto.auth.RegisterRequest;
