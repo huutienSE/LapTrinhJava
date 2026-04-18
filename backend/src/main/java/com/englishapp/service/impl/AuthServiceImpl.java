@@ -1,10 +1,8 @@
 package com.englishapp.service.impl;
 
-import com.englishapp.dto.auth.LoginRequest;
-import com.englishapp.dto.auth.LoginResponse;
-import com.englishapp.dto.auth.RegisterRequest;
-import com.englishapp.dto.auth.RegisterResponse;
+import com.englishapp.dto.auth.*;
 import com.englishapp.entity.Role;
+import com.englishapp.entity.Topic;
 import com.englishapp.entity.User;
 import com.englishapp.entity.UserRole;
 import com.englishapp.entity.enums.RoleName;
@@ -14,6 +12,7 @@ import com.englishapp.exception.InvalidCredentialsException;
 import com.englishapp.exception.RoleNotFoundException;
 import com.englishapp.exception.UserDisabledException;
 import com.englishapp.repositoty.RoleRepository;
+import com.englishapp.repositoty.TopicRepository;
 import com.englishapp.repositoty.UserRepository;
 import com.englishapp.repositoty.UserRoleRepository;
 import com.englishapp.service.AuthService;
@@ -25,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +38,8 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
 
     private final UserRoleRepository userRoleRepository;
+
+    private final TopicRepository topicRepository;
 
     @Override
     @Transactional
@@ -152,5 +154,7 @@ public class AuthServiceImpl implements AuthService {
 
         return response;
     }
+
+
 }
 

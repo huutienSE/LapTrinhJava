@@ -14,19 +14,20 @@ const Register = () => {
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    console.log(formData)
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-        const response = await authService.register(formData);
-        alert(response.message);
-        navigate("/login"); // Đăng ký thành công thì đá sang Login
+      const response = await authService.register({lastName, email, password});
+      alert(response.message);
+      navigate("/login"); // Đăng ký thành công thì đá sang Login
     } catch (err) {
-        setError(err.message);
+      setError(err.message);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
