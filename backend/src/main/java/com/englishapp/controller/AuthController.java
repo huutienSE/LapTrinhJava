@@ -8,10 +8,7 @@ import com.englishapp.dto.auth.RegisterResponse;
 import com.englishapp.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -30,5 +27,10 @@ public class AuthController {
     public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request){
         LoginResponse response = authService.login(request);
         return new ApiResponse<>(true, response, "Login success");
+    }
+
+    @GetMapping("/test")
+    public String test(){
+        return "Hello JWT";
     }
 }
