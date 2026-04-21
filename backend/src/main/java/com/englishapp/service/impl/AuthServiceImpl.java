@@ -16,6 +16,7 @@ import com.englishapp.exception.UserDisabledException;
 import com.englishapp.repositoty.RoleRepository;
 import com.englishapp.repositoty.UserRepository;
 import com.englishapp.repositoty.UserRoleRepository;
+import com.englishapp.security.JwtUtil;
 import com.englishapp.service.AuthService;
 
 
@@ -38,6 +39,9 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
 
     private final UserRoleRepository userRoleRepository;
+
+    private final JwtUtil jwtUtil;
+
 
     @Override
     @Transactional
@@ -142,13 +146,19 @@ public class AuthServiceImpl implements AuthService {
 
     private LoginResponse mapToLoginResponse(User user) {
 
+        String email =user.getEmail();
+
+        String token = jwtUtil.generateToken(email);
+
         LoginResponse response = new LoginResponse();
 
         response.setUserId(user.getUserId());
 
         response.setUserName(user.getUserName());
 
-        response.setEmail(user.getEmail());
+        response.setEmail(email);
+
+        response.setToken(token);
 
         return response;
     }
