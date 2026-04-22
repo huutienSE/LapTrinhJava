@@ -1,12 +1,13 @@
 package com.englishapp.security;
 
 import com.englishapp.entity.User;
-import com.englishapp.repositoty.UserRoleRepository;
+import com.englishapp.repositoty.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,8 +18,10 @@ import java.io.IOException;
 @RequiredArgsConstructor
 
 public class JwtAuthFilter extends OncePerRequestFilter {
+
     private final JwtUtil jwtUtil;
-    private final UserRoleRepository userRoleRepository;
+
+    private final UserRepository userRepository;
 
 
     @Override
@@ -37,8 +40,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String email = jwtUtil.extractEmail(token);
 
             if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                User user = userRoleRepository.findByEmail(email).orElseThrow();
+
+                if(!jwtUtil.validateToken(token)){
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
+
+                // load user tu DB
+                User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, null);
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+        catch(Exception e){
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        filterChain.doFilter(request, response);
     }
 }
