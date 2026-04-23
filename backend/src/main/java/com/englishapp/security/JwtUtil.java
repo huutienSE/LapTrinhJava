@@ -1,5 +1,6 @@
 package com.englishapp.security;
 
+import com.englishapp.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -47,7 +48,7 @@ public class JwtUtil {
             return true;
         }
         catch(JwtException | IllegalArgumentException e) {
-            return false;
+            throw new InvalidTokenException();
         }
     }
 
