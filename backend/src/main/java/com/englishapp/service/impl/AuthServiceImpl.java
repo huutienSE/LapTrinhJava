@@ -144,11 +144,22 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    private String getUserRole(User user){
+        return user.getUserRoles().stream()
+                .findFirst()
+                .map(ur -> ur.getRole()
+                                        .getRoleName()
+                                        .name())
+                .orElse("LEARNER");
+    }
+
     private LoginResponse mapToLoginResponse(User user) {
 
-        String email =user.getEmail();
+        String role = getUserRole(user);
 
-        String token = jwtUtil.generateToken(email);
+        String email = user.getEmail();
+
+        String token = jwtUtil.generateToken(email, role);
 
         LoginResponse response = new LoginResponse();
 

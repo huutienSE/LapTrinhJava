@@ -29,9 +29,10 @@ public class JwtUtil {
     }
 
     // tao token
-    public String generateToken(String email){
+    public String generateToken(String email, String role){
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -40,6 +41,10 @@ public class JwtUtil {
     //trich xuat email
     public String extractEmail(String token){
         return getClaims(token).getSubject();
+    }
+
+    public String extractRole(String token){
+        return getClaims(token).get("role", String.class);
     }
 
     public boolean validateToken(String token){
