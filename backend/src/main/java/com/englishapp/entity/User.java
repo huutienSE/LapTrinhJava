@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Table(name = "user")
 @Getter
 @Setter
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -42,38 +42,4 @@ public class User implements UserDetails {
     // RELATIONSHIP
     @OneToMany(mappedBy = "user")
     private List<UserRole> userRoles;
-
-    //method user detail
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRoles.stream()
-                .map(ur -> new SimpleGrantedAuthority("ROLE_" + ur.getRole().getRoleName()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public String getPassword() {
-        return this.passwordHash;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.userName; // Dùng email làm định danh đăng nhập
-    }
-
-    @Override
-    public boolean isAccountNonExpired() { return true; }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return this.status != UserStatus.DISABLE; // Giả sử bạn có status này
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() { return true; }
-
-    @Override
-    public boolean isEnabled() {
-        return this.status == UserStatus.ACTIVE; // Chỉ cho phép user ACTIVE
-    }
 }
