@@ -8,77 +8,103 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-
+@Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-
     private final UserRepository userRepository;
 
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+        final String authHeader = request.getHeader("Authorization");
 
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-        
-        String token = authHeader.substring(7);
-        
-        try {
 
-            // validate token
-            if(!jwtUtil.validateToken(token)){
+        final String token = authHeader.substring(7);
+
+        try {
+            if (!jwtUtil.validateToken(token)) {
                 throw new InvalidTokenException();
             }
 
-            //extract email
-            String email = jwtUtil.extractEmail(token);
+            final String email = jwtUtil.extractEmail(token);
+            final String role = jwtUtil.extractRole(token);
 
-            if(email != null && SecurityContextHolder.getContext().getAuthentication() == null){
-                // load user tu DB
-                User user = userRepository.findByEmail(email).orElseThrow(InvalidTokenException::new);
+            if (email == null || role == null) {
+                throw new InvalidTokenException();
+            }
 
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+            var currentAuth = SecurityContextHolder.getContext().getAuthentication();
+
+            boolean isAnonymousPrincipal = false;
+            if (currentAuth != null) {
+                Object principal = currentAuth.getPrincipal();
+                isAnonymousPrincipal = (principal instanceof String && "anonymousUser".equals(principal))
+                        || currentAuth instanceof AnonymousAuthenticationToken;
+            }
+
+            if (currentAuth == null || isAnonymousPrincipal) {
+
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(InvalidTokenException::new);
+
+                var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(user, null, authorities);
+
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }
-        catch(InvalidTokenException ex){
-            handleUnauthorized(response, "Invalid or expired token");
-            return;
-        }
-        catch(Exception e){
-            handleUnauthorized(response, "Authentication failed");
-            return;
-        }
 
-        filterChain.doFilter(request, response);
+                log.info("Authentication set from JWT for user: {}, roles: {}", email, authorities);
+            } else {
+                log.debug("Existing non-anonymous authentication present, not overriding: {}", currentAuth);
+            }
+
+            filterChain.doFilter(request, response);
+
+        } catch (InvalidTokenException e) {
+            log.warn("Invalid JWT: {}", e.getMessage());
+            handleUnauthorized(response, "Invalid or expired token");
+        } catch (Exception e) {
+            log.error("Authentication filter error", e);
+            handleUnauthorized(response, "Authentication failed");
+        }
     }
 
-    private void handleUnauthorized(HttpServletResponse response, String message) throws IOException{
+    private void handleUnauthorized(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
+        response.setContentType("application/json; charset=UTF-8");
 
-        response.getWriter().write("""
-                    {
-                        "success": false,
-                        "data": null,
-                        "message": "%s"
-                    }
-                    """.formatted(message));
+        String jsonResponse = String.format("""
+                {
+                    "success": false,
+                    "data": null,
+                    "message": "%s"
+                }
+                """, message);
+
+        response.getWriter().write(jsonResponse);
     }
 }

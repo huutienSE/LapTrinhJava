@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
 
         response.setUserId(user.getUserId());
 
-        response.setUserName(user.getUserName());
+        response.setUserName(user.getUsername());
 
         response.setEmail(user.getEmail());
 
@@ -165,7 +165,7 @@ public class AuthServiceImpl implements AuthService {
 
         response.setUserId(user.getUserId());
 
-        response.setUserName(user.getUserName());
+        response.setUserName(user.getUsername());
 
         response.setEmail(email);
 
