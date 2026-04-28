@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { speakingService } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
+
 
 const Speaking = () => {
   const { currentUser } = useAuth();
@@ -9,9 +11,16 @@ const Speaking = () => {
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [sentences, setSentences] = useState([]);
   const [selectedSentence, setSelectedSentence] = useState(null);
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
+  const [finalTranscript, setFinalTranscript] = useState("");
   
   // Trạng thái cho phòng thu âm
-  const [isRecording, setIsRecording] = useState(false);
   const [result, setResult] = useState(null);
 
   // Load Topics khi vào trang
@@ -26,27 +35,43 @@ const Speaking = () => {
     setStep(2);
   };
 
-  const handleSimulateRecord = async () => {
-    setIsRecording(true);
-    setResult(null);
-    
-    // Giả lập thời gian AI nghe và phân tích
-    setTimeout(async () => {
-        setIsRecording(false);
-        const mockScore = Math.floor(Math.random() * 30) + 70; // Random điểm 70-100
-        setResult(mockScore);
+  if (!browserSupportsSpeechRecognition) {
+    return <div className="text-red-500 text-center mt-20">Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Chrome.</div>;
+  }
+  
+    const handleStartRecord = () => {
+      setResult(null);
+      setFinalTranscript("");
+      resetTranscript();
 
-        // Lưu lịch sử
-        if(currentUser) {
-            await speakingService.saveRecord({
-                userEmail: currentUser.email,
-                topicTitle: selectedTopic.title,
-                sentenceText: selectedSentence.text,
-                score: mockScore
-            });
-        }
-    }, 4000);
-  };
+      SpeechRecognition.startListening({
+        continuous: true,
+        language: 'en-US',
+      })
+    };
+
+    const handleStopRecord = async () => {
+      SpeechRecognition.stopListening();
+
+      setFinalTranscript(transcript);
+
+      resetTranscript();
+
+      const mockScore = Math.floor(Math.random()*30) + 70;
+      setResult(mockScore);
+
+      if (currentUser && currentUser.email) {
+        await speakingService.saveRecord({
+          userEmail: currentUser.email,
+          topicTitle: selectedTopic.title,
+          sentenceText: selectedSentence.text,
+          score: mockScore
+        });
+      }
+    };
+
+
+
 
   return (
     <div className="max-w-5xl mx-auto py-8">
@@ -108,22 +133,47 @@ const Speaking = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-16 leading-tight">"{selectedSentence?.text}"</h1>
 
           {/* Khối Micro */}
-          <div className="flex flex-col items-center justify-center">
-              <button 
-                onClick={handleSimulateRecord}
-                disabled={isRecording}
-                className={`w-24 h-24 rounded-full flex items-center justify-center text-3xl transition-all duration-300
-                    ${isRecording 
-                        ? 'bg-red-500/20 text-red-500 border-4 border-red-500 animate-pulse' 
-                        : 'bg-indigo-500 hover:bg-indigo-600 text-white shadow-[0_0_30px_rgba(99,102,241,0.3)] hover:scale-105'
-                    }`}
-              >
-                  {isRecording ? '🎙️' : '🎤'}
-              </button>
-              
-              <p className="mt-6 text-zinc-400 h-6">
-                  {isRecording ? "Đang lắng nghe và phân tích AI..." : "Nhấn để bắt đầu nói"}
-              </p>
+          <div className="flex flex-col items-center justify-center gap-6">
+            
+            {/* 2 Nút Thu/Dừng */}
+            <div className="flex gap-6">
+                <button 
+                  onClick={handleStartRecord}
+                  disabled={listening}
+                  className={`px-8 py-4 rounded-2xl font-bold flex items-center justify-center text-lg transition-all duration-300
+                      ${listening 
+                          ? 'bg-zinc-800/50 text-zinc-600 border border-zinc-800 cursor-not-allowed' 
+                          : 'bg-indigo-500 hover:bg-indigo-600 text-white shadow-[0_0_30px_rgba(99,102,241,0.3)] hover:-translate-y-1'
+                      }`}
+                >
+                    🎤 Bắt đầu nói
+                </button>
+
+                <button 
+                  onClick={handleStopRecord}
+                  disabled={!listening}
+                  className={`px-8 py-4 rounded-2xl font-bold flex items-center justify-center text-lg transition-all duration-300
+                      ${!listening 
+                          ? 'bg-zinc-800/50 text-zinc-600 border border-zinc-800 cursor-not-allowed' 
+                          : 'bg-red-500/20 text-red-500 border-2 border-red-500 animate-pulse hover:bg-red-500/30'
+                      }`}
+                >
+                    ⏹️ Dừng thu
+                </button>
+            </div>
+            
+            <p className="text-zinc-400 h-6">
+                {listening ? "Đang lắng nghe và phân tích AI..." : "Nhấn 'Bắt đầu nói' để ghi âm"}
+            </p>
+
+            {/* Khung hiển thị Transcript */}
+            <div className="w-full max-w-2xl bg-zinc-900/80 rounded-2xl p-6 min-h-[100px] border border-zinc-800 mt-2 text-left shadow-inner">
+                <h4 className="text-zinc-500 text-xs mb-3 font-medium uppercase tracking-wider">Nội dung AI nhận diện:</h4>
+                <p className="text-zinc-200 text-lg leading-relaxed min-h-[28px]">
+                    {listening ? transcript : finalTranscript}
+                    {!listening && !finalTranscript && <span className="text-zinc-600 italic">Chưa có dữ liệu...</span>}
+                </p>
+            </div>
           </div>
 
           {/* Bảng Kết Quả */}
