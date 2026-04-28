@@ -15,6 +15,7 @@ import com.englishapp.repositoty.RoleRepository;
 import com.englishapp.repositoty.TopicRepository;
 import com.englishapp.repositoty.UserRepository;
 import com.englishapp.repositoty.UserRoleRepository;
+import com.englishapp.security.JwtUtil;
 import com.englishapp.service.AuthService;
 
 
@@ -39,7 +40,8 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRoleRepository userRoleRepository;
 
-    private final TopicRepository topicRepository;
+    private final JwtUtil jwtUtil;
+
 
     @Override
     @Transactional
@@ -142,7 +144,22 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    private String getUserRole(User user){
+        return user.getUserRoles().stream()
+                .findFirst()
+                .map(ur -> ur.getRole()
+                                        .getRoleName()
+                                        .name())
+                .orElse("LEARNER");
+    }
+
     private LoginResponse mapToLoginResponse(User user) {
+
+        String role = getUserRole(user);
+
+        String email = user.getEmail();
+
+        String token = jwtUtil.generateToken(email, role);
 
         LoginResponse response = new LoginResponse();
 
@@ -150,7 +167,9 @@ public class AuthServiceImpl implements AuthService {
 
         response.setUserName(user.getUserName());
 
-        response.setEmail(user.getEmail());
+        response.setEmail(email);
+
+        response.setToken(token);
 
         return response;
     }
