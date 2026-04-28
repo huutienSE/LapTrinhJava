@@ -68,16 +68,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 User user = userRepository.findByEmail(email)
                         .orElseThrow(InvalidTokenException::new);
 
-                var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+//                var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+//
+//                UsernamePasswordAuthenticationToken authToken =
+//                        new UsernamePasswordAuthenticationToken(user, null, authorities);
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(user, null, authorities);
+                UserPrincipal userPrincipal = UserPrincipal.fromUser(user, role);
+
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userPrincipal, null, userPrincipal.getAuthorities());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                log.info("Authentication set from JWT for user: {}, roles: {}", email, authorities);
+                log.info("Authentication set from JWT for user: {}, roles: {}", userPrincipal.getUsername(), userPrincipal.getAuthorities());
             } else {
                 log.debug("Existing non-anonymous authentication present, not overriding: {}", currentAuth);
             }
