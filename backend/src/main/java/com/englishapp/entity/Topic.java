@@ -28,7 +28,7 @@ public class Topic {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "diffculty_level")
+    @Column(name = "difficulty_level")
     private Level difficultyLevel;
 
     @Column(name = "created_date")
