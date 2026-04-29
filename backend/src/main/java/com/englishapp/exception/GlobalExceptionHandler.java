@@ -52,6 +52,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
-    
-
 }

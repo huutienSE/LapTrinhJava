@@ -4,6 +4,9 @@
 //   password: "123"
 // };
 import { MOCK_USER, MOCK_TOPICS, MOCK_SENTENCES, MOCK_HISTORY } from "./mockData"
+import axios from "axios";
+
+const API_BASE_URL = "http://localhost:8080/api/auth";
 
 export const authService = {
   // Giả lập API Đăng nhập
@@ -29,25 +32,29 @@ export const authService = {
 
   // Giả lập API Đăng ký
   register: async (userData) => {
-    return new Promise((resolve, reject) => {
-      console.log("Calling API Register với dữ liệu:", userData);
-      
-      setTimeout(() => {
-        // Luôn trả về thành công trong bản giả lập
-        const newUser = MOCK_USER.find((u) => 
-           u.email === userData.email
-        )
+    const payload = {
+      userName: `${userData.lastName}`.trim(),
+      email: userData.email,
+      password: userData.password,
+    }
+    try {
+      console.log("Calling api register with dataL: ", payload);
 
-        if (!newUser) {
-          resolve({ success: true, message: "Đăng ký tài khoản thành công!" });
-          MOCK_USER.push(userData)
-          console.log(MOCK_USER)
-        } else {
-          reject({success: false, message:"Email đã được sử dụng!"})
-        }
+      const response = await axios.post(`${API_BASE_URL}/register`, payload);
+      return {message: response.data}
+
+    } catch (error) {
+      const data = error?.response?.data
+      let message = "lỗi đăng ký"
+
+      if (data) {
+        if (typeof data === "string") message = data
+        else if (data?.message) message = data.message
+        else if (typeof data === "object") message = Object.values(data).flat().join(" \n ")
+        } else if (error?.message) message = error.message
         
-      }, 1500);
-    });
+        throw new Error(message)
+      }
   }
 };
 
