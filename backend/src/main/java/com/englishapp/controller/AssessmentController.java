@@ -15,9 +15,9 @@ public class AssessmentController {
 
     private final AssessmentService assessmentService;
 
-    @GetMapping("/start/{userId}")
-    public ApiResponse<Object> startAssessment(@PathVariable StartAssessmentRequest startAssessmentRequest) {
-        Integer sessionId = assessmentService.startAssessment(startAssessmentRequest);
+    @GetMapping("/start")
+    public ApiResponse<Object> startAssessment(@RequestBody StartAssessmentRequest request) {
+        Integer sessionId = assessmentService.startAssessment(request);
 
         return new ApiResponse<>(
                 true,
