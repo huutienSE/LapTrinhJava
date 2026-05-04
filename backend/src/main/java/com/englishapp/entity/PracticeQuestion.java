@@ -27,9 +27,8 @@ public class PracticeQuestion {
     @JoinColumn(name = "creator_id")
     private User creator;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "diffculty_level")
-    private Level difficultyLevel;
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
