@@ -74,11 +74,6 @@ public class AuthServiceImpl implements AuthService {
         return mapToLoginResponse(user);
     }
 
-    @Override
-    public void deleteUser(Integer id) {
-        userRepository.deleteById(id);
-    }
-
     // Register method
 
     private String normalizeEmail(String email) {
