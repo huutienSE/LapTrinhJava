@@ -19,7 +19,7 @@ public class Question {
 
     @ManyToOne
     @JoinColumn(name = "topic_id")
-    private Topic topicId;
+    private Topic topic;
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
