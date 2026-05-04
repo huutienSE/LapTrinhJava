@@ -52,4 +52,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
+
+
+    //user khonng ton tai voi id
+    @ExceptionHandler(UserNotFound.class)
+    public ResponseEntity<ApiResponse> handleUserNotFound(UserNotFound ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
 }

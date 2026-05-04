@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Setter
 public class PracticeHistoryResponse {
 
-    private String name;
-    private Double score;
+    private String topicName;
+    private Integer score;
     private LocalDateTime time;
     private Integer sessionId;
 }

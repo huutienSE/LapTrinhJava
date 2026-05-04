@@ -7,4 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PracticeSessionRepository extends JpaRepository<PracticeSession, Integer> {
+
+    List<PracticeSession> findByUser_UserId(Integer userId);
 }

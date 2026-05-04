@@ -1,13 +1,15 @@
 package com.englishapp.service.impl;
 
+import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
+import com.englishapp.dto.PracticeSession.PracticeSessionRequest;
 import com.englishapp.dto.question.PracticeQuestionResponse;
 import com.englishapp.entity.PracticeQuestion;
+import com.englishapp.entity.PracticeSession;
 import com.englishapp.entity.Question;
 import com.englishapp.entity.Topic;
 import com.englishapp.exception.TopicNotFoundException;
-import com.englishapp.repositoty.PracticeQuestionRepository;
-import com.englishapp.repositoty.QuestionRepository;
-import com.englishapp.repositoty.TopicRepository;
+import com.englishapp.exception.UserNotFound;
+import com.englishapp.repositoty.*;
 import com.englishapp.service.PracticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ public class PracticeServiceImpl implements PracticeService {
     private final PracticeQuestionRepository practiceQuestionRepository;
     private final TopicRepository topicRepository;
     private final QuestionRepository questionRepository;
+    private final PracticeSessionRepository practiceSessionRepository;
+    private final UserRepository userRepository;
     @Override
     public List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId) {
 
@@ -37,5 +41,24 @@ public class PracticeServiceImpl implements PracticeService {
             res.setDescription(q.getDescription());
             return res;
         }).toList();
+    }
+
+    @Override
+    public List<PracticeHistoryResponse> getPracticeHistory(Integer userId) {
+
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFound(userId);
+        }
+
+        List<PracticeSession> sessions = practiceSessionRepository.findByUser_UserId(userId);
+
+        return sessions.stream().map(session -> {
+            PracticeHistoryResponse res = new PracticeHistoryResponse();
+            res.setTopicName(session.getTopic().getTopicName());
+            res.setScore(session.getScore());
+            res.setTime(session.getEndedTime());
+            return res;
+        }).toList();
+
     }
 }
