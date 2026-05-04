@@ -39,8 +39,9 @@ function Navbar() {
         <div className="flex items-center gap-4">
           {isLoggedIn ? (
             <div className="flex items-center gap-4">
-              <span className="text-sm text-zinc-400 hidden sm:block">
-                Hi, <span className="text-white font-medium">{currentUser?.firstName || 'User'}</span>
+              <span className="text-sm text-zinc-400 hidden sm:block"> 
+                {/* userName là tên lấy từ trong object từ json backend trả về */}
+                Hi, <span className="text-white font-medium">{currentUser?.userName || 'User'}</span>
               </span>
               <button 
                 onClick={handleLogOut}

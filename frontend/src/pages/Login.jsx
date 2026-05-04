@@ -22,6 +22,7 @@ const Login = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        setError(""); // Reset lỗi cũ
         try {
             const response = await authService.login(formData);
             alert(response.message);
@@ -29,6 +30,7 @@ const Login = () => {
             navigate("/");
         } catch (err) {
             setError(err.message);
+            console.error("Login error:", err);
         } finally {
             setIsLoading(false);
         }
