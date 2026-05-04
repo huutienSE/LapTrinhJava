@@ -1,5 +1,6 @@
 package com.englishapp.repositoty;
 
+import com.englishapp.entity.PracticeQuestion;
 import com.englishapp.entity.Question;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
             @Param("level") String level,
             @Param("limit") int limit
     );
+
+    public List<Question> findByTopic_TopicId(Integer topicId);
 }
