@@ -1,12 +1,8 @@
 package com.englishapp.entity;
 
-import com.englishapp.entity.enums.Level;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-
 
 @Entity
 @Table(name = "practice_question")
@@ -14,22 +10,27 @@ import java.time.LocalDateTime;
 @Setter
 public class PracticeQuestion {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id")
-    private Integer questionId;
+    @EmbeddedId
+    private PracticeQuestionId id;
+
+    public PracticeQuestion() {}
+
+    public PracticeQuestion(PracticeSession session, Question question) {
+        this.session = session;
+        this.question = question;
+        this.id = new PracticeQuestionId(
+                session.getSessionId(),
+                question.getQuestionId()
+        );
+    }
 
     @ManyToOne
-    @JoinColumn(name = "topic_id")
-    private Topic topic;
+    @MapsId("sessionId")
+    @JoinColumn(name = "session_id")
+    private PracticeSession session;
 
     @ManyToOne
-    @JoinColumn(name = "creator_id")
-    private User creator;
-
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
+    @MapsId("questionId")
+    @JoinColumn(name = "question_id")
+    private Question question;
 }

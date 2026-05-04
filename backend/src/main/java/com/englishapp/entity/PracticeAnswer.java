@@ -23,10 +23,13 @@ public class PracticeAnswer {
 
     @ManyToOne
     @JoinColumn(name = "question_id")
-    private PracticeQuestion question;
+    private Question question;
 
     @Column(name = "user_answer")
     private String userAnswer;
+
+    @Column(name = "is_correct")
+    private Boolean isCorrect;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
