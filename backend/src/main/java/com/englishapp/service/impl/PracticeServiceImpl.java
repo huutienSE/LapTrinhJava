@@ -57,6 +57,7 @@ public class PracticeServiceImpl implements PracticeService {
             res.setTopicName(session.getTopic().getTopicName());
             res.setScore(session.getScore());
             res.setTime(session.getEndedTime());
+            res.setSessionId(session.getSessionId());
             return res;
         }).toList();
 
