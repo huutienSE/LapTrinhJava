@@ -5,7 +5,7 @@ import com.englishapp.dto.question.PracticeQuestionResponse;
 
 import java.util.List;
 
-public interface PracticeService {
+public interface PracticeSessionService {
 
     List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId);
 

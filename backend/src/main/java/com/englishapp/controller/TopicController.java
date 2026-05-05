@@ -3,7 +3,7 @@ package com.englishapp.controller;
 import com.englishapp.common.ApiResponse;
 import com.englishapp.dto.question.PracticeQuestionResponse;
 import com.englishapp.dto.topic.TopicResponse;
-import com.englishapp.service.PracticeService;
+import com.englishapp.service.PracticeSessionService;
 import com.englishapp.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import java.util.List;
 public class TopicController {
 
     private final TopicService topicService ;
-    private final PracticeService practiceService;
+    private final PracticeSessionService practiceService;
 
     @GetMapping
     public ApiResponse<List<TopicResponse>> getAllTopics() {
