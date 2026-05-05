@@ -1,9 +1,9 @@
 package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
-import com.englishapp.dto.question.PracticeQuestionResponse;
+import com.englishapp.dto.question.QuestionResponse;
 import com.englishapp.dto.topic.TopicResponse;
-import com.englishapp.service.PracticeService;
+import com.englishapp.service.PracticeSessionService;
 import com.englishapp.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import java.util.List;
 public class TopicController {
 
     private final TopicService topicService ;
-    private final PracticeService practiceService;
+    private final PracticeSessionService practiceSessionServiceService;
 
     @GetMapping
     public ApiResponse<List<TopicResponse>> getAllTopics() {
@@ -26,8 +26,8 @@ public class TopicController {
     }
 
     @GetMapping("/{topicId}/questions")
-    public ApiResponse<List<PracticeQuestionResponse>> getQuestions(@PathVariable Integer topicId) {
-        List<PracticeQuestionResponse> practiceQuestionResponses =  practiceService.getQuestionsByTopicId(topicId);
+    public ApiResponse<List<QuestionResponse>> getQuestions(@PathVariable Integer topicId) {
+        List<QuestionResponse> practiceQuestionResponses =  practiceSessionServiceService.getQuestionsByTopicId(topicId);
         return new ApiResponse<>(true, practiceQuestionResponses, "get Questions successfully");
     }
 }

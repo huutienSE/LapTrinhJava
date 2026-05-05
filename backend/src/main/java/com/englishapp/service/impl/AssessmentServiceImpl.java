@@ -33,7 +33,6 @@ public class AssessmentServiceImpl implements com.englishapp.service.AssessmentS
     {
         User user = userRepository.findById(startAssessmentRequest.getUserId())
         .orElseThrow(() -> new RuntimeException("User is not found"));
-
         PracticeSession practiceSession = new PracticeSession();
         practiceSession.setUser(user);
         practiceSession.setSessionType(SessionType.ASSESSMENT);
@@ -81,6 +80,7 @@ public class AssessmentServiceImpl implements com.englishapp.service.AssessmentS
 
         Assessment assessment = new Assessment();
         assessment.setUser(practiceSession.getUser());
+        assessment.setPracticeSession(practiceSession);
         assessment.setScore(score);
         assessment.setTakenDate(LocalDateTime.now());
 
@@ -98,6 +98,7 @@ public class AssessmentServiceImpl implements com.englishapp.service.AssessmentS
         AssessmentResponse assessmentResponse = new AssessmentResponse();
         assessmentResponse.setAssessmentId(assessment.getAssessmentId());
         assessmentResponse.setUserId(assessment.getUser().getUserId());
+        assessmentResponse.setSessionId(assessment.getPracticeSession().getSessionId());
         assessmentResponse.setScore(assessment.getScore());
         assessmentResponse.setLevelAssigned(String.valueOf(assessment.getLevelAssigned()));
         assessmentResponse.setTakenDate(assessment.getTakenDate());

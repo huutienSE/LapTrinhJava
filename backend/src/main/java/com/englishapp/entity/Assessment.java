@@ -22,12 +22,17 @@ public class Assessment {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToOne
+    @JoinColumn(name = "practice_session_id")
+    private PracticeSession practiceSession;
+
     @Column
     private Integer score;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "level_assigned")
     private Level levelAssigned;
+
 
     @Column(name = "taken_date")
     private LocalDateTime takenDate;
