@@ -2,6 +2,7 @@ package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
 import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
+import com.englishapp.dto.question.PracticeSessionDetailResponse;
 import com.englishapp.service.PracticeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,10 @@ public class PracticeController {
     }
 
     @GetMapping("/session/{sessionId}")
-    public
+    public ApiResponse<PracticeSessionDetailResponse> getSessionDetail(@PathVariable Integer sessionId) {
+
+        return new ApiResponse<>(true, practiceService.getSessionDetail(sessionId), "Get session detail successfully");
+    }
 
 
 }

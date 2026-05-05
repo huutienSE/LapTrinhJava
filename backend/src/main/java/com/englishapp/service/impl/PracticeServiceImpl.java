@@ -99,10 +99,27 @@ public class PracticeServiceImpl implements PracticeService {
         List<PracticeAnswer> answers = practiceAnswerRepository.findBySession_SessionId(session.getSessionId());
 
         List<PracticeQuestionDetailResponse> questions = answers.stream().map(answer -> {
+
             PracticeQuestionDetailResponse res = new PracticeQuestionDetailResponse();
 
-            res.setQuestionId(answer.get);
-        })
-        return null;
+            res.setQuestionId(answer.getQuestion().getQuestionId());
+            res.setQuestion(answer.getQuestion().getDescription());
+            res.setAnswer((answer.getUserAnswer()));
+
+            if (answer.getFeedback() != null) {
+                res.setFeedback(answer.getFeedback().getFeedbackText());
+                res.setScore(answer.getFeedback().getOverallScore());
+            }
+
+            return res;
+        }).toList();
+
+        PracticeSessionDetailResponse res = new PracticeSessionDetailResponse();
+        res.setSessionId(session.getSessionId());
+        res.setTopic(session.getTopic().getTopicName());
+        res.setScore(session.getScore());
+        res.setQuestions(questions);
+
+        return res ;
     }
 }

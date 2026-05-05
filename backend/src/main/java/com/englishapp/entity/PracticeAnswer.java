@@ -33,4 +33,7 @@ public class PracticeAnswer {
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
+
+    @OneToOne(mappedBy = "answer")
+    private Feedback feedback;
 }
