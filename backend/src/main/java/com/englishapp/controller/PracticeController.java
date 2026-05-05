@@ -26,4 +26,9 @@ public class PracticeController {
         return new ApiResponse<>(true, practiceHistoryResponseList, "Get history successfully");
 
     }
+
+    @GetMapping("/session/{sessionId}")
+    public
+
+
 }
