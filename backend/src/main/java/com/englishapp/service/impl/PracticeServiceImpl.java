@@ -2,11 +2,12 @@ package com.englishapp.service.impl;
 
 import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
 import com.englishapp.dto.PracticeSession.PracticeSessionRequest;
+import com.englishapp.dto.question.PracticeQuestionDetailResponse;
 import com.englishapp.dto.question.PracticeQuestionResponse;
-import com.englishapp.entity.PracticeQuestion;
-import com.englishapp.entity.PracticeSession;
-import com.englishapp.entity.Question;
-import com.englishapp.entity.Topic;
+import com.englishapp.dto.question.PracticeSessionDetailResponse;
+import com.englishapp.entity.*;
+import com.englishapp.exception.ForbiddenException;
+import com.englishapp.exception.SessionNotFoundException;
 import com.englishapp.exception.TopicNotFoundException;
 import com.englishapp.exception.UserNotFound;
 import com.englishapp.repositoty.*;
@@ -26,7 +27,7 @@ public class PracticeServiceImpl implements PracticeService {
     private final TopicRepository topicRepository;
     private final QuestionRepository questionRepository;
     private final PracticeSessionRepository practiceSessionRepository;
-    private final UserRepository userRepository;
+    private final PracticeAnswerRepository practiceAnswerRepository;
     @Override
     public List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId) {
 
@@ -79,5 +80,29 @@ public class PracticeServiceImpl implements PracticeService {
             return res;
         }).toList();
 
+    }
+
+    @Override
+    public PracticeSessionDetailResponse getSessionDetail(Integer sessionId) {
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+
+        Integer userId = userPrincipal.getUserId();
+
+        PracticeSession session = practiceSessionRepository.findById(sessionId)
+                .orElseThrow(SessionNotFoundException::new);
+
+        if (!session.getUser().getUserId().equals(userId)) {
+            throw new ForbiddenException();
+        }
+
+        List<PracticeAnswer> answers = practiceAnswerRepository.findBySession_SessionId(session.getSessionId());
+
+        List<PracticeQuestionDetailResponse> questions = answers.stream().map(answer -> {
+            PracticeQuestionDetailResponse res = new PracticeQuestionDetailResponse();
+
+            res.setQuestionId(answer.get);
+        })
+        return null;
     }
 }
