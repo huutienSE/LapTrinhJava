@@ -3,21 +3,18 @@ package com.englishapp.service.impl;
 import com.englishapp.dto.User.UserResponse;
 import com.englishapp.entity.User;
 import com.englishapp.repositoty.UserRepository;
-import com.englishapp.service.UserService;
+import com.englishapp.service.AdminService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
 
     @Override
-    @PreAuthorize("hasAuthority('ADMIN')")
     public List<UserResponse> getUsers() {
         return userRepository.findAll().stream().map(user -> {
             UserResponse userResponse = MaptoUserResponse(user);

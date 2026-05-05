@@ -5,6 +5,6 @@ import com.englishapp.dto.User.UserResponse;
 import java.util.List;
 
 
-public interface UserService {
+public interface AdminService {
     public List<UserResponse> getUsers();
 }
