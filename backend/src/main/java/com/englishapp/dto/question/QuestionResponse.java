@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PracticeQuestionResponse {
+public class QuestionResponse {
 
     private Integer questionId;
     private String description;

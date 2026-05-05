@@ -90,22 +90,6 @@ CREATE TABLE IF NOT EXISTS profile
 
 CREATE INDEX idx_profile_user ON profile (user_id);
 
-DROP TABLE IF EXISTS assessment;
-CREATE TABLE IF NOT EXISTS assessment
-(
-    assessment_id  INT PRIMARY KEY AUTO_INCREMENT,
-    user_id        INT,
-    score          INT CHECK (score BETWEEN 0 AND 100),
-    level_assigned ENUM ('BEGINNER' , 'INTERMEDIATE' , 'ADVANCED'),
-    taken_date     DATETIME DEFAULT (CURRENT_TIMESTAMP()),
-
-    FOREIGN KEY (user_id)
-        REFERENCES user (user_id)
-        ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-CREATE INDEX idx_assessment_user ON assessment (user_id);
-
 DROP TABLE IF EXISTS topic;
 CREATE TABLE IF NOT EXISTS topic
 (
@@ -146,6 +130,27 @@ CREATE TABLE IF NOT EXISTS practice_session
 CREATE INDEX idx_session_user ON practice_session (user_id);
 CREATE INDEX idx_session_topic ON practice_session (topic_id);
 
+DROP TABLE IF EXISTS assessment;
+CREATE TABLE IF NOT EXISTS assessment
+(
+    assessment_id  INT PRIMARY KEY AUTO_INCREMENT,
+    user_id        INT,
+    session_id     INT,
+    score          INT CHECK (score BETWEEN 0 AND 100),
+    level_assigned ENUM ('BEGINNER' , 'INTERMEDIATE' , 'ADVANCED'),
+    taken_date     DATETIME DEFAULT (CURRENT_TIMESTAMP()),
+
+    FOREIGN KEY (user_id)
+        REFERENCES user (user_id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+
+    FOREIGN KEY (session_id)
+        REFERENCES practice_session (session_id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE INDEX idx_assessment_user ON assessment (user_id);
+
 DROP TABLE IF EXISTS question;
 CREATE TABLE IF NOT EXISTS question
 (
@@ -154,7 +159,6 @@ CREATE TABLE IF NOT EXISTS question
     creator_id       INT,
     description      VARCHAR(200),
     difficulty_level ENUM ('BEGINNER' , 'INTERMEDIATE' , 'ADVANCED'),
-    correct_answer   VARCHAR(100),
     created_date     DATETIME DEFAULT (CURRENT_TIMESTAMP()),
 
     FOREIGN KEY (topic_id)
@@ -302,15 +306,6 @@ BEGIN
            (10, 'toilet@gmail.com', 'Nguyen Van', 'Toilet', '2012-05-02', 'ADVANCED');
 
 
-    INSERT INTO assessment (user_id, score, level_assigned)
-    VALUES (5, 20, 'BEGINNER'),
-           (6, 60, 'INTERMEDIATE'),
-           (7, 30, 'BEGINNER'),
-           (8, 50, 'INTERMEDIATE'),
-           (9, 80, 'ADVANCED'),
-           (10, 90, 'ADVANCED');
-
-
     INSERT INTO topic (creator_id, topic_name, description, difficulty_level)
     VALUES (2, 'daily life', 'Topics about everyday conversations', 'BEGINNER');
 
@@ -325,30 +320,34 @@ BEGIN
            (7, 1, 'PRACTICE', CURRENT_TIME - INTERVAL 30 MINUTE, 60);
 
 
-    INSERT INTO question (topic_id, creator_id, description, difficulty_level, correct_answer)
-    VALUES (1, 2, 'What do you usually do on weekends?', 'BEGINNER', 'I relax at home'),
-           (1, 2, 'Do you like watching movies?', 'BEGINNER', 'Yes, I do'),
-           (1, 2, 'What kind of music do you like?', 'BEGINNER', 'I like pop music'),
-           (1, 2, 'How often do you exercise?', 'BEGINNER', '3 times a week'),
+    INSERT INTO assessment (user_id, session_id, score, level_assigned)
+    VALUES (5, 1, 20, 'BEGINNER');
 
-           (1, 2, 'Do you like studying English?', 'INTERMEDIATE', 'Yes, I enjoy it'),
-           (1, 2, 'What is your favorite place?', 'INTERMEDIATE', 'My hometown'),
-           (1, 2, 'Do you prefer city or countryside?', 'INTERMEDIATE', 'I prefer the city'),
 
-           (1, 2, 'What do you do after school?', 'ADVANCED', 'I usually study and relax'),
-           (1, 2, 'Do you use social media every day?', 'ADVANCED', 'Yes, I use it daily'),
-           (1, 2, 'What is your dream job?', 'ADVANCED', 'I want to be a software engineer'),
+    INSERT INTO question (topic_id, creator_id, description, difficulty_level)
+    VALUES (1, 2, 'What do you usually do on weekends?', 'BEGINNER'),
+           (1, 2, 'Do you like watching movies?', 'BEGINNER'),
+           (1, 2, 'What kind of music do you like?', 'BEGINNER'),
+           (1, 2, 'How often do you exercise?', 'BEGINNER'),
 
-           (1, 2, 'Do you like traveling abroad?', 'BEGINNER', 'Yes, I do'),
-           (1, 2, 'What is your daily routine?', 'BEGINNER', 'I wake up, study, and sleep'),
-           (1, 2, 'Do you like reading books?', 'INTERMEDIATE', 'Yes, I enjoy reading'),
-           (1, 2, 'How do you relax?', 'INTERMEDIATE', 'I watch movies'),
-           (1, 2, 'What do you do in the evening?', 'ADVANCED', 'I study and rest'),
-           (1, 2, 'Do you like fast food?', 'BEGINNER', 'Yes, sometimes'),
-           (1, 2, 'What is your favorite drink?', 'INTERMEDIATE', 'Coffee'),
-           (1, 2, 'Do you like sports?', 'ADVANCED', 'Yes, I love sports'),
-           (1, 2, 'What do you usually eat for breakfast?', 'BEGINNER', 'Bread and milk'),
-           (1, 2, 'Do you like coffee?', 'INTERMEDIATE', 'Yes, I do');
+           (1, 2, 'Do you like studying English?', 'INTERMEDIATE'),
+           (1, 2, 'What is your favorite place?', 'INTERMEDIATE'),
+           (1, 2, 'Do you prefer city or countryside?', 'INTERMEDIATE'),
+
+           (1, 2, 'What do you do after school?', 'ADVANCED'),
+           (1, 2, 'Do you use social media every day?', 'ADVANCED'),
+           (1, 2, 'What is your dream job?', 'ADVANCED'),
+
+           (1, 2, 'Do you like traveling abroad?', 'BEGINNER'),
+           (1, 2, 'What is your daily routine?', 'BEGINNER'),
+           (1, 2, 'Do you like reading books?', 'INTERMEDIATE'),
+           (1, 2, 'How do you relax?', 'INTERMEDIATE'),
+           (1, 2, 'What do you do in the evening?', 'ADVANCED'),
+           (1, 2, 'Do you like fast food?', 'BEGINNER'),
+           (1, 2, 'What is your favorite drink?', 'INTERMEDIATE'),
+           (1, 2, 'Do you like sports?', 'ADVANCED'),
+           (1, 2, 'What do you usually eat for breakfast?', 'BEGINNER'),
+           (1, 2, 'Do you like coffee?', 'INTERMEDIATE');
 
     INSERT INTO practice_question (session_id, question_id)
     VALUES (1, 1),
