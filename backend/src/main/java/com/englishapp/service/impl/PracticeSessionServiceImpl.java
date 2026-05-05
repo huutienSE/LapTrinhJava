@@ -3,7 +3,6 @@ package com.englishapp.service.impl;
 import com.englishapp.dto.question.QuestionResponse;
 import com.englishapp.entity.Question;
 import com.englishapp.exception.TopicNotFoundException;
-import com.englishapp.repositoty.PracticeQuestionRepository;
 import com.englishapp.repositoty.QuestionRepository;
 import com.englishapp.repositoty.TopicRepository;
 import com.englishapp.service.PracticeSessionService;
