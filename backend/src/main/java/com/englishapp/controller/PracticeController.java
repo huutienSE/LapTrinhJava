@@ -19,9 +19,9 @@ public class PracticeController {
     private final PracticeService practiceService;
 
 
-    @GetMapping("/history/{userId}")
-    public ApiResponse<List<PracticeHistoryResponse>> getHistory(@PathVariable Integer userId) {
-        List<PracticeHistoryResponse> practiceHistoryResponseList = practiceService.getPracticeHistory(userId);
+    @GetMapping("/history")
+    public ApiResponse<List<PracticeHistoryResponse>> getHistory() {
+        List<PracticeHistoryResponse> practiceHistoryResponseList = practiceService.getPracticeHistory();
 
         return new ApiResponse<>(true, practiceHistoryResponseList, "Get history successfully");
 

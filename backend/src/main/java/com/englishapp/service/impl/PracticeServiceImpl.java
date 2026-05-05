@@ -10,8 +10,10 @@ import com.englishapp.entity.Topic;
 import com.englishapp.exception.TopicNotFoundException;
 import com.englishapp.exception.UserNotFound;
 import com.englishapp.repositoty.*;
+import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.PracticeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,20 +46,36 @@ public class PracticeServiceImpl implements PracticeService {
     }
 
     @Override
-    public List<PracticeHistoryResponse> getPracticeHistory(Integer userId) {
+    public List<PracticeHistoryResponse> getPracticeHistory() {
 
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFound(userId);
-        }
+//        if (!userRepository.existsById(userId)) {
+//            throw new UserNotFound(userId);
+//        }
+//
+//        List<PracticeSession> sessions = practiceSessionRepository.findByUser_UserId(userId);
+//
+//        return sessions.stream().map(session -> {
+//            PracticeHistoryResponse res = new PracticeHistoryResponse();
+//            res.setTopicName(session.getTopic().getTopicName());
+//            res.setScore(session.getScore());
+//            res.setTime(session.getEndedTime());
+//            res.setSessionId(session.getSessionId());
+//            return res;
+//        }).toList();
+
+        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
+
+        Integer userId = userPrincipal.getUserId();
 
         List<PracticeSession> sessions = practiceSessionRepository.findByUser_UserId(userId);
 
         return sessions.stream().map(session -> {
             PracticeHistoryResponse res = new PracticeHistoryResponse();
+            res.setSessionId(session.getSessionId());
             res.setTopicName(session.getTopic().getTopicName());
             res.setScore(session.getScore());
             res.setTime(session.getEndedTime());
-            res.setSessionId(session.getSessionId());
             return res;
         }).toList();
 

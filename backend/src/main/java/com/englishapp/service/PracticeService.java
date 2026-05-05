@@ -9,5 +9,5 @@ public interface PracticeService {
 
     List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId);
 
-    List<PracticeHistoryResponse> getPracticeHistory(Integer topicId);
+    List<PracticeHistoryResponse> getPracticeHistory();
 }
