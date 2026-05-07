@@ -8,12 +8,9 @@ import com.englishapp.entity.*;
 import com.englishapp.exception.ForbiddenException;
 import com.englishapp.exception.SessionNotFoundException;
 import com.englishapp.exception.TopicNotFoundException;
-import com.englishapp.exception.UserNotFound;
 import com.englishapp.repositoty.*;
-import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.PracticeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,22 +56,6 @@ public class PracticeServiceImpl implements PracticeService {
             res.setSessionId(session.getSessionId());
             return res;
         }).toList();
-
-//        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
-//                .getContext().getAuthentication().getPrincipal();
-//
-//        Integer userId = userPrincipal.getUserId();
-//
-//        List<PracticeSession> sessions = practiceSessionRepository.findByUserIdWithTopic(userId);
-//
-//        return sessions.stream().map(session -> {
-//            PracticeHistoryResponse res = new PracticeHistoryResponse();
-//            res.setSessionId(session.getSessionId());
-//            res.setTopicName(session.getTopic().getTopicName());
-//            res.setScore(session.getScore());
-//            res.setTime(session.getEndedTime());
-//            return res;
-//        }).toList();
 
     }
 
