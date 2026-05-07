@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 public class PracticeSessionDetailResponse {
     private Integer sessionId;
-    private String topic;
+    private String topicName;
     private Integer score;
     private List<PracticeQuestionDetailResponse> questions;
 }

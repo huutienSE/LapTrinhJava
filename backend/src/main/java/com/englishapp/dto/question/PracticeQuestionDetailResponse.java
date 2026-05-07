@@ -8,7 +8,7 @@ import lombok.Setter;
 public class PracticeQuestionDetailResponse {
     private Integer questionId;
     private String question;
-    private String answer;
+    private String userAnswer;
     private String feedback;
-    private Integer Score;
+    private Integer score;
 }

@@ -7,7 +7,6 @@ import com.englishapp.service.PracticeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -20,9 +19,9 @@ public class PracticeController {
     private final PracticeService practiceService;
 
 
-    @GetMapping("/history")
-    public ApiResponse<List<PracticeHistoryResponse>> getHistory() {
-        List<PracticeHistoryResponse> practiceHistoryResponseList = practiceService.getPracticeHistory();
+    @GetMapping("/history/{userId}")
+    public ApiResponse<List<PracticeHistoryResponse>> getHistory(@PathVariable Integer userId) {
+        List<PracticeHistoryResponse> practiceHistoryResponseList = practiceService.getPracticeHistory(userId);
 
         return new ApiResponse<>(true, practiceHistoryResponseList, "Get history successfully");
 

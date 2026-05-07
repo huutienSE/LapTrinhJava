@@ -4,7 +4,6 @@ import com.englishapp.entity.enums.Level;
 import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
 import lombok.Getter;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
@@ -35,6 +34,5 @@ public class Question {
     private String correctAnswer;
 
     @Column(name = "created_date")
-    @Timestamp
     private LocalDate createdDate;
 }

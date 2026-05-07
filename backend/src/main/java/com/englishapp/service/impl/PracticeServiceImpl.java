@@ -1,7 +1,6 @@
 package com.englishapp.service.impl;
 
 import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
-import com.englishapp.dto.PracticeSession.PracticeSessionRequest;
 import com.englishapp.dto.question.PracticeQuestionDetailResponse;
 import com.englishapp.dto.question.PracticeQuestionResponse;
 import com.englishapp.dto.question.PracticeSessionDetailResponse;
@@ -28,6 +27,7 @@ public class PracticeServiceImpl implements PracticeService {
     private final QuestionRepository questionRepository;
     private final PracticeSessionRepository practiceSessionRepository;
     private final PracticeAnswerRepository practiceAnswerRepository;
+    private final UserRepository userRepository;
     @Override
     public List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId) {
 
@@ -47,64 +47,66 @@ public class PracticeServiceImpl implements PracticeService {
     }
 
     @Override
-    public List<PracticeHistoryResponse> getPracticeHistory() {
+    public List<PracticeHistoryResponse> getPracticeHistory(Integer userId) {
 
-//        if (!userRepository.existsById(userId)) {
-//            throw new UserNotFound(userId);
-//        }
-//
-//        List<PracticeSession> sessions = practiceSessionRepository.findByUser_UserId(userId);
-//
-//        return sessions.stream().map(session -> {
-//            PracticeHistoryResponse res = new PracticeHistoryResponse();
-//            res.setTopicName(session.getTopic().getTopicName());
-//            res.setScore(session.getScore());
-//            res.setTime(session.getEndedTime());
-//            res.setSessionId(session.getSessionId());
-//            return res;
-//        }).toList();
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFound(userId);
+        }
 
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal();
-
-        Integer userId = userPrincipal.getUserId();
-
-        List<PracticeSession> sessions = practiceSessionRepository.findByUser_UserId(userId);
+        List<PracticeSession> sessions = (practiceSessionRepository).findByUser_UserId(userId);
 
         return sessions.stream().map(session -> {
             PracticeHistoryResponse res = new PracticeHistoryResponse();
-            res.setSessionId(session.getSessionId());
             res.setTopicName(session.getTopic().getTopicName());
             res.setScore(session.getScore());
             res.setTime(session.getEndedTime());
+            res.setSessionId(session.getSessionId());
             return res;
         }).toList();
+
+//        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
+//                .getContext().getAuthentication().getPrincipal();
+//
+//        Integer userId = userPrincipal.getUserId();
+//
+//        List<PracticeSession> sessions = practiceSessionRepository.findByUserIdWithTopic(userId);
+//
+//        return sessions.stream().map(session -> {
+//            PracticeHistoryResponse res = new PracticeHistoryResponse();
+//            res.setSessionId(session.getSessionId());
+//            res.setTopicName(session.getTopic().getTopicName());
+//            res.setScore(session.getScore());
+//            res.setTime(session.getEndedTime());
+//            return res;
+//        }).toList();
 
     }
 
     @Override
     public PracticeSessionDetailResponse getSessionDetail(Integer sessionId) {
-        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal();
+//        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
+//                .getContext().getAuthentication().getPrincipal();
+//
+//        Integer userId = userPrincipal.getUserId();
+//
+//        PracticeSession session = practiceSessionRepository.findById(sessionId)
+//                .orElseThrow(SessionNotFoundException::new);
+//
+//        if (!session.getUser().getUserId().equals(userId)) {
+//            throw new ForbiddenException();
+//        }
 
-        Integer userId = userPrincipal.getUserId();
-
-        PracticeSession session = practiceSessionRepository.findById(sessionId)
-                .orElseThrow(SessionNotFoundException::new);
-
-        if (!session.getUser().getUserId().equals(userId)) {
-            throw new ForbiddenException();
-        }
-
-        List<PracticeAnswer> answers = practiceAnswerRepository.findBySession_SessionId(session.getSessionId());
+        List<PracticeAnswer> answers = practiceAnswerRepository.findBySessionWithDetails(sessionId);
 
         List<PracticeQuestionDetailResponse> questions = answers.stream().map(answer -> {
 
             PracticeQuestionDetailResponse res = new PracticeQuestionDetailResponse();
 
-            res.setQuestionId(answer.getQuestion().getQuestionId());
-            res.setQuestion(answer.getQuestion().getDescription());
-            res.setAnswer((answer.getUserAnswer()));
+            res.setQuestionId(answer.getPracticeQuestion().getQuestion().getQuestionId());
+
+            res.setQuestion(answer.getPracticeQuestion().getQuestion().getDescription());
+
+            res.setUserAnswer(answer.getUserAnswer());
 
             if (answer.getFeedback() != null) {
                 res.setFeedback(answer.getFeedback().getFeedbackText());
@@ -114,12 +116,15 @@ public class PracticeServiceImpl implements PracticeService {
             return res;
         }).toList();
 
+        PracticeSession session = practiceSessionRepository.findById(sessionId)
+                .orElseThrow(SessionNotFoundException::new);
+
         PracticeSessionDetailResponse res = new PracticeSessionDetailResponse();
         res.setSessionId(session.getSessionId());
-        res.setTopic(session.getTopic().getTopicName());
+        res.setTopicName(session.getTopic().getTopicName());
         res.setScore(session.getScore());
         res.setQuestions(questions);
 
-        return res ;
+        return res;
     }
 }

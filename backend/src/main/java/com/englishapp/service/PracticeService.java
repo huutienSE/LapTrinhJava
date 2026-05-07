@@ -11,7 +11,7 @@ public interface PracticeService {
 
     List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId);
 
-    List<PracticeHistoryResponse> getPracticeHistory();
+    List<PracticeHistoryResponse> getPracticeHistory(Integer userId);
 
     PracticeSessionDetailResponse getSessionDetail(Integer sessionId);
 }
