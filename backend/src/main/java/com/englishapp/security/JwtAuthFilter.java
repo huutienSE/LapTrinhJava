@@ -25,71 +25,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request,
-//                                    HttpServletResponse response,
-//                                    FilterChain filterChain) throws ServletException, IOException {
-//
-//        final String authHeader = request.getHeader("Authorization");
-//
-//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-//
-//        final String token = authHeader.substring(7);
-//
-//        try {
-//            if (!jwtUtil.validateToken(token)) {
-//                throw new InvalidTokenException();
-//            }
-//
-//            final String email = jwtUtil.extractEmail(token);
-//            final String role = jwtUtil.extractRole(token);
-//
-//            if (email == null || role == null) {
-//                throw new InvalidTokenException();
-//            }
-//
-//            var currentAuth = SecurityContextHolder.getContext().getAuthentication();
-//
-//            boolean isAnonymousPrincipal = false;
-//            if (currentAuth != null) {
-//                Object principal = currentAuth.getPrincipal();
-//                isAnonymousPrincipal = (principal instanceof String && "anonymousUser".equals(principal))
-//                        || currentAuth instanceof AnonymousAuthenticationToken;
-//            }
-//
-//            if (currentAuth == null || isAnonymousPrincipal) {
-//
-//                User user = userRepository.findByEmail(email)
-//                        .orElseThrow(InvalidTokenException::new);
-//
-//                UserPrincipal userPrincipal = UserPrincipal.fromUser(user, role);
-//
-//                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-//                        userPrincipal, null, userPrincipal.getAuthorities());
-//
-//                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//                SecurityContextHolder.getContext().setAuthentication(authToken);
-//
-//                log.info("Authentication set from JWT for user: {}, roles: {}", userPrincipal.getUsername(), userPrincipal.getAuthorities());
-//            } else {
-//                log.debug("Existing non-anonymous authentication present, not overriding: {}", currentAuth);
-//            }
-//
-//            filterChain.doFilter(request, response);
-//
-//        } catch (InvalidTokenException e) {
-//            log.warn("Invalid JWT: {}", e.getMessage());
-//            handleUnauthorized(response, "Invalid or expired token");
-//        } catch (Exception e) {
-//            log.error("Authentication filter error", e);
-//            handleUnauthorized(response, "Authentication failed");
-//        }
-//    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -97,7 +32,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        // 1. Không có token → bỏ qua
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -106,33 +40,43 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String token = authHeader.substring(7);
 
         try {
-            // 2. Validate token (nếu sai sẽ throw luôn)
-            jwtUtil.validateToken(token);
+            if (!jwtUtil.validateToken(token)) {
+                throw new InvalidTokenException();
+            }
 
-            // 3. Lấy info từ token
             final String email = jwtUtil.extractEmail(token);
             final String role = jwtUtil.extractRole(token);
 
-            // 4. Nếu chưa có auth thì set
-            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (email == null || role == null) {
+                throw new InvalidTokenException();
+            }
+
+            var currentAuth = SecurityContextHolder.getContext().getAuthentication();
+
+            boolean isAnonymousPrincipal = false;
+            if (currentAuth != null) {
+                Object principal = currentAuth.getPrincipal();
+                isAnonymousPrincipal = (principal instanceof String && "anonymousUser".equals(principal))
+                        || currentAuth instanceof AnonymousAuthenticationToken;
+            }
+
+            if (currentAuth == null || isAnonymousPrincipal) {
 
                 User user = userRepository.findByEmail(email)
                         .orElseThrow(InvalidTokenException::new);
 
                 UserPrincipal userPrincipal = UserPrincipal.fromUser(user, role);
 
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                userPrincipal,
-                                null,
-                                userPrincipal.getAuthorities()
-                        );
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userPrincipal, null, userPrincipal.getAuthorities());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                log.info("JWT authenticated user: {}", email);
+                log.info("Authentication set from JWT for user: {}, roles: {}", userPrincipal.getUsername(), userPrincipal.getAuthorities());
+            } else {
+                log.debug("Existing non-anonymous authentication present, not overriding: {}", currentAuth);
             }
 
             filterChain.doFilter(request, response);
@@ -140,9 +84,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } catch (InvalidTokenException e) {
             log.warn("Invalid JWT: {}", e.getMessage());
             handleUnauthorized(response, "Invalid or expired token");
-
         } catch (Exception e) {
-            log.error("JWT filter error", e);
+            log.error("Authentication filter error", e);
             handleUnauthorized(response, "Authentication failed");
         }
     }

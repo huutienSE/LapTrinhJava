@@ -49,11 +49,7 @@ public class PracticeServiceImpl implements PracticeService {
     @Override
     public List<PracticeHistoryResponse> getPracticeHistory(Integer userId) {
 
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFound(userId);
-        }
-
-        List<PracticeSession> sessions = (practiceSessionRepository).findByUser_UserId(userId);
+        List<PracticeSession> sessions = practiceSessionRepository.findByUserIdWithTopic(userId);
 
         return sessions.stream().map(session -> {
             PracticeHistoryResponse res = new PracticeHistoryResponse();
@@ -83,18 +79,15 @@ public class PracticeServiceImpl implements PracticeService {
     }
 
     @Override
-    public PracticeSessionDetailResponse getSessionDetail(Integer sessionId) {
-//        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
-//                .getContext().getAuthentication().getPrincipal();
-//
-//        Integer userId = userPrincipal.getUserId();
-//
-//        PracticeSession session = practiceSessionRepository.findById(sessionId)
-//                .orElseThrow(SessionNotFoundException::new);
-//
-//        if (!session.getUser().getUserId().equals(userId)) {
-//            throw new ForbiddenException();
-//        }
+    public PracticeSessionDetailResponse getSessionDetail(Integer sessionId,
+                                                          Integer userId) {
+
+        PracticeSession session = practiceSessionRepository.findById(sessionId)
+                .orElseThrow(SessionNotFoundException::new);
+
+        if (!session.getUser().getUserId().equals(userId)) {
+            throw new ForbiddenException();
+        }
 
         List<PracticeAnswer> answers = practiceAnswerRepository.findBySessionWithDetails(sessionId);
 
@@ -115,9 +108,6 @@ public class PracticeServiceImpl implements PracticeService {
 
             return res;
         }).toList();
-
-        PracticeSession session = practiceSessionRepository.findById(sessionId)
-                .orElseThrow(SessionNotFoundException::new);
 
         PracticeSessionDetailResponse res = new PracticeSessionDetailResponse();
         res.setSessionId(session.getSessionId());

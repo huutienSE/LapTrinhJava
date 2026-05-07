@@ -13,5 +13,6 @@ public interface PracticeService {
 
     List<PracticeHistoryResponse> getPracticeHistory(Integer userId);
 
-    PracticeSessionDetailResponse getSessionDetail(Integer sessionId);
+    PracticeSessionDetailResponse getSessionDetail(Integer sessionId,
+                                                   Integer userId);
 }
