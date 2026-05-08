@@ -3,29 +3,36 @@ import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/api";
 
 const Register = () => {
+
   const [formData, setFormData] = useState({
     firstName: "", lastName: "", tel: "", email: "", password: "",
   });
 
   const {firstName, lastName, tel, email, password} = formData;
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    console.log(formData)
   };
 
   const onSubmit = async (e) => {
+
     e.preventDefault();
+
     setIsLoading(true);
     try {
       const response = await authService.register({lastName, email, password});
       alert(response.message);
       navigate("/login"); // Đăng ký thành công thì đá sang Login
     } catch (err) {
-      setError(err.message);
+      setError(
+        err.response?.data?.message || err.message || "Đăng ký thất bại"
+      );
     } finally {
       setIsLoading(false);
     }

@@ -32,12 +32,30 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-            // Nếu Spring Boot báo lỗi 401/403 (Token sai hoặc hết hạn)
-            localStorage.removeItem("token");
-            window.location.href = '/login'; // Ép văng ra trang đăng nhập
-        }
-        return Promise.reject(error);
+      const status = error.response?.status;
+
+      // URL request hiện tại
+      const requestUrl = error.config?.url || "";
+      
+      const isAuthRequest = requestUrl.includes("/auth/login");
+
+      // Chỉ logout khi:
+      // - token hết hạn / không hợp lệ
+      // - KHÔNG phải request login/register
+      if (
+          (status === 401 || status === 403) &&
+          !isAuthRequest
+      ) {
+
+          // Xóa dữ liệu đăng nhập
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+
+          // Redirect về login
+          window.location.href = "/login";
+      }
+
+      return Promise.reject(error);
     }
   );
 
