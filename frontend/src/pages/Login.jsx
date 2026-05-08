@@ -24,13 +24,14 @@ const Login = () => {
         setIsLoading(true);
         setError(""); // Reset lỗi cũ
         try {
-            const response = await authService.login(formData);
+            const response = await handleLogin(formData);
+            
             alert(response.message);
-            handleLogin(response.user);
+            console.log("login success")
             navigate("/");
         } catch (err) {
-            setError(err.message);
-            console.error("Login error:", err);
+            // Hiển thị message lỗi từ backend trả về
+            setError(err.response?.data?.message || err.message || "Đăng nhập thất bại");
         } finally {
             setIsLoading(false);
         }
@@ -51,7 +52,11 @@ const Login = () => {
                         </div>
 
                         <form onSubmit={onSubmit} className="space-y-6">
-                            {error && <div>{error}</div>}
+                            {error && (
+                                <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-sm">
+                                    {error}
+                                </div>
+                            )}
 
                             <div className="space-y-2">
                                 <label htmlFor="email" className="text-sm font-medium text-zinc-400 ml-1">email</label>
@@ -62,7 +67,9 @@ const Login = () => {
                                 placeholder="email"
                                 value={email}
                                 onChange={onChange} 
-                                className="w-full p-3 bg-zinc-800/50 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200 placeholder:text-zinc-600"/>
+                                className="w-full p-3 bg-zinc-800/50 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200 placeholder:text-zinc-600"
+                                required
+                                />
                             </div>
                             <div className="space-y-2">
                                 <label htmlFor="password" className="text-sm font-medium text-zinc-400">password</label>
@@ -70,7 +77,7 @@ const Login = () => {
                                 id="password"
                                 type="password"
                                 name="password"
-                                placeholder="password"
+                                placeholder="••••••••"
                                 value={password}
                                 onChange={onChange}
                                 className="w-full p-3 bg-zinc-800/50 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200 placeholder:text-zinc-600"
@@ -78,14 +85,15 @@ const Login = () => {
                                 />
                             </div>
 
-                            <button disabled={isLoading} className="w-full bg-zinc-100 hover:bg-white text-zinc-950 font-bold py-3 rounded-xl transition-all duration-200 active:scale-[0.98] mt-4">submit</button>
+                            <button disabled={isLoading} 
+                            className="w-full bg-zinc-100 hover:bg-white text-zinc-950 font-bold py-3 rounded-xl transition-all duration-200 active:scale-[0.98] mt-4">Đăng nhập</button>
                             {isLoading ? "Đang xử lý..." : ""}
                         </form>
 
                         <div className="mt-8 text-center">
                             <p className="text-sm text-zinc-500">
-                            Don't have an account?{" "}
-                            <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Sign up</Link>
+                            Chưa có tài khoản?{" "}
+                            <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Đăng ký ngay</Link>
                             </p>
                         </div>
                     </>
@@ -106,6 +114,7 @@ const Login = () => {
 
                         <button 
                         onClick={() => {
+                            localStorage.removeItem("token"); // Xóa token khi logout
                             handleLogOut();
                             navigate("/");
                         }}
