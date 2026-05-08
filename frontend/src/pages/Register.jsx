@@ -26,7 +26,14 @@ const Register = () => {
 
     setIsLoading(true);
     try {
-      const response = await authService.register({lastName, email, password});
+
+      const payload = {
+        userName: `${firstName} ${lastName}`,
+        email,
+        password
+      };
+
+      const response = await authService.register(payload);
       alert(response.message);
       navigate("/login"); // Đăng ký thành công thì đá sang Login
     } catch (err) {
