@@ -117,7 +117,7 @@ export const userService = {
   getPracticeHistoryDetail: async (sessionId) => {
     // Gọi đến /api/user/practice/history/sessionid
     // Token đã được Interceptor tự động thêm vào Header rồi
-    const response = await apiClient.get(`/user/practice/history/${sessionId}`);
+    const response = await apiClient.get(`/user/practice/session/${sessionId}`);
     return response.data;
   },
 
