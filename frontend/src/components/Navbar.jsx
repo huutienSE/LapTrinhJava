@@ -47,13 +47,13 @@ function Navbar() {
                 onClick={handleLogOut}
                 className="text-sm font-medium px-4 py-2 rounded-lg bg-zinc-800 hover:bg-red-500/20 hover:text-red-400 text-zinc-300 transition-all border border-transparent hover:border-red-500/50"
               >
-                Logout
+                Đăng xuất
               </button>
             </div>
           ) : (
             <div className="flex gap-3">
-              <Link to="/login" className="text-sm font-medium px-4 py-2 text-zinc-300 hover:text-white transition-colors">Log in</Link>
-              <Link to="/register" className="text-sm font-medium px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-all active:scale-95">Sign up</Link>
+              <Link to="/login" className="text-sm font-medium px-4 py-2 text-zinc-300 hover:text-white transition-colors">Đăng nhập</Link>
+              <Link to="/register" className="text-sm font-medium px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-all active:scale-95">Đăng kí</Link>
             </div>
           )}
         </div>

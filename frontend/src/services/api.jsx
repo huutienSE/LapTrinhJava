@@ -6,121 +6,136 @@
 import { MOCK_USER, MOCK_TOPICS, MOCK_SENTENCES, MOCK_HISTORY } from "./mockData"
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:8080/api/auth";
+const API_BASE_URL_AUTH = "http://localhost:8080/api/auth";
+const API_BASE_URL_PRACTICE = "http://localhost:8080/api/user/practice";
+
+// 1. Khởi tạo apiClient cho các request cần xác thực (History, Speaking...)
+const apiClient = axios.create({
+  baseURL: 'http://localhost:8080/api', // URL gốc của Backend
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// 2. TỰ ĐỘNG GẮN TOKEN: Trực chặn Request trước khi gửi đi
+apiClient.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`; // Gắn token chuẩn JWT
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      const status = error.response?.status;
+
+      // URL request hiện tại
+      const requestUrl = error.config?.url || "";
+      
+      const isAuthRequest = requestUrl.includes("/auth/login");
+
+      // Chỉ logout khi:
+      // - token hết hạn / không hợp lệ
+      // - KHÔNG phải request login/register
+      if (
+          (status === 401 || status === 403) &&
+          !isAuthRequest
+      ) {
+
+          // Xóa dữ liệu đăng nhập
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+
+          // Redirect về login
+          window.location.href = "/login";
+      }
+
+      return Promise.reject(error);
+    }
+  );
 
 export const authService = {
-  // Giả lập API Đăng nhập
+  // Gọi đến /api/auth/login
   login: async (credentials) => {
-      try {
-        console.log("Calling API Login với dữ liệu:", credentials);
-
-        const response = await axios.post(`${API_BASE_URL}/login`,{ email: credentials.email, password: credentials.password});
-        return {
-          success: true,
-          message: `Đăng nhập thành công, chào ${response.data.userName}!`,
-          user: response.data,
-        };
-      } catch (error) {
-        if (error.response) {
-        const status = error.response.status;
-        const data = error.response.data;
-        let message = "Đăng nhập thất bại";
-
-        // Xử lý theo status code
-        if (status === 400) {
-          if (data?.message === "User is disabled") {
-            message = "Tài khoản của bạn đã bị khóa";
-          } else if (data?.message === "Invalid email or password") {
-            message = "Email hoặc mật khẩu không chính xác";
-          } else {
-            message = data?.message || message;
-          }
-        } else if (status === 500) {
-          message = "Lỗi server, vui lòng thử lại sau";
-        }
-
-        throw new Error(message);
-        }
-        // Xử lý lỗi network hoặc timeout
-        else if (error.request) {
-          throw new Error("Không thể kết nối tới server. Kiểm tra kết nối mạng!");
-        }
-        // Lỗi khác
-        else {
-          throw new Error(error.message || "Lỗi không xác định");
-        }
-      }
+    const response = await apiClient.post('/auth/login', credentials);
+    return response.data;
   },
 
   // Giả lập API Đăng ký
   register: async (userData) => {
-    const payload = {
-      userName: `${userData.lastName}`.trim(),
-      email: userData.email,
-      password: userData.password,
-    }
-    try {
-      console.log("Calling api register with dataL: ", payload);
-
-      const response = await axios.post(`${API_BASE_URL}/register`, payload);
-      return {message: response.data.userName}
-
-    } catch (error) {
-      const data = error?.response?.data
-      let message = "lỗi đăng ký"
-
-      if (data) {
-        if (typeof data === "string") message = data
-        else if (data?.message) message = data.message
-        else if (typeof data === "object") message = Object.values(data).flat().join(" \n ")
-        } else if (error?.message) message = error.message
-        
-        throw new Error(message)
-      }
+    // Gọi đến /api/auth/register
+    const response = await apiClient.post('/auth/register', userData);
+    return response.data;
   }
 };
 
 
-// Cập nhật file src/services/api.jsx để thêm các hàm lấy dữ liệu và lưu lịch sử. Sau này bạn chỉ cần đổi ruột các hàm này thành axios.get/post.
-export const speakingService = {
-  //tduong voi: get/ api/ topics
-  getTopics: async () => {
-    return new Promise((resolve) => setTimeout(() => resolve(MOCK_TOPICS), 500))
-  },
+// // Cập nhật file src/services/api.jsx để thêm các hàm lấy dữ liệu và lưu lịch sử. Sau này bạn chỉ cần đổi ruột các hàm này thành axios.get/post.
+// export const speakingService = {
+//   // Thay thế toàn bộ Promise Mock bằng apiClient (Axios)
+//   getTopics: async () => {
+//     // Gọi: GET http://localhost:8080/api/topics
+//     const response = await apiClient.get('/topics');
+//     return response.data;
+//   },
   
-  //tduong: get/api/semtences?topicID=1
-  getSentencesByTopic: async (topicId) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const sentences = MOCK_SENTENCES.filter(s => s.topicId === topicId)
-        resolve(sentences)
-      }, 500)
-    })
+//   getSentencesByTopic: async (topicId) => {
+//     // Gọi: GET http://localhost:8080/api/sentences?topicId=1
+//     const response = await apiClient.get(`/sentences?topicId=${topicId}`);
+//     return response.data;
+//   },
+  
+//   saveRecord: async (recordData) => {
+//     // Gọi: POST http://localhost:8080/api/history
+//     // Nhờ có apiClient, request này đã tự động mang theo JWT token
+//     const response = await apiClient.post('/history', recordData);
+//     return { success: true, message: "Đã lưu kết quả thành công!", data: response.data };
+//   },
+
+//   // SỬA ĐỔI LỚN: Không cần truyền tham số email nữa
+//   getHistory: async () => {
+//     // Gọi đến /api/user/practice/history
+//     // Token đã được Interceptor tự động thêm vào Header rồi
+//     const response = await apiClient.get('/user/practice/history');
+//     return response.data;
+//   }
+// }
+
+// --- USER SERVICE (Xử lý các thông tin cá nhân, history) ---
+export const userService = {
+  getPracticeHistory: async () => {
+    // Gọi đến /api/user/practice/history
+    // Token đã được Interceptor tự động thêm vào Header rồi
+    const response = await apiClient.get('/user/practice/history');
+    return response.data;
+  },
+  getPracticeHistoryDetail: async (sessionId) => {
+    // Gọi đến /api/user/practice/history/sessionid
+    // Token đã được Interceptor tự động thêm vào Header rồi
+    const response = await apiClient.get(`/user/practice/session/${sessionId}`);
+    return response.data;
   },
 
-  
-  saveRecord: async (recordData) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newRecord = {
-          id: Date.now(),
-          ...recordData,
-          createdAt: new Date().toLocaleString(),
-        }
-        MOCK_HISTORY.push(newRecord)
-        console.log("Dữ liệu History hiện tại:", MOCK_HISTORY);
-        resolve({success: true, message: "Đã lưu kết quả!"})
-      }, 600)
-    })
-  },
-
-  // Tương đương: GET /api/history?email=...
-  getHistory: async (email) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const userHistory = MOCK_HISTORY.filter(h => h.userEmail === email);
-        resolve(userHistory.reverse()) // đảo ngược để bài mới nhất lên đầu 
-      }, 500)
-    })
+  getProfile: async () => {
+    const response = await apiClient.get('/user/profile');
+    return response.data;
   }
-}
+};
+
+// --- SPEAKING SERVICE (Dữ liệu chung về bài học) ---
+export const speakingService = {
+  getTopics: async () => {
+    // Gọi đến /api/topics (hoặc /api/speaking/topics tùy backend)
+    const response = await apiClient.get('/topics');
+    return response.data;
+  },
+  getSentences: async (topicId) => {
+    const response = await apiClient.get(`/topics/${topicId}/sentences`);
+    return response.data;
+  }
+};
