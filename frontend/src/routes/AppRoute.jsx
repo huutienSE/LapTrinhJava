@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import History from '../pages/user/History.jsx';
 import Login from '../pages/auth/Login.jsx';
 import Register from '../pages/auth/Register.jsx';
@@ -18,6 +19,18 @@ import ManageTopics from "../pages/admin/ManageTopics";
 import ManageQuestions from "../pages/admin/ManageQuestions";
 import ManageUsers from "../pages/admin/ManageUsers";
 
+const HomeRedirect = () => {
+    const { currentUser, isLoggedIn } = useAuth();
+
+    // Nếu đã login và là ADMIN -> vào dashboard
+    if (isLoggedIn && currentUser?.role === "ADMIN") {
+        return <Navigate to="/admin" replace />;
+    }
+
+    // Ngược lại render Home bình thường
+    return <Home />;
+};
+
 const AppRouter = () => {
     return (
         <Routes>
@@ -26,7 +39,7 @@ const AppRouter = () => {
             <Route element={<UserLayout />}>
 
                 {/* Public */}
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<HomeRedirect />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
 
@@ -41,29 +54,17 @@ const AppRouter = () => {
 
             {/* ADMIN */}
             <Route element={<AdminRoute />}>
-                <Route path="/admin" element={<AdminLayout />}>
-                    {/* /admin */}
-                    <Route index element={<Dashboard />} />
-                    {/* /admin/topics */}
-                    <Route
-                        path="topics"
-                        element={<ManageTopics />}
-                    />
-                    {/* /admin/questions */}
-                    <Route
-                        path="questions"
-                        element={<ManageQuestions />}
-                    />
-                    {/* /admin/users */}
-                    <Route
-                        path="users"
-                        element={<ManageUsers />}
-                    />
+                <Route element={<AdminLayout />}>
+                    <Route path="/admin" element={<Dashboard />} />
+                    <Route path="/admin/topics" element={<ManageTopics />} />
+                    <Route path="/admin/questions" element={<ManageQuestions />} />
+                    <Route path="/admin/users" element={<ManageUsers />} />
                 </Route>
             </Route>
 
             {/* fallback */}
             <Route path="*" element={<Navigate to="/" />} />
+
 
         </Routes>
     );
