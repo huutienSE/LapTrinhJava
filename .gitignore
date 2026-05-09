@@ -63,4 +63,8 @@ frontend/.vite/
 .DS_Store
 Thumbs.db
 
-backend/src/main/resources/application.properties
+
+backend/SPEAKING_ASSESSMENT_BACKEND_GUIDE.md
+backend/REGISTER_COMPONENTS_DOCUMENT.md
+backend/DATABASE_DOCUMENTATION.md
+backend/BACKEND_FULL_DOCUMENTATION.md

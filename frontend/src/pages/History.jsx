@@ -1,20 +1,41 @@
 import { useState, useEffect } from "react";
-import { speakingService } from "../services/api";
+import { userService } from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const History = () => {
-  const { currentUser } = useAuth();  
+  const { isLoggedIn } = useAuth();  
   const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (currentUser) {
-        speakingService.getHistory(currentUser.email).then(data => {
-            setHistory(data);
+    // Không cần truyền Email nữa, Backend sẽ đọc từ Token
+    const fetchHistory = async () => {
+
+      console.log("running");
+      
+        try {
+            const response = await userService.getPracticeHistory();
+
+            console.log(response);
+
+            if (response.success) {
+                setHistory(response.data);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy lịch sử:", error);
+        } finally {
             setIsLoading(false);
-        });
+        }
+    };
+
+    if (isLoggedIn) {
+        fetchHistory();
     }
-  }, [currentUser]);
+  }, [isLoggedIn]);
+
+  const navigate = useNavigate();
 
   if (isLoading) return <div className="text-center py-20 text-zinc-500">Đang tải dữ liệu...</div>;
 
@@ -37,16 +58,27 @@ const History = () => {
               <tr>
                 <th className="px-6 py-4">Ngày giờ</th>
                 <th className="px-6 py-4">Chủ đề</th>
-                <th className="px-6 py-4">Câu đã luyện</th>
                 <th className="px-6 py-4 text-center">Điểm số</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800">
               {history.map((record) => (
-                <tr key={record.id} className="hover:bg-zinc-800/30 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">{record.createdAt}</td>
-                  <td className="px-6 py-4 font-medium text-indigo-400">{record.topicTitle}</td>
-                  <td className="px-6 py-4 text-zinc-300">"{record.sentenceText}"</td>
+                <tr
+                  key={record.sessionId}
+                  onClick={() => navigate(`/history/${record.sessionId}`)}
+                  className="
+                    hover:bg-zinc-800/30
+                    transition-colors
+                    cursor-pointer
+                  "
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {/* Format lại thời gian cho đẹp */}
+                    {new Date(record.time).toLocaleString('vi-VN')}
+                  </td>
+                  <td className="px-6 py-4 font-medium text-indigo-400">
+                    {record.topicName}
+                  </td>
                   <td className="px-6 py-4 text-center">
                     <span className={`px-3 py-1 rounded-full font-bold text-xs ${
                         record.score >= 80 ? 'bg-green-500/20 text-green-400' : 

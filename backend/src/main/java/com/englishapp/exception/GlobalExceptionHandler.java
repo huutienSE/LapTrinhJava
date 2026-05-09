@@ -54,11 +54,23 @@ public class GlobalExceptionHandler {
     }
 
 
-    // token
-    @ExceptionHandler
-    public ResponseEntity<ApiResponse<?>> handleInvalidToken(InvalidTokenException ex){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+    //user khonng ton tai voi id
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleUserNotFound(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
 
+    @ExceptionHandler(SessionNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleSessionNotFound(SessionNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
+
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ApiResponse> handleForbidden(ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
 }
