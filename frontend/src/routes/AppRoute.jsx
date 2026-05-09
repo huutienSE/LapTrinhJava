@@ -5,6 +5,7 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Speaking from '../pages/Speaking.jsx';
 import Home from '../pages/Home';
+import SessionDetail from '../pages/SessionDetail';
 
 const AppRouter = () => {
     const { isLoggedIn } = useAuth(); // Lấy từ Context
@@ -17,6 +18,7 @@ const AppRouter = () => {
             {/* Private Routes */}
             <Route path="/History" element={isLoggedIn ? <History /> : <Navigate to="/Login" />} />
             <Route path="/Speaking" element={isLoggedIn ? <Speaking /> : <Navigate to="/Login" />} />
+            <Route path="/history/:sessionId" element={ isLoggedIn ? <SessionDetail /> : <Navigate to="/Login" />}/>
             {/* Fallback route */}
             <Route path="*" element={<Navigate to="/" />} />
         </Routes>

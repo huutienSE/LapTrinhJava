@@ -1,5 +1,6 @@
 package com.englishapp.entity;
 
+import com.englishapp.entity.enums.SessionType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,11 +26,15 @@ public class PracticeSession {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
+    @Enumerated(EnumType.STRING)
+    private SessionType sessionType;
+
     @Column(name = "started_time")
     private LocalDateTime startedTime;
 
     @Column(name = "ended_time")
     private LocalDateTime endedTime;
 
+    @Column(name = "score")
     private Integer score;
 }

@@ -21,10 +21,11 @@ public class Profile {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String email;
+    @Column(name = "first_name")
+    private String firstName;
 
-    @Column(name = "full_name")
-    private String fullName;
+    @Column(name = "last_name")
+    private String lastName;
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
@@ -35,5 +36,6 @@ public class Profile {
     @Column(name = "target_goal")
     private String targetGoal;
 
+    @Column(name = "occupation")
     private String occupation;
 }
