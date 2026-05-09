@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { speakingService } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { speakingService } from "../../services/api.jsx";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 
 

@@ -34,6 +34,7 @@ export const AuthProvider = ({ children }) => {
       // response backend:
           // response.data.token
       const userData = response.data;
+      console.log(userData)
 
       if (userData && userData.token) {
 

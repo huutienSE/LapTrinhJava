@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { userService } from "../services/api";
+import { userService } from "../../services/api.jsx";
 
 const SessionDetail = () => {
 

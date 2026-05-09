@@ -75,37 +75,6 @@ export const authService = {
 };
 
 
-// // Cập nhật file src/services/api.jsx để thêm các hàm lấy dữ liệu và lưu lịch sử. Sau này bạn chỉ cần đổi ruột các hàm này thành axios.get/post.
-// export const speakingService = {
-//   // Thay thế toàn bộ Promise Mock bằng apiClient (Axios)
-//   getTopics: async () => {
-//     // Gọi: GET http://localhost:8080/api/topics
-//     const response = await apiClient.get('/topics');
-//     return response.data;
-//   },
-  
-//   getSentencesByTopic: async (topicId) => {
-//     // Gọi: GET http://localhost:8080/api/sentences?topicId=1
-//     const response = await apiClient.get(`/sentences?topicId=${topicId}`);
-//     return response.data;
-//   },
-  
-//   saveRecord: async (recordData) => {
-//     // Gọi: POST http://localhost:8080/api/history
-//     // Nhờ có apiClient, request này đã tự động mang theo JWT token
-//     const response = await apiClient.post('/history', recordData);
-//     return { success: true, message: "Đã lưu kết quả thành công!", data: response.data };
-//   },
-
-//   // SỬA ĐỔI LỚN: Không cần truyền tham số email nữa
-//   getHistory: async () => {
-//     // Gọi đến /api/user/practice/history
-//     // Token đã được Interceptor tự động thêm vào Header rồi
-//     const response = await apiClient.get('/user/practice/history');
-//     return response.data;
-//   }
-// }
-
 // --- USER SERVICE (Xử lý các thông tin cá nhân, history) ---
 export const userService = {
   getPracticeHistory: async () => {
@@ -139,3 +108,38 @@ export const speakingService = {
     return response.data;
   }
 };
+
+
+
+
+
+// // Cập nhật file src/services/api.jsx để thêm các hàm lấy dữ liệu và lưu lịch sử. Sau này bạn chỉ cần đổi ruột các hàm này thành axios.get/post.
+// export const speakingService = {
+//   // Thay thế toàn bộ Promise Mock bằng apiClient (Axios)
+//   getTopics: async () => {
+//     // Gọi: GET http://localhost:8080/api/topics
+//     const response = await apiClient.get('/topics');
+//     return response.data;
+//   },
+
+//   getSentencesByTopic: async (topicId) => {
+//     // Gọi: GET http://localhost:8080/api/sentences?topicId=1
+//     const response = await apiClient.get(`/sentences?topicId=${topicId}`);
+//     return response.data;
+//   },
+
+//   saveRecord: async (recordData) => {
+//     // Gọi: POST http://localhost:8080/api/history
+//     // Nhờ có apiClient, request này đã tự động mang theo JWT token
+//     const response = await apiClient.post('/history', recordData);
+//     return { success: true, message: "Đã lưu kết quả thành công!", data: response.data };
+//   },
+
+//   // SỬA ĐỔI LỚN: Không cần truyền tham số email nữa
+//   getHistory: async () => {
+//     // Gọi đến /api/user/practice/history
+//     // Token đã được Interceptor tự động thêm vào Header rồi
+//     const response = await apiClient.get('/user/practice/history');
+//     return response.data;
+//   }
+// }
