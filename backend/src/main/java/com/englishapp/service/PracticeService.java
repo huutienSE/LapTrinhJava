@@ -1,4 +1,4 @@
 package com.englishapp.service;
 
-public interface PracticeQuestionRepository {
+public interface PracticeService {
 }
