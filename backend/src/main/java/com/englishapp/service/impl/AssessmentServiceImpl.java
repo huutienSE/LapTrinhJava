@@ -29,10 +29,9 @@ public class AssessmentServiceImpl implements com.englishapp.service.AssessmentS
     QuestionService questionService;
 
     @Override
-    public Integer startAssessment(StartAssessmentRequest startAssessmentRequest)
-    {
+    public Integer startAssessment(StartAssessmentRequest startAssessmentRequest) {
         User user = userRepository.findById(startAssessmentRequest.getUserId())
-        .orElseThrow(() -> new RuntimeException("User is not found"));
+                .orElseThrow(() -> new RuntimeException("User is not found"));
 
         PracticeSession practiceSession = new PracticeSession();
         practiceSession.setUser(user);
@@ -53,22 +52,18 @@ public class AssessmentServiceImpl implements com.englishapp.service.AssessmentS
     }
 
     @Override
-    public AssessmentResponse commitAssessment(CommitAssessmentRequest request)
-    {
+    public AssessmentResponse commitAssessment(CommitAssessmentRequest request) {
         PracticeSession practiceSession = practiceSessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new RuntimeException("Session is not found"));
         int score = 0;
 
-        for(AnswerRequest answer : request.getAnswers())
-        {
+        for (AnswerRequest answer : request.getAnswers()) {
             Question question = questionRepository.findById(answer.getQuestionId()).orElseThrow();
 
             boolean isCorrect = answer.getAnswer().equals(question.getCorrectAnswer());
             if (isCorrect) score++;
 
             PracticeAnswer practiceAnswer = new PracticeAnswer();
-            practiceAnswer.setSession(practiceSession);
-            practiceAnswer.setQuestion(question);
             practiceAnswer.setUserAnswer(answer.getAnswer());
             practiceAnswer.setIsCorrect(isCorrect);
             practiceAnswer.setCreatedDate(LocalDateTime.now());
@@ -93,8 +88,7 @@ public class AssessmentServiceImpl implements com.englishapp.service.AssessmentS
     }
 
     @Override
-    public AssessmentResponse mapToAssessmentResponse(Assessment assessment)
-    {
+    public AssessmentResponse mapToAssessmentResponse(Assessment assessment) {
         AssessmentResponse assessmentResponse = new AssessmentResponse();
         assessmentResponse.setAssessmentId(assessment.getAssessmentId());
         assessmentResponse.setUserId(assessment.getUser().getUserId());

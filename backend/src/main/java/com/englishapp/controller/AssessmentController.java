@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:5173")
-@RequestMapping("/api/assessment")
+@RequestMapping("/api/user/assessment")
 public class AssessmentController {
 
     private final AssessmentService assessmentService;
 
-    @GetMapping("/start")
+    @PostMapping("/start")
     public ApiResponse<Object> startAssessment(@RequestBody StartAssessmentRequest request) {
         Integer sessionId = assessmentService.startAssessment(request);
 

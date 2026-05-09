@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,19 +14,15 @@ public class Feedback {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "feedback_id")
     private Integer feedbackId;
 
     @OneToOne
-    @JoinColumn(name = "answer_id")
+    @JoinColumn(name = "answer_id", nullable = false, unique = true)
     private PracticeAnswer answer;
 
-    @Column(name = "overall_score")
     private Integer overallScore;
 
-    @Column(name = "feedback_text")
     private String feedbackText;
 
-    @Column(name = "created_date")
     private LocalDateTime createdDate;
 }

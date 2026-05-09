@@ -26,11 +26,11 @@ public class PracticeQuestion {
 
     @ManyToOne
     @MapsId("sessionId")
-    @JoinColumn(name = "session_id")
+    @JoinColumn(name = "session_id", nullable = false)
     private PracticeSession session;
 
     @ManyToOne
     @MapsId("questionId")
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 }

@@ -74,7 +74,7 @@ DROP TABLE IF EXISTS profile;
 CREATE TABLE IF NOT EXISTS profile
 (
     profile_id  INT PRIMARY KEY AUTO_INCREMENT,
-    user_id     INT,
+    user_id     INT UNIQUE,
     email       VARCHAR(50) UNIQUE KEY,
     first_name  VARCHAR(50),
     last_name   VARCHAR(50),
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS assessment
 (
     assessment_id  INT PRIMARY KEY AUTO_INCREMENT,
     user_id        INT,
-    session_id     INT,
+    session_id     INT UNIQUE,
     score          INT CHECK (score BETWEEN 0 AND 100),
     level_assigned ENUM ('BEGINNER' , 'INTERMEDIATE' , 'ADVANCED'),
     taken_date     DATETIME DEFAULT (CURRENT_TIMESTAMP()),
@@ -195,8 +195,8 @@ CREATE INDEX idx_question_creator ON question (creator_id);
 CREATE TABLE practice_answer
 (
     answer_id    INT PRIMARY KEY AUTO_INCREMENT,
-    session_id   INT,
-    question_id  INT,
+    session_id   INT NOT NULL,
+    question_id  INT NOT NULL,
     user_answer  VARCHAR(100),
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
 
@@ -205,14 +205,13 @@ CREATE TABLE practice_answer
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE INDEX idx_answer_session ON practice_answer (session_id);
-CREATE INDEX idx_answer_question ON practice_answer (question_id);
+CREATE INDEX idx_answer_session_question ON practice_answer (session_id, question_id);
 
 DROP TABLE IF EXISTS feedback;
 CREATE TABLE IF NOT EXISTS feedback
 (
     feedback_id   INT PRIMARY KEY AUTO_INCREMENT,
-    answer_id     INT,
+    answer_id     INT UNIQUE,
     overall_score INT CHECK (overall_score BETWEEN 0 AND 100),
     feedback_text VARCHAR(200),
     created_date  DATETIME DEFAULT (CURRENT_TIMESTAMP()),

@@ -14,23 +14,22 @@ public class PracticeAnswer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "answer_id")
     private Integer answerId;
 
     @ManyToOne
-    @JoinColumn(name = "session_id")
-    private PracticeSession session;
+    @JoinColumns({
+            @JoinColumn(name = "session_id", referencedColumnName = "session_id", nullable = false),
+            @JoinColumn(name = "question_id", referencedColumnName = "question_id", nullable = false)
+    })
+    private PracticeQuestion practiceQuestion;
 
-    @ManyToOne
-    @JoinColumn(name = "question_id")
-    private Question question;
+    @OneToOne(mappedBy = "answer", cascade = CascadeType.ALL)
+    private Feedback feedback;
 
-    @Column(name = "user_answer")
+    @Column(name = "user_answer", nullable = false)
     private String userAnswer;
 
-    @Column(name = "is_correct")
     private Boolean isCorrect;
 
-    @Column(name = "created_date")
     private LocalDateTime createdDate;
 }
