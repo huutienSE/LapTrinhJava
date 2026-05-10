@@ -1,4 +1,4 @@
-package com.englishapp.dto.question;
+package com.englishapp.dto.practice;
 
 import lombok.Getter;
 import lombok.Setter;

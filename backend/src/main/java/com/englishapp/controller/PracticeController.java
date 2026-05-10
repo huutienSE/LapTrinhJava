@@ -1,8 +1,8 @@
 package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
-import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
-import com.englishapp.dto.question.PracticeSessionDetailResponse;
+import com.englishapp.dto.practice.PracticeHistoryResponse;
+import com.englishapp.dto.practice.PracticeSessionDetailResponse;
 import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.PracticeService;
 import lombok.AllArgsConstructor;
