@@ -8,6 +8,7 @@ import com.englishapp.entity.*;
 import com.englishapp.entity.enums.Level;
 import com.englishapp.entity.enums.SessionType;
 import com.englishapp.repositoty.*;
+import com.englishapp.service.AssessmentService;
 import com.englishapp.service.QuestionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class AssessmentServiceImpl implements com.englishapp.service.AssessmentService {
+public class AssessmentServiceImpl implements AssessmentService {
     UserRepository userRepository;
     PracticeSessionRepository practiceSessionRepository;
     TopicRepository topicRepository;
