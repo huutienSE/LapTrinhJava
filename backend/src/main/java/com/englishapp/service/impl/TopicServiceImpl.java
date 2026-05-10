@@ -3,7 +3,7 @@ package com.englishapp.service.impl;
 import com.englishapp.dto.topic.TopicRequest;
 import com.englishapp.dto.topic.TopicResponse;
 import com.englishapp.entity.Topic;
-import com.englishapp.mapper.ToppicMapper;
+import com.englishapp.mapper.TopicMapper;
 import com.englishapp.repositoty.TopicRepository;
 import com.englishapp.service.TopicService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 public class TopicServiceImpl implements TopicService {
 
     private final TopicRepository topicRepository;
-    private final ToppicMapper topicMapper;
+    private final TopicMapper topicMapper;
 
     @Override
     public List<TopicResponse> getAllTopics() {
