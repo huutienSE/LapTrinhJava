@@ -40,5 +40,4 @@ public class ProfileController {
         ProfileResponse response = profileService.update(request, id);
         return new ApiResponse<>(true, response, "Update profile success");
     }
-
 }

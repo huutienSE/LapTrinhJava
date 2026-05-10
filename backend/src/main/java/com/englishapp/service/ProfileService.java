@@ -16,7 +16,4 @@ public interface ProfileService {
 
     ProfileResponse findById(Integer id);
 
-    ProfileResponse mapToProfileResponse(Profile profile);
-
-
 }

@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 public class AssessmentResponse {
     private Integer assessmentId;
+    private Integer sessionId;
     private Integer userId;
     private Integer score;
     private String levelAssigned;

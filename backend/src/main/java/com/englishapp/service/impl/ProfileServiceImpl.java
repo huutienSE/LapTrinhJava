@@ -96,9 +96,7 @@ public class ProfileServiceImpl implements ProfileService {
         return mapToProfileResponse(profile);
     }
 
-
-    @Override
-    public ProfileResponse mapToProfileResponse(Profile profile)
+    private ProfileResponse mapToProfileResponse(Profile profile)
     {
         ProfileResponse profileResponse = new ProfileResponse();
         profileResponse.setProfileId(profile.getProfileId());
