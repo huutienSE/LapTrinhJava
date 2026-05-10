@@ -110,6 +110,43 @@ export const speakingService = {
 };
 
 
+export const adminService = {
+
+    // TOPICS
+
+    getTopics: async () => {
+        const response = await apiClient.get("/topics");
+        return response.data;
+    },
+
+    createTopic: async (topicData) => {
+        const response = await apiClient.post(
+            "/topics",
+            topicData
+        );
+
+        return response.data;
+    },
+
+    updateTopic: async (topicId, topicData) => {
+        const response = await apiClient.put(
+            `/topics/${topicId}`,
+            topicData
+        );
+
+        return response.data;
+    },
+
+    deleteTopic: async (topicId) => {
+        const response = await apiClient.delete(
+            `/topics/${topicId}`
+        );
+
+        return response.data;
+    }
+};
+
+
 
 
 
