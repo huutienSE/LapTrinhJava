@@ -19,24 +19,6 @@ import java.util.List;
 public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
-    @Override
-    public List<ProfileResponse> findAll() {
-        return profileRepository.findAll()
-                .stream()
-                .map(profile -> {
-                    ProfileResponse profileResponse = new ProfileResponse();
-                    profileResponse.setProfileId(profile.getProfileId());
-                    profileResponse.setUserId(profile.getUser().getUserId());
-                    profileResponse.setFirstName(profile.getFirstName());
-                    profileResponse.setLastName(profile.getLastName());
-                    profileResponse.setBirthDate(profile.getBirthDate());
-                    profileResponse.setLevel(String.valueOf(profile.getLevel()));
-                    profileResponse.setTargetGoal(profile.getTargetGoal());
-                    profileResponse.setOccupation(profile.getOccupation());
-                    return profileResponse;
-                })
-                .toList();
-    }
 
     @Override
     public ProfileResponse create(ProfileRequest profileRequest)
@@ -96,9 +78,7 @@ public class ProfileServiceImpl implements ProfileService {
         return mapToProfileResponse(profile);
     }
 
-
-    @Override
-    public ProfileResponse mapToProfileResponse(Profile profile)
+    private ProfileResponse mapToProfileResponse(Profile profile)
     {
         ProfileResponse profileResponse = new ProfileResponse();
         profileResponse.setProfileId(profile.getProfileId());

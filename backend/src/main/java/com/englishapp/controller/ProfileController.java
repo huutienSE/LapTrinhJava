@@ -16,12 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
     private final ProfileService profileService;
 
-    @GetMapping("/all")
-    public ApiResponse<Iterable<ProfileResponse>> findAll() {
-        Iterable<ProfileResponse> response = profileService.findAll();
-        return new ApiResponse<>(true, response, "Get all profile success");
-    }
-
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<ProfileResponse> create(@Valid @RequestBody ProfileRequest request) {
@@ -40,5 +34,4 @@ public class ProfileController {
         ProfileResponse response = profileService.update(request, id);
         return new ApiResponse<>(true, response, "Update profile success");
     }
-
 }
