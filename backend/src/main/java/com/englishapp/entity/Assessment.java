@@ -18,6 +18,10 @@ public class Assessment {
     @Column(name = "assessment_id")
     private Integer assessmentId;
 
+    @OneToOne
+    @JoinColumn(name = "session_id")
+    private PracticeSession session;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
