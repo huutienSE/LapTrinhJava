@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TopicController {
 
-    private final TopicService topicService ;
+    private final TopicService topicService;
     private final PracticeService practiceService;
 
     @GetMapping
