@@ -8,14 +8,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ViewHistoryAssessmentResponse {
-
     private Integer assessmentId;
-
     private Integer sessionId;
-
     private Integer score;
-
     private String levelAssigned;
-
     private LocalDateTime takenDate;
 }

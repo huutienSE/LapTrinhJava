@@ -2,7 +2,6 @@ package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
 import com.englishapp.dto.assessment.CommitAssessmentRequest;
-import com.englishapp.dto.assessment.StartAssessmentRequest;
 import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.AssessmentService;
 import lombok.AllArgsConstructor;
@@ -37,12 +36,22 @@ public class AssessmentController {
         );
     }
 
-    @GetMapping("/all")
+    @GetMapping("/history")
     public ApiResponse<Object> viewHistoryAssessment(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         return new ApiResponse<>(
                 true,
                 assessmentService.viewHistoryAssessmentResponses(userPrincipal.getUserId()),
                 "View history assessment successfully"
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<Object> getAssessmentDetail(@PathVariable Integer id,
+                                                 @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return new ApiResponse<>(
+                true,
+                assessmentService.getAssessmentDetail(id, userPrincipal.getUserId()),
+                "Get assessment detail successfully"
         );
     }
 }
