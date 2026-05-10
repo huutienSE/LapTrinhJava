@@ -1,10 +1,67 @@
+/* eslint-disable no-undef */
 import { useEffect, useState } from "react";
 import { adminService } from "../../services/api";
+import ActionButton from "../../components/common/ActionButton.jsx";
 
 const ManageTopics = () => {
 
     const [topics, setTopics] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
+
+    const [newTopic, setNewTopic] = useState({
+        topic: "",
+        description: "",
+        level: "BEGINNER",
+    });
+
+    const handleCreateTopic = async () => {
+
+        if (
+            !newTopic.topic.trim() ||
+            !newTopic.description.trim()
+        ) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        try {
+
+            setIsCreating(true);
+
+            const response =
+                await adminService.createTopic(newTopic);
+
+            console.log("in handleCreateTopic")
+            if (response.success) {
+
+                alert("Create topic success");
+
+                setTopics((prev) => [
+                    ...prev,
+                    response.data
+                ]);
+
+                setShowCreateModal(false);
+
+                setNewTopic({
+                    topic: "",
+                    description: "",
+                    level: "BEGINNER",
+                });
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Create topic failed");
+
+        } finally {
+            setIsCreating(false);
+        }
+    };
 
     useEffect(() => {
 
@@ -50,18 +107,9 @@ const ManageTopics = () => {
                         CRUD topics for speaking system
                     </p>
                 </div>
-                <button
-                    className="
-                        bg-indigo-500
-                        hover:bg-indigo-600
-                        px-5 py-3
-                        rounded-xl
-                        font-semibold
-                        transition
-                    "
-                >
+                <ActionButton variant="add" size="lg" onClick={() => setShowCreateModal(true)}>
                     + Add Topic
-                </button>
+                </ActionButton>
             </div>
             <div
                 className="
@@ -120,38 +168,183 @@ const ManageTopics = () => {
                                             text-indigo-400
                                         "
                                     >
-                                        {topic.difficultyLevel}
+                                        {topic.level}
                                     </span>
                                 </td>
-                                <td className="p-5">
-                                    <div className="flex justify-center gap-3">
-                                        <button
-                                            className="
-                                                px-4 py-2
-                                                rounded-lg
-                                                bg-yellow-500/20
-                                                text-yellow-400
-                                            "
+                                <td className="px-6 py-4">
+                                    <div className="flex gap-3">
+
+                                        <ActionButton
+                                            variant="edit"
+                                            onClick={() => console.log(topic) || handleEdit(topic)}
                                         >
                                             Edit
-                                        </button>
-                                        <button
-                                            className="
-                                                px-4 py-2
-                                                rounded-lg
-                                                bg-red-500/20
-                                                text-red-400
-                                            "
+                                        </ActionButton>
+
+                                        <ActionButton
+                                            variant="delete"
+                                            onClick={() => console.log(topic.topicId) || handleDelete(topic.topicId)}
                                         >
                                             Delete
-                                        </button>
+                                        </ActionButton>
+
                                     </div>
-                                </td>
+                                </td>           
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+            {
+                showCreateModal && (
+                    <div className="
+                        fixed inset-0
+                        bg-black/60
+                        flex items-center justify-center
+                        z-50
+                    ">
+                        <div className="
+                            bg-zinc-900
+                            border border-zinc-800
+                            rounded-2xl
+                            p-6
+                            w-full
+                            max-w-lg
+                        ">
+                            <h2 className="
+                                text-2xl
+                                font-bold
+                                text-white
+                                mb-6
+                            ">
+                                Create Topic
+                            </h2>
+                            <div className="space-y-4">
+                                {/* TOPIC NAME */}
+                                <div>
+                                    <label className="
+                                        block
+                                        text-sm
+                                        text-zinc-400
+                                        mb-2
+                                    ">
+                                        Topic Name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={newTopic.topicName}
+                                        onChange={(e) =>
+                                            setNewTopic({
+                                                ...newTopic,
+                                                topic: e.target.value,
+                                            })
+                                        }
+                                        className="
+                                            w-full
+                                            p-3
+                                            rounded-xl
+                                            bg-zinc-800
+                                            border border-zinc-700
+                                            text-white
+                                        "
+                                        placeholder="Enter topic name"
+                                    />
+                                </div>
+                                {/* DESCRIPTION */}
+                                <div>
+                                    <label className="
+                                        block
+                                        text-sm
+                                        text-zinc-400
+                                        mb-2
+                                    ">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        rows="4"
+                                        value={newTopic.description}
+                                        onChange={(e) =>
+                                            setNewTopic({
+                                                ...newTopic,
+                                                description: e.target.value,
+                                            })
+                                        }
+                                        className="
+                                            w-full
+                                            p-3
+                                            rounded-xl
+                                            bg-zinc-800
+                                            border border-zinc-700
+                                            text-white
+                                        "
+                                        placeholder="Enter description"
+                                    />
+                                </div>
+                                {/* DIFFICULTY */}
+                                <div>
+                                    <label className="
+                                        block
+                                        text-sm
+                                        text-zinc-400
+                                        mb-2
+                                    ">
+                                        Difficulty
+                                    </label>
+                                    <select
+                                        value={newTopic.level}
+                                        onChange={(e) =>
+                                            setNewTopic({
+                                                ...newTopic,
+                                                level: e.target.value,
+                                            })
+                                        }
+                                        className="
+                                            w-full
+                                            p-3
+                                            rounded-xl
+                                            bg-zinc-800
+                                            border border-zinc-700
+                                            text-white
+                                        "
+                                    >
+                                        <option value="BEGINNER">
+                                            Beginner
+                                        </option>
+                                        <option value="INTERMEDIATE">
+                                            Intermediate
+                                        </option>
+                                        <option value="ADVANCED">
+                                            advanced
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            {/* ACTIONS */}
+                            <div className="
+                                flex justify-end gap-3
+                                mt-6
+                            ">
+                                <ActionButton
+                                    variant="delete"
+                                    onClick={() =>
+                                        setShowCreateModal(false)
+                                    }
+                                >
+                                    Cancel
+                                </ActionButton>
+
+                                <ActionButton
+                                    variant="add"
+                                    onClick={handleCreateTopic}
+                                >
+                                    {isCreating ? "Creating..." : "Create"}
+                                </ActionButton>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
         </div>
     );
 };

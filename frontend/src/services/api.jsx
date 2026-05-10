@@ -120,6 +120,7 @@ export const adminService = {
     },
 
     createTopic: async (topicData) => {
+      console.log("in createTopic")
         const response = await apiClient.post(
             "/topics",
             topicData

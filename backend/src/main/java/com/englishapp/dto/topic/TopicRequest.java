@@ -11,5 +11,5 @@ public class TopicRequest {
     @NotBlank(message = "topic name must be required")
     private String topic;
     private String description;
-    private Level difficultyLevel;
+    private Level level;
 }
