@@ -11,6 +11,7 @@ import com.englishapp.entity.enums.Level;
 import com.englishapp.entity.enums.SessionType;
 import com.englishapp.entity.PracticeQuestionId;
 import com.englishapp.repositoty.*;
+import com.englishapp.service.AssessmentService;
 import com.englishapp.service.QuestionService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class AssessmentServiceImpl implements com.englishapp.service.AssessmentService {
+public class AssessmentServiceImpl implements AssessmentService {
     UserRepository userRepository;
     PracticeSessionRepository practiceSessionRepository;
     TopicRepository topicRepository;
