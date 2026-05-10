@@ -11,7 +11,7 @@ const ManageTopics = () => {
     const [isCreating, setIsCreating] = useState(false);
 
     const [newTopic, setNewTopic] = useState({
-        topic: "",
+        topicName: "",
         description: "",
         level: "BEGINNER",
     });
@@ -19,7 +19,7 @@ const ManageTopics = () => {
     const handleCreateTopic = async () => {
 
         if (
-            !newTopic.topic.trim() ||
+            !newTopic.topicName.trim() ||
             !newTopic.description.trim()
         ) {
             alert("Please fill all fields");
@@ -46,7 +46,7 @@ const ManageTopics = () => {
                 setShowCreateModal(false);
 
                 setNewTopic({
-                    topic: "",
+                    topicName: "",
                     description: "",
                     level: "BEGINNER",
                 });
@@ -176,14 +176,14 @@ const ManageTopics = () => {
 
                                         <ActionButton
                                             variant="edit"
-                                            onClick={() => console.log(topic) || handleEdit(topic)}
+                                            onClick={() => handleEdit(topic)}
                                         >
                                             Edit
                                         </ActionButton>
 
                                         <ActionButton
                                             variant="delete"
-                                            onClick={() => console.log(topic.topicId) || handleDelete(topic.topicId)}
+                                            onClick={() => handleDelete(topic.topicId)}
                                         >
                                             Delete
                                         </ActionButton>
@@ -237,7 +237,7 @@ const ManageTopics = () => {
                                         onChange={(e) =>
                                             setNewTopic({
                                                 ...newTopic,
-                                                topic: e.target.value,
+                                                topicName: e.target.value,
                                             })
                                         }
                                         className="

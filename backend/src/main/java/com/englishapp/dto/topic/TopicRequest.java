@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class TopicRequest {
     @NotBlank(message = "topic name must be required")
-    private String topic;
+    private String topicName;
     private String description;
     private Level level;
 }

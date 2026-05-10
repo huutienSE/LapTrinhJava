@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     // Nếu có token, bạn có thể gọi thêm 1 API lấy profile user ở đây
     if (token) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsLoggedIn(true);
         // Tạm thời set true, nếu token hết hạn apiClient sẽ tự đá văng ra login
 

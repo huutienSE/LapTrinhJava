@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { authService } from "../../services/api.jsx";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 

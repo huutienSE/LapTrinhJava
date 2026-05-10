@@ -41,12 +41,12 @@ public class TopicServiceImpl implements TopicService {
     }
     @Override
     public TopicResponse createTopic(TopicRequest topicRequest) {
-        if (topicRepository.existsByTopicName(topicRequest.getTopic())) {
+        if (topicRepository.existsByTopicName(topicRequest.getTopicName())) {
             throw new RuntimeException();
         }
 
         Topic topic = new Topic();
-        topic.setTopicName(topicRequest.getTopic());
+        topic.setTopicName(topicRequest.getTopicName());
         topic.setDescription(topicRequest.getDescription());
         topic.setLevel(topicRequest.getLevel());
         Topic savedTopic = topicRepository.save(topic);
@@ -57,7 +57,7 @@ public class TopicServiceImpl implements TopicService {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(null);
 
-        topic.setTopicName(topicRequest.getTopic());
+        topic.setTopicName(topicRequest.getTopicName());
         topic.setDescription(topicRequest.getDescription());
         topic.setLevel(topicRequest.getLevel());
         Topic savedTopic = topicRepository.save(topic);
