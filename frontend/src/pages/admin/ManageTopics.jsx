@@ -9,12 +9,86 @@ const ManageTopics = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingTopic, setEditingTopic] = useState(null);
 
     const [newTopic, setNewTopic] = useState({
         topicName: "",
         description: "",
         level: "BEGINNER",
     });
+
+    const handleEdit = (topic) => {
+
+        setEditingTopic(topic);
+
+        setShowEditModal(true);
+    };
+
+    const handleUpdateTopic = async () => {
+
+        try {
+
+            const response =
+                await adminService.updateTopic(
+                    editingTopic.topicId,
+                    editingTopic
+                );
+
+            if (response.success) {
+
+                setTopics((prev) =>
+                    prev.map((topic) =>
+                        topic.topicId === editingTopic.topicId
+                            ? response.data
+                            : topic
+                    )
+                );
+
+                setShowEditModal(false);
+
+                alert("Update success");
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Update failed");
+        }
+    };
+
+    const handleDelete = async (topicId) => {
+
+        const confirmDelete =
+            window.confirm("Delete this topic?");
+
+        if (!confirmDelete) return;
+
+        try {
+
+            const response =
+                await adminService.deleteTopic(topicId);
+
+            if (response.success) {
+
+                setTopics((prev) =>
+                    prev.filter(
+                        (topic) =>
+                            topic.topicId !== topicId
+                    )
+                );
+
+                alert("Delete success");
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert("Delete failed");
+        }
+    };
 
     const handleCreateTopic = async () => {
 
@@ -337,6 +411,157 @@ const ManageTopics = () => {
                                 <ActionButton
                                     variant="add"
                                     onClick={handleCreateTopic}
+                                >
+                                    {isCreating ? "Creating..." : "Create"}
+                                </ActionButton>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {
+                showEditModal && (
+                    <div className="
+                        fixed inset-0
+                        bg-black/60
+                        flex items-center justify-center
+                        z-50
+                    ">
+                        <div className="
+                            bg-zinc-900
+                            border border-zinc-800
+                            rounded-2xl
+                            p-6
+                            w-full
+                            max-w-lg
+                        ">
+                            <h2 className="
+                                text-2xl
+                                font-bold
+                                text-white
+                                mb-6
+                            ">
+                                Edit Topic
+                            </h2>
+                            <div className="space-y-4">
+                                {/* TOPIC NAME */}
+                                <div>
+                                    <label className="
+                                        block
+                                        text-sm
+                                        text-zinc-400
+                                        mb-2
+                                    ">
+                                        Topic Name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        value={editingTopic.topicName}
+                                        onChange={(e) =>
+                                            setEditingTopic({
+                                                ...editingTopic,
+                                                topicName: e.target.value,
+                                            })
+                                        }
+                                        className="
+                                            w-full
+                                            p-3
+                                            rounded-xl
+                                            bg-zinc-800
+                                            border border-zinc-700
+                                            text-white
+                                        "
+                                        placeholder="Enter topic name"
+                                    />
+                                </div>
+                                {/* DESCRIPTION */}
+                                <div>
+                                    <label className="
+                                        block
+                                        text-sm
+                                        text-zinc-400
+                                        mb-2
+                                    ">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        rows="4"
+                                        value={editingTopic.description}
+                                        onChange={(e) =>
+                                            setEditingTopic({
+                                                ...editingTopic,
+                                                description: e.target.value,
+                                            })
+                                        }
+                                        className="
+                                            w-full
+                                            p-3
+                                            rounded-xl
+                                            bg-zinc-800
+                                            border border-zinc-700
+                                            text-white
+                                        "
+                                        placeholder="Enter description"
+                                    />
+                                </div>
+                                {/* DIFFICULTY */}
+                                <div>
+                                    <label className="
+                                        block
+                                        text-sm
+                                        text-zinc-400
+                                        mb-2
+                                    ">
+                                        Difficulty
+                                    </label>
+                                    <select
+                                        value={editingTopic.level}
+                                        onChange={(e) =>
+                                            setEditingTopic({
+                                                ...editingTopic,
+                                                level: e.target.value,
+                                            })
+                                        }
+                                        className="
+                                            w-full
+                                            p-3
+                                            rounded-xl
+                                            bg-zinc-800
+                                            border border-zinc-700
+                                            text-white
+                                        "
+                                    >
+                                        <option value="BEGINNER">
+                                            Beginner
+                                        </option>
+                                        <option value="INTERMEDIATE">
+                                            Intermediate
+                                        </option>
+                                        <option value="ADVANCED">
+                                            advanced
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            {/* ACTIONS */}
+                            <div className="
+                                flex justify-end gap-3
+                                mt-6
+                            ">
+                                <ActionButton
+                                    variant="delete"
+                                    onClick={() =>
+                                        setShowEditModal(false)
+                                    }
+                                >
+                                    Cancel
+                                </ActionButton>
+
+                                <ActionButton
+                                    variant="add"
+                                    onClick={handleUpdateTopic}
                                 >
                                     {isCreating ? "Creating..." : "Create"}
                                 </ActionButton>
