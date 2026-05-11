@@ -4,11 +4,14 @@ import com.englishapp.entity.enums.Level;
 import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "question")
 public class Question {
     @Id

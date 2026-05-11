@@ -15,7 +15,7 @@ const ManageTopics = () => {
     const [newTopic, setNewTopic] = useState({
         topicName: "",
         description: "",
-        level: "BEGINNER",
+        difficultyLevel: "BEGINNER",
     });
 
     const handleEdit = (topic) => {
@@ -122,7 +122,7 @@ const ManageTopics = () => {
                 setNewTopic({
                     topicName: "",
                     description: "",
-                    level: "BEGINNER",
+                    difficultyLevel: "BEGINNER",
                 });
             }
 
@@ -197,9 +197,6 @@ const ManageTopics = () => {
                     <thead className="bg-zinc-800/50">
                         <tr className="text-left">
                             <th className="p-5">
-                                ID
-                            </th>
-                            <th className="p-5">
                                 Topic Name
                             </th>
                             <th className="p-5">
@@ -223,9 +220,6 @@ const ManageTopics = () => {
                                 "
                             >
                                 <td className="p-5">
-                                    {topic.topicId}
-                                </td>
-                                <td className="p-5">
                                     {topic.topicName}
                                 </td>
                                 <td className="p-5 text-zinc-400">
@@ -242,7 +236,7 @@ const ManageTopics = () => {
                                             text-indigo-400
                                         "
                                     >
-                                        {topic.level}
+                                        {topic.difficultyLevel}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
@@ -366,11 +360,11 @@ const ManageTopics = () => {
                                         Difficulty
                                     </label>
                                     <select
-                                        value={newTopic.level}
+                                        value={newTopic.difficultyLevel}
                                         onChange={(e) =>
                                             setNewTopic({
                                                 ...newTopic,
-                                                level: e.target.value,
+                                                difficultyLevel: e.target.value,
                                             })
                                         }
                                         className="
@@ -517,11 +511,11 @@ const ManageTopics = () => {
                                         Difficulty
                                     </label>
                                     <select
-                                        value={editingTopic.level}
+                                        value={editingTopic.difficultyLevel}
                                         onChange={(e) =>
                                             setEditingTopic({
                                                 ...editingTopic,
-                                                level: e.target.value,
+                                                difficultyLevel: e.target.value,
                                             })
                                         }
                                         className="

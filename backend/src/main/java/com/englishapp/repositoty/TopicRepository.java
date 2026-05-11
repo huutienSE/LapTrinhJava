@@ -9,4 +9,5 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
     Topic findRandomTopic();
 
     boolean existsByTopicName(String topicName);
+
 }

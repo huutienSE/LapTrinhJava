@@ -144,6 +144,26 @@ export const adminService = {
         );
 
         return response.data;
+    },
+
+    // QUESTION 
+
+    getQuestions: async () => {
+        const response = await apiClient.get('/questions');
+        return response.data;
+    },
+
+    createQuestion: async (questionData) => {
+        const response = await apiClient.post('/questions', questionData);
+        return response.data;
+    },
+
+    updateQuestion: async (questionData, questionId) => {
+        const response = await apiClient.put(
+          `/questions/${questionId}`,
+          questionData
+        );
+        return response.data
     }
 };
 

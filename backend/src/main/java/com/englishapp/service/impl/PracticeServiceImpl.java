@@ -2,18 +2,16 @@ package com.englishapp.service.impl;
 
 import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
 import com.englishapp.dto.question.PracticeQuestionDetailResponse;
-import com.englishapp.dto.question.PracticeQuestionResponse;
+import com.englishapp.dto.question.QuestionResponse;
 import com.englishapp.dto.question.PracticeSessionDetailResponse;
 import com.englishapp.entity.*;
 import com.englishapp.exception.ForbiddenException;
 import com.englishapp.exception.SessionNotFoundException;
 import com.englishapp.exception.TopicNotFoundException;
-import com.englishapp.exception.UserNotFound;
+import com.englishapp.mapper.QuestionMapper;
 import com.englishapp.repositoty.*;
-import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.PracticeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +26,9 @@ public class PracticeServiceImpl implements PracticeService {
     private final PracticeSessionRepository practiceSessionRepository;
     private final PracticeAnswerRepository practiceAnswerRepository;
     private final UserRepository userRepository;
+    private final QuestionMapper questionMapper;
     @Override
-    public List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId) {
+    public List<QuestionResponse> getQuestionsByTopicId(Integer topicId) {
 
         if (!topicRepository.existsById(topicId)) {
             throw new TopicNotFoundException(topicId);
@@ -38,12 +37,7 @@ public class PracticeServiceImpl implements PracticeService {
         List<Question> questions =
                 questionRepository.findByTopic_TopicId(topicId);
 
-        return questions.stream().map(q -> {
-            PracticeQuestionResponse res = new PracticeQuestionResponse();
-            res.setQuestionId(q.getQuestionId());
-            res.setDescription(q.getDescription());
-            return res;
-        }).toList();
+        return questions.stream().map(questionMapper::toQuestionResponse).toList();
     }
 
     @Override

@@ -10,5 +10,5 @@ public class TopicResponse {
     private Integer topicId;
     private String topicName;
     private String description;
-    private Level level;
+    private Level difficultyLevel;
 }

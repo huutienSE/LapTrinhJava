@@ -28,7 +28,7 @@ public class TopicServiceImpl implements TopicService {
             topicResponse.setTopicId(topic.getTopicId());
             topicResponse.setTopicName(topic.getTopicName());
             topicResponse.setDescription(topic.getDescription());
-            topicResponse.setLevel(topic.getLevel());
+            topicResponse.setDifficultyLevel(topic.getLevel());
             return topicResponse;
         }).toList();
     }
@@ -48,7 +48,7 @@ public class TopicServiceImpl implements TopicService {
         Topic topic = new Topic();
         topic.setTopicName(topicRequest.getTopicName());
         topic.setDescription(topicRequest.getDescription());
-        topic.setLevel(topicRequest.getLevel());
+        topic.setLevel(topicRequest.getDifficultyLevel());
         Topic savedTopic = topicRepository.save(topic);
         return  topicMapper.topicToTopicResponse(savedTopic);
     }
@@ -59,7 +59,7 @@ public class TopicServiceImpl implements TopicService {
 
         topic.setTopicName(topicRequest.getTopicName());
         topic.setDescription(topicRequest.getDescription());
-        topic.setLevel(topicRequest.getLevel());
+        topic.setLevel(topicRequest.getDifficultyLevel());
         Topic savedTopic = topicRepository.save(topic);
         return  topicMapper.topicToTopicResponse(savedTopic);
     }

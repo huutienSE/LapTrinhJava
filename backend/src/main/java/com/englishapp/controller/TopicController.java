@@ -1,7 +1,7 @@
 package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
-import com.englishapp.dto.question.PracticeQuestionResponse;
+import com.englishapp.dto.question.QuestionResponse;
 import com.englishapp.dto.topic.TopicRequest;
 import com.englishapp.dto.topic.TopicResponse;
 import com.englishapp.service.PracticeService;
@@ -28,8 +28,8 @@ public class TopicController {
 
     // lấy question
     @GetMapping("/{topicId}/questions")
-    public ApiResponse<List<PracticeQuestionResponse>> getQuestions(@PathVariable Integer topicId) {
-        List<PracticeQuestionResponse> practiceQuestionResponses =  practiceService.getQuestionsByTopicId(topicId);
+    public ApiResponse<List<QuestionResponse>> getQuestions(@PathVariable Integer topicId) {
+        List<QuestionResponse> practiceQuestionResponses =  practiceService.getQuestionsByTopicId(topicId);
         return new ApiResponse<>(true, practiceQuestionResponses, "get Questions successfully");
     }
 
@@ -49,7 +49,7 @@ public class TopicController {
     }
 
     @DeleteMapping("/{topicId}")
-    public ApiResponse<TopicResponse> deleteTopic(@PathVariable Integer topicId) {
+    public ApiResponse<Void> deleteTopic(@PathVariable Integer topicId) {
         topicService.deleteTopic(topicId);
 
         return new ApiResponse<>(

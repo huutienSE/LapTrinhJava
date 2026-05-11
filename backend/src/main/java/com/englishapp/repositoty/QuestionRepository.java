@@ -22,5 +22,16 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
             @Param("limit") int limit
     );
 
-    public List<Question> findByTopic_TopicId(Integer topicId);
+    List<Question> findByTopic_TopicId(Integer topicId);
+
+    Boolean existsQuestionByDescription(String description);
+
+    @Query("""
+        SELECT q FROM Question q
+        Join fetch q.topic
+    """
+    )
+    List<Question> findAllWithTopic();
+
+
 }
