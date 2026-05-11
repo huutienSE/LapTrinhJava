@@ -2,85 +2,74 @@ package com.englishapp.service.impl;
 
 import com.englishapp.entity.Feedback;
 import com.englishapp.service.GeminiAIService;
-import lombok.RequiredArgsConstructor;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
-@RequiredArgsConstructor
 public class GeminiAIServiceImpl implements GeminiAIService {
 
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    private final WebClient.Builder webClientBuilder;
+    private Client client;
+
+    @PostConstruct
+    public void init() {
+
+        client = Client.builder()
+                .apiKey(apiKey)
+                .build();
+    }
 
     @Override
     public Feedback evaluateAnswer(String question, String answer) {
 
         String prompt = """
-                You are an English teacher.
-
-                Evaluate the student's answer.
+                You are an IELTS speaking examiner.
 
                 Question:
                 %s
 
-                Student Answer:
+                User Answer:
                 %s
 
-                Return ONLY this format:
+                Evaluate the answer carefully.
+
+                Score must be between 0 and 100.
+
+                Return EXACTLY in this format:
 
                 SCORE: number
-                FEEDBACK: text
+                FEEDBACK: short feedback
                 """.formatted(question, answer);
 
-        Map<String, Object> requestBody = Map.of(
-                "contents", new Object[]{
-                        Map.of(
-                                "parts", new Object[]{
-                                        Map.of("text", prompt)
-                                }
-                        )
-                }
-        );
+        GenerateContentResponse response =
+                client.models.generateContent(
+                        "gemini-flash-latest",
+                        prompt,
+                        null
+                );
 
-        String response = webClientBuilder.build()
-                .post()
-                .uri("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .header("X-goog-api-key", apiKey)
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+        String result = response.text();
 
-        System.out.println(response);
+//        System.out.println("========== GEMINI RESPONSE ==========");
+//        System.out.println(result);
+
+        int score = extractScore(result);
+
+//        System.out.println("========== PARSED SCORE ==========");
+//        System.out.println(score);
 
         Feedback feedback = new Feedback();
 
-        try {
-
-            String text = response
-                    .split("\"text\": \"")[1]
-                    .split("\"")[0]
-                    .replace("\\n", "\n");
-
-            int score = extractScore(text);
-
-            feedback.setOverallScore(score);
-            feedback.setFeedbackText(text);
-
-        } catch (Exception e) {
-
-            feedback.setOverallScore(0);
-            feedback.setFeedbackText("AI response parse error");
-        }
+        feedback.setFeedbackText(result);
+        feedback.setOverallScore(score);
 
         return feedback;
     }
@@ -89,24 +78,23 @@ public class GeminiAIServiceImpl implements GeminiAIService {
 
         try {
 
-            String scoreLine = text.lines()
-                    .filter(line -> line.startsWith("SCORE:"))
-                    .findFirst()
-                    .orElse("SCORE: 0");
+            Pattern pattern = Pattern.compile("SCORE:\\s*(\\d+)");
+            Matcher matcher = pattern.matcher(text);
 
-            String scoreText = scoreLine
-                    .replace("SCORE:", "")
-                    .trim();
+            if (matcher.find()) {
 
-            if (scoreText.contains("/")) {
-                scoreText = scoreText.split("/")[0];
+                int score = Integer.parseInt(matcher.group(1));
+
+                score = Math.max(0, Math.min(score, 100));
+
+                return score;
             }
-
-            return Integer.parseInt(scoreText);
 
         } catch (Exception e) {
 
-            return 0;
+            e.printStackTrace();
         }
+
+        return 0;
     }
 }
