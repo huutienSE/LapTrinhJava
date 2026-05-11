@@ -63,7 +63,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (currentAuth == null || isAnonymousPrincipal) {
 
                 User user = userRepository.findByEmail(email)
-                        .orElseThrow(InvalidTokenException::new);
+                        .orElseThrow(() -> new InvalidTokenException("User not found for the provided email: " + email));
 
                 UserPrincipal userPrincipal = UserPrincipal.fromUser(user, role);
 
@@ -83,10 +83,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         } catch (InvalidTokenException e) {
             log.warn("Invalid JWT: {}", e.getMessage());
-            handleUnauthorized(response, "Invalid or expired token");
+            handleUnauthorized(response, "Invalid or expired token: " + e.getMessage());
         } catch (Exception e) {
-            log.error("Authentication filter error", e);
-            handleUnauthorized(response, "Authentication failed");
+            log.error("Authentication filter error for request: {} {}", request.getMethod(), request.getRequestURI(), e);
+            handleUnauthorized(response, "Authentication failed: " + e.getMessage());
         }
     }
 

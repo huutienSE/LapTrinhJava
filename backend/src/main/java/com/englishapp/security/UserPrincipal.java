@@ -2,7 +2,6 @@ package com.englishapp.security;
 
 import com.englishapp.entity.User;
 import lombok.Getter;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,14 +15,19 @@ public class UserPrincipal implements UserDetails {
     private final String password;
     private final Collection<SimpleGrantedAuthority> authorities;
 
-    public UserPrincipal(Integer userId, String email, String password, Collection<SimpleGrantedAuthority> authorities) {
+    public UserPrincipal(
+            Integer userId,
+            String email,
+            String password,
+            Collection<SimpleGrantedAuthority> authorities
+    ) {
         this.userId = userId;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
     }
 
-    // convvert User to UserPrincipal
+    // convert User -> UserPrincipal
     public static UserPrincipal fromUser(User user, String role) {
         return new UserPrincipal(
                 user.getUserId(),
@@ -34,13 +38,12 @@ public class UserPrincipal implements UserDetails {
     }
 
     @Override
-
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
 
     @Override
-    public @Nullable String getPassword() {
+    public String getPassword() {
         return password;
     }
 
