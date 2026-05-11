@@ -6,6 +6,8 @@ import com.englishapp.dto.profile.ProfileUpdateRequest;
 import com.englishapp.entity.Profile;
 import com.englishapp.entity.User;
 import com.englishapp.entity.enums.Level;
+import com.englishapp.exception.ProfileNotFoundException;
+import com.englishapp.exception.UserNotFoundException;
 import com.englishapp.repositoty.ProfileRepository;
 import com.englishapp.repositoty.UserRepository;
 import com.englishapp.service.ProfileService;
@@ -24,7 +26,7 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileResponse create(ProfileRequest profileRequest)
     {
         User user = userRepository.findById(profileRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(profileRequest.getUserId()));
 
         var profile = new Profile();
         profile.setFirstName(profileRequest.getFirstName());
@@ -42,8 +44,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer id) {
 
-        Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        Profile profile = profileRepository.findById(id).orElseThrow(ProfileNotFoundException::new);
 
         if (profileUpdateRequest.getFirstName() != null) {
             profile.setFirstName(profileUpdateRequest.getFirstName());
@@ -73,8 +74,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public ProfileResponse findById(Integer id)
     {
-        Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        Profile profile = profileRepository.findById(id).orElseThrow(ProfileNotFoundException::new);
         return mapToProfileResponse(profile);
     }
 

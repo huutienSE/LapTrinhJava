@@ -10,6 +10,7 @@ import com.englishapp.entity.*;
 import com.englishapp.entity.enums.Level;
 import com.englishapp.entity.enums.SessionType;
 import com.englishapp.entity.PracticeQuestionId;
+import com.englishapp.exception.*;
 import com.englishapp.repositoty.*;
 import com.englishapp.service.AssessmentService;
 import com.englishapp.service.QuestionService;
@@ -35,8 +36,7 @@ public class AssessmentServiceImpl implements AssessmentService {
 
     @Override
     public Integer startAssessment(Integer userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User is not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         PracticeSession practiceSession = new PracticeSession();
         practiceSession.setUser(user);
@@ -58,19 +58,17 @@ public class AssessmentServiceImpl implements AssessmentService {
 
     @Override
     @Transactional
-    public AssessmentResponse commitAssessment(CommitAssessmentRequest request,
-                                               Integer userId) {
+    public AssessmentResponse commitAssessment(CommitAssessmentRequest request, Integer userId) {
 
         PracticeSession practiceSession = practiceSessionRepository
-                .findById(request.getSessionId())
-                .orElseThrow(() -> new RuntimeException("Session is not found"));
+                .findById(request.getSessionId()).orElseThrow(SessionNotFoundException::new);
 
         if (practiceSession.getEndedTime() != null) {
-            throw new RuntimeException("Assessment already committed");
+            throw new AssessmentAlreadyCommittedException();
         }
 
         if (!practiceSession.getUser().getUserId().equals(userId)) {
-            throw new RuntimeException("You do not have permission");
+            throw new ForbiddenException();
         }
 
         List<PracticeAnswer> answers = practiceAnswerRepository.findBySessionWithDetails(practiceSession.getSessionId());
@@ -120,7 +118,7 @@ public class AssessmentServiceImpl implements AssessmentService {
     public AssessmentDetailResponse getAssessmentDetail(Integer assessmentId, Integer userId) {
 
         Assessment assessment = assessmentRepository.findById(assessmentId)
-                .orElseThrow(() -> new RuntimeException("Assessment is not found"));
+                .orElseThrow(AssessmentNotFoundException::new);
 
         if (!assessment.getUser().getUserId().equals(userId)) {
             throw new RuntimeException("You do not have permission to view this assessment");

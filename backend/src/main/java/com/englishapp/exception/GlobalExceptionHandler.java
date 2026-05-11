@@ -73,4 +73,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
+
+    @ExceptionHandler(AssessmentNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleAssessmentNotFound(AssessmentNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
+
+    @ExceptionHandler(AssessmentAlreadyCommittedException.class)
+    public ResponseEntity<ApiResponse<?>> handleCommitted(AssessmentAlreadyCommittedException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProfileNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleProfileNotFound(ProfileNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
 }
