@@ -109,11 +109,15 @@ public class AssessmentServiceImpl implements AssessmentService {
             feedback = geminiAIService.evaluateAnswer(practiceQuestion.getQuestion().getDescription(), request.getAnswer());
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
+        /*catch (Exception e) {
+            e.printStackTrace();
             feedback = new Feedback();
             feedback.setFeedbackText("AI is busy now");
             feedback.setOverallScore(0);
         }
-
+        */
         feedback.setAnswer(answer);
         feedback.setCreatedDate(LocalDateTime.now());
 

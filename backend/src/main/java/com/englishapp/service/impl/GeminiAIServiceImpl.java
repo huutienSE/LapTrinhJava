@@ -94,9 +94,15 @@ public class GeminiAIServiceImpl implements GeminiAIService {
                     .findFirst()
                     .orElse("SCORE: 0");
 
-            return Integer.parseInt(
-                    scoreLine.replace("SCORE:", "").trim()
-            );
+            String scoreText = scoreLine
+                    .replace("SCORE:", "")
+                    .trim();
+
+            if (scoreText.contains("/")) {
+                scoreText = scoreText.split("/")[0];
+            }
+
+            return Integer.parseInt(scoreText);
 
         } catch (Exception e) {
 
