@@ -2,7 +2,7 @@ package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
 import com.englishapp.dto.practice.PracticeQuestionResponse;
-import com.englishapp.dto.question.QuestionResponse;
+import com.englishapp.dto.Question.QuestionResponse;
 import com.englishapp.dto.topic.TopicRequest;
 import com.englishapp.dto.topic.TopicResponse;
 import com.englishapp.service.PracticeService;

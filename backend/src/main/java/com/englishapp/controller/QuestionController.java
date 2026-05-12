@@ -1,8 +1,8 @@
 package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
-import com.englishapp.dto.question.QuestionRequest;
-import com.englishapp.dto.question.QuestionResponse;
+import com.englishapp.dto.Question.QuestionRequest;
+import com.englishapp.dto.Question.QuestionResponse;
 import com.englishapp.service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

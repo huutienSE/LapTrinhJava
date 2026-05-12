@@ -1,7 +1,7 @@
 package com.englishapp.service.impl;
 
-import com.englishapp.dto.question.QuestionRequest;
-import com.englishapp.dto.question.QuestionResponse;
+import com.englishapp.dto.Question.QuestionRequest;
+import com.englishapp.dto.Question.QuestionResponse;
 import com.englishapp.entity.Question;
 import com.englishapp.entity.Topic;
 import com.englishapp.mapper.QuestionMapper;
@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,7 +83,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         Question question = questionMapper.toQuestion(questionRequest);
         question.setTopic(topic);
-        question.setCreatedDate(LocalDate.now());
+        question.setCreatedDate(LocalDateTime.now());
         Question questionUpdated = questionRepository.save(question);
         return questionMapper.toQuestionResponse(questionUpdated);
 
@@ -100,7 +101,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         Question question = questionMapper.toQuestion(questionRequest);
         question.setTopic(topic);
-        question.setCreatedDate(LocalDate.now());
+        question.setCreatedDate(LocalDateTime.now());
         Question questionUpdated = questionRepository.save(question);
         return questionMapper.toQuestionResponse(questionUpdated);
     }

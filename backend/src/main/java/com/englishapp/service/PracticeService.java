@@ -4,9 +4,9 @@ import com.englishapp.dto.practice.PracticeHistoryResponse;
 import com.englishapp.dto.practice.StartPracticeResponse;
 import com.englishapp.dto.practice.PracticeQuestionResponse;
 import com.englishapp.dto.practice.PracticeSessionDetailResponse;
-import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
-import com.englishapp.dto.question.QuestionResponse;
-import com.englishapp.dto.question.PracticeSessionDetailResponse;
+import com.englishapp.dto.practice.PracticeHistoryResponse;
+import com.englishapp.dto.Question.QuestionResponse;
+import com.englishapp.dto.practice.PracticeSessionDetailResponse;
 
 import java.util.List;
 

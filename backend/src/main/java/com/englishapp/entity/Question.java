@@ -34,5 +34,5 @@ public class Question {
     private Level difficultyLevel;
 
     @Column(name = "created_date")
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 }
