@@ -4,6 +4,10 @@ import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
 import com.englishapp.dto.question.PracticeQuestionDetailResponse;
 import com.englishapp.dto.question.QuestionResponse;
 import com.englishapp.dto.question.PracticeSessionDetailResponse;
+import com.englishapp.dto.practice.PracticeHistoryResponse;
+import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
+import com.englishapp.dto.practice.PracticeQuestionResponse;
+import com.englishapp.dto.practice.PracticeSessionDetailResponse;
 import com.englishapp.entity.*;
 import com.englishapp.exception.ForbiddenException;
 import com.englishapp.exception.SessionNotFoundException;
@@ -53,22 +57,6 @@ public class PracticeServiceImpl implements PracticeService {
             res.setSessionId(session.getSessionId());
             return res;
         }).toList();
-
-//        UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder
-//                .getContext().getAuthentication().getPrincipal();
-//
-//        Integer userId = userPrincipal.getUserId();
-//
-//        List<PracticeSession> sessions = practiceSessionRepository.findByUserIdWithTopic(userId);
-//
-//        return sessions.stream().map(session -> {
-//            PracticeHistoryResponse res = new PracticeHistoryResponse();
-//            res.setSessionId(session.getSessionId());
-//            res.setTopicName(session.getTopic().getTopicName());
-//            res.setScore(session.getScore());
-//            res.setTime(session.getEndedTime());
-//            return res;
-//        }).toList();
 
     }
 
