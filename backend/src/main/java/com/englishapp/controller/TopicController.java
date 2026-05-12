@@ -1,7 +1,7 @@
 package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
-import com.englishapp.dto.question.PracticeQuestionResponse;
+import com.englishapp.dto.practice.PracticeQuestionResponse;
 import com.englishapp.dto.topic.TopicResponse;
 import com.englishapp.service.PracticeService;
 import com.englishapp.service.TopicService;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TopicController {
 
-    private final TopicService topicService ;
+    private final TopicService topicService;
     private final PracticeService practiceService;
 
     @GetMapping

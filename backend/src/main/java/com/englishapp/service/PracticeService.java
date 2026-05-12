@@ -1,9 +1,9 @@
 package com.englishapp.service;
 
-import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
-import com.englishapp.dto.question.PracticeQuestionDetailResponse;
-import com.englishapp.dto.question.PracticeQuestionResponse;
-import com.englishapp.dto.question.PracticeSessionDetailResponse;
+import com.englishapp.dto.practice.PracticeHistoryResponse;
+import com.englishapp.dto.practice.StartPracticeResponse;
+import com.englishapp.dto.practice.PracticeQuestionResponse;
+import com.englishapp.dto.practice.PracticeSessionDetailResponse;
 
 import java.util.List;
 
@@ -15,4 +15,7 @@ public interface PracticeService {
 
     PracticeSessionDetailResponse getSessionDetail(Integer sessionId,
                                                    Integer userId);
+
+//    // huutienSE25
+//    StartPracticeResponse startPractice(Integer topicId, Integer userId);
 }
