@@ -8,15 +8,10 @@ import com.englishapp.entity.Profile;
 import java.util.List;
 
 public interface ProfileService {
-    List<ProfileResponse> findAll();
-
     ProfileResponse create(ProfileRequest profileRequest);
 
     ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer id);
 
     ProfileResponse findById(Integer id);
-
-    ProfileResponse mapToProfileResponse(Profile profile);
-
 
 }

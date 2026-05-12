@@ -33,9 +33,6 @@ public class Question {
     @Enumerated(EnumType.STRING)
     private Level difficultyLevel;
 
-    @Column(name = "correct_answer")
-    private String correctAnswer;
-
     @Column(name = "created_date")
     private LocalDate createdDate;
 }
