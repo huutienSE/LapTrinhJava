@@ -16,6 +16,6 @@ public interface PracticeService {
     PracticeSessionDetailResponse getSessionDetail(Integer sessionId,
                                                    Integer userId);
 
-    // huutienSE25
-    StartPracticeResponse startPractice(Integer topicId, Integer userId);
+//    // huutienSE25
+//    StartPracticeResponse startPractice(Integer topicId, Integer userId);
 }
