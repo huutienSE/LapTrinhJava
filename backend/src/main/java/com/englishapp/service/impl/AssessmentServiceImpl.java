@@ -1,15 +1,13 @@
 package com.englishapp.service.impl;
 
-import com.englishapp.dto.PracticeAnswer.AnswerRequest;
 import com.englishapp.dto.assessment.AssessmentDetailResponse;
 import com.englishapp.dto.assessment.AssessmentResponse;
 import com.englishapp.dto.assessment.CommitAssessmentRequest;
 import com.englishapp.dto.assessment.ViewHistoryAssessmentResponse;
-import com.englishapp.dto.question.PracticeQuestionDetailResponse;
+import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
 import com.englishapp.entity.*;
 import com.englishapp.entity.enums.Level;
 import com.englishapp.entity.enums.SessionType;
-import com.englishapp.entity.PracticeQuestionId;
 import com.englishapp.repositoty.*;
 import com.englishapp.service.AssessmentService;
 import com.englishapp.service.QuestionService;

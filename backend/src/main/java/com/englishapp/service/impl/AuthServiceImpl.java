@@ -11,6 +11,7 @@ import com.englishapp.exception.EmailAlreadyExistsException;
 import com.englishapp.exception.InvalidCredentialsException;
 import com.englishapp.exception.RoleNotFoundException;
 import com.englishapp.exception.UserDisabledException;
+import com.englishapp.mapper.AuthMapper;
 import com.englishapp.repositoty.RoleRepository;
 import com.englishapp.repositoty.TopicRepository;
 import com.englishapp.repositoty.UserRepository;
@@ -42,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final JwtUtil jwtUtil;
 
+    private final AuthMapper authMapper;
 
     @Override
     @Transactional
@@ -57,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
 
         saveUserRole(user, role);
 
-        return mapToRegisterResponse(user);
+        return authMapper.toRegisterResponse(user);
     }
 
     @Override
@@ -112,20 +114,6 @@ public class AuthServiceImpl implements AuthService {
         userRoleRepository.save(userRole);
     }
 
-    private RegisterResponse mapToRegisterResponse(User user) {
-
-        RegisterResponse response = new RegisterResponse();
-
-        response.setUserId(user.getUserId());
-
-        response.setUserName(user.getUserName());
-
-        response.setEmail(user.getEmail());
-
-        return response;
-    }
-
-
     // Login method
 
     private User getUserByEmail(String email) {
@@ -161,13 +149,7 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtUtil.generateToken(email, role);
 
-        LoginResponse response = new LoginResponse();
-
-        response.setUserId(user.getUserId());
-
-        response.setUserName(user.getUserName());
-
-        response.setEmail(email);
+        LoginResponse response = authMapper.toLoginResponse(user);
 
         response.setToken(token);
 

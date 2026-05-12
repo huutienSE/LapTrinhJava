@@ -1,6 +1,6 @@
 package com.englishapp.dto.assessment;
 
-import com.englishapp.dto.question.PracticeQuestionDetailResponse;
+import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
 import com.englishapp.entity.enums.Level;
 import lombok.Getter;
 import lombok.Setter;

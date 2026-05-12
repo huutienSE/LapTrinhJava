@@ -1,9 +1,9 @@
 package com.englishapp.service.impl;
 
-import com.englishapp.dto.PracticeHistory.PracticeHistoryResponse;
-import com.englishapp.dto.question.PracticeQuestionDetailResponse;
-import com.englishapp.dto.question.PracticeQuestionResponse;
-import com.englishapp.dto.question.PracticeSessionDetailResponse;
+import com.englishapp.dto.practice.PracticeHistoryResponse;
+import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
+import com.englishapp.dto.practice.PracticeQuestionResponse;
+import com.englishapp.dto.practice.PracticeSessionDetailResponse;
 import com.englishapp.entity.*;
 import com.englishapp.exception.ForbiddenException;
 import com.englishapp.exception.SessionNotFoundException;
