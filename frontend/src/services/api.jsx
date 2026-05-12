@@ -164,6 +164,14 @@ export const adminService = {
           questionData
         );
         return response.data
+    },
+
+    deleteQuestion: async (questionId) => {
+        const response = await apiClient.delete(
+          `/questions/${questionId}`,
+          questionId
+        );
+        return response.data;
     }
 };
 
