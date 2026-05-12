@@ -16,9 +16,6 @@ public class QuestionRequest {
     @NotBlank(message = "description is required")
     private String description;
 
-    @NotBlank(message = "correctAnswer is required")
-    private String correctAnswer;
-
     @NotNull(message = "difficultyLevel is required")
     private Level difficultyLevel;
 }

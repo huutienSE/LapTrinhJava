@@ -16,7 +16,6 @@ const ManageQuestions = () => {
     const [newQuestion, setNewQuestion] = useState({
         topicId: "",
         description: "",
-        correctAnswer: "",
         difficultyLevel: "BEGINNER",
     });
 
@@ -81,8 +80,7 @@ const ManageQuestions = () => {
         // fix #15: validate topicId too
         if (
             !newQuestion.topicId ||
-            !newQuestion.description.trim() ||
-            !newQuestion.correctAnswer.trim()
+            !newQuestion.description.trim()
         ) {
             alert("Please fill all fields");
             return;
@@ -103,7 +101,6 @@ const ManageQuestions = () => {
                 setNewQuestion({
                     topicId: "",
                     description: "",
-                    correctAnswer: "",
                     difficultyLevel: "BEGINNER",
                 });
             }
@@ -186,7 +183,6 @@ const ManageQuestions = () => {
                         <tr className="text-left">
                             <th className="p-5">Topic</th>
                             <th className="p-5">Question</th>
-                            <th className="p-5">Answer</th>
                             <th className="p-5">Date</th>
                             <th className="p-5">Level</th>
                             <th className="p-5 text-center">Actions</th>
@@ -208,9 +204,6 @@ const ManageQuestions = () => {
                                 {/* fix #3: render description, not questionName */}
                                 <td className="p-5 text-white">
                                     {question.description}
-                                </td>
-                                <td className="p-5 text-zinc-400">
-                                    {question.correctAnswer}
                                 </td>
                                 <td className="p-5 text-zinc-400 text-sm">
                                     {question.createdDate} 
@@ -333,31 +326,6 @@ const ManageQuestions = () => {
                                         text-white
                                     "
                                     placeholder="Enter question"
-                                />
-                            </div>
-
-                            {/* fix #8: correctAnswer input */}
-                            <div>
-                                <label className="block text-sm text-zinc-400 mb-2">
-                                    Correct Answer
-                                </label>
-                                <input
-                                    type="text"
-                                    value={newQuestion.correctAnswer}
-                                    onChange={(e) =>
-                                        setNewQuestion({
-                                            ...newQuestion,
-                                            correctAnswer: e.target.value,
-                                        })
-                                    }
-                                    className="
-                                        w-full p-3
-                                        rounded-xl
-                                        bg-zinc-800
-                                        border border-zinc-700
-                                        text-white
-                                    "
-                                    placeholder="Enter correct answer"
                                 />
                             </div>
 
@@ -490,32 +458,6 @@ const ManageQuestions = () => {
                                     placeholder="Enter question"
                                 />
                             </div>
-
-                            {/* Correct Answer */}
-                            <div>
-                                <label className="block text-sm text-zinc-400 mb-2">
-                                    Correct Answer
-                                </label>
-                                <input
-                                    type="text"
-                                    value={editingQuestion.correctAnswer}
-                                    onChange={(e) =>
-                                        setEditingQuestion({
-                                            ...editingQuestion,
-                                            correctAnswer: e.target.value,
-                                        })
-                                    }
-                                    className="
-                                        w-full p-3
-                                        rounded-xl
-                                        bg-zinc-800
-                                        border border-zinc-700
-                                        text-white
-                                    "
-                                    placeholder="Enter correct answer"
-                                />
-                            </div>
-
                             {/* fix #12: Difficulty bound to editingQuestion.difficultyLevel */}
                             <div>
                                 <label className="block text-sm text-zinc-400 mb-2">

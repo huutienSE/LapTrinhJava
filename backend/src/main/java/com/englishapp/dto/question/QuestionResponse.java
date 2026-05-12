@@ -15,8 +15,6 @@ public class QuestionResponse {
 
     private String description;
 
-    private String correctAnswer;
-
     private Level difficultyLevel;
 
     private Integer topicId;
