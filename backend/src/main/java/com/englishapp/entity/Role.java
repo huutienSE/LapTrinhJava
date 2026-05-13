@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "role")
 @Getter
@@ -18,4 +20,7 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name")
     private RoleName roleName;
+
+    @OneToMany(mappedBy = "role")
+    private List<UserRole> userRoles;
 }

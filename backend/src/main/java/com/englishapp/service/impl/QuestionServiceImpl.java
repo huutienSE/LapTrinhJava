@@ -4,18 +4,18 @@ import com.englishapp.dto.Question.QuestionRequest;
 import com.englishapp.dto.Question.QuestionResponse;
 import com.englishapp.entity.Question;
 import com.englishapp.entity.Topic;
+import com.englishapp.exception.QuestionAlreadyExistsException;
+import com.englishapp.exception.QuestionNotFoundException;
+import com.englishapp.exception.TopicNotFoundException;
 import com.englishapp.mapper.QuestionMapper;
 import com.englishapp.repositoty.QuestionRepository;
 import com.englishapp.repositoty.TopicRepository;
 import com.englishapp.service.QuestionService;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -59,7 +59,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public QuestionResponse getQuestionById(Integer topicId) {
         Question question = questionRepository.findById(topicId)
-                .orElseThrow(null);
+                .orElseThrow(() -> new TopicNotFoundException(topicId));
 
         return questionMapper.toQuestionResponse(question);
     }
@@ -67,7 +67,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public void deleteQuestionById(Integer topicId) {
         Question question = questionRepository.findById(topicId)
-                .orElseThrow(null);
+                .orElseThrow(() -> new TopicNotFoundException(topicId));
         questionRepository.delete(question);
     }
 
@@ -75,10 +75,10 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionResponse createQuestion(QuestionRequest questionRequest) {
 
         Topic topic = topicRepository.findById(questionRequest.getTopicId())
-                .orElseThrow(null);
+                .orElseThrow(() -> new TopicNotFoundException(questionRequest.getTopicId()));
 
         if (questionRepository.existsQuestionByDescription(questionRequest.getDescription())) {
-            throw new RuntimeException("Question already exists");
+            throw new QuestionAlreadyExistsException();
         }
 
         Question question = questionMapper.toQuestion(questionRequest);
@@ -93,10 +93,10 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionResponse updateQuestion(QuestionRequest questionRequest, Integer questionId) {
 
         Topic topic = topicRepository.findById(questionRequest.getTopicId())
-                .orElseThrow(null);
+                .orElseThrow(() -> new TopicNotFoundException(questionRequest.getTopicId()));
 
         if (!questionRepository.existsById(questionId)) {
-            throw new RuntimeException("Question not found");
+            throw new QuestionNotFoundException(questionId);
         }
 
         Question question = questionMapper.toQuestion(questionRequest);

@@ -73,4 +73,30 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
+
+    // question description da ton tai
+    @ExceptionHandler(QuestionAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<?>> handleQuestionAlreadyExists(
+            QuestionAlreadyExistsException ex
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
+
+    //question k co id ton tai
+    @ExceptionHandler(QuestionNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleQuestionNotFound(
+            QuestionNotFoundException ex
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
+
+    @ExceptionHandler(TopicAlreadyExistsException.class)
+    public ResponseEntity<ApiResponse<?>> handleTopicAlreadyExists(
+            TopicAlreadyExistsException ex
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
 }

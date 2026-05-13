@@ -3,6 +3,8 @@ package com.englishapp.service.impl;
 import com.englishapp.dto.topic.TopicRequest;
 import com.englishapp.dto.topic.TopicResponse;
 import com.englishapp.entity.Topic;
+import com.englishapp.exception.TopicAlreadyExistsException;
+import com.englishapp.exception.TopicNotFoundException;
 import com.englishapp.mapper.TopicMapper;
 import com.englishapp.repositoty.TopicRepository;
 import com.englishapp.service.TopicService;
@@ -35,14 +37,14 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public TopicResponse getTopicById(Integer topicId) {
         Topic topic = topicRepository.findById(topicId)
-                .orElseThrow(null);
+                .orElseThrow(() -> new TopicNotFoundException(topicId));
 
         return topicMapper.topicToTopicResponse(topic);
     }
     @Override
     public TopicResponse createTopic(TopicRequest topicRequest) {
         if (topicRepository.existsByTopicName(topicRequest.getTopicName())) {
-            throw new RuntimeException();
+            throw new TopicAlreadyExistsException(topicRequest.getTopicName());
         }
 
         Topic topic = new Topic();
@@ -55,7 +57,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public TopicResponse updateTopic(Integer topicId, TopicRequest topicRequest) {
         Topic topic = topicRepository.findById(topicId)
-                .orElseThrow(null);
+                .orElseThrow(() -> new TopicNotFoundException(topicId));
 
         topic.setTopicName(topicRequest.getTopicName());
         topic.setDescription(topicRequest.getDescription());
@@ -67,7 +69,7 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public void deleteTopic(Integer topicId) {
         Topic  topic = topicRepository.findById(topicId)
-                .orElseThrow(null);
+                .orElseThrow(()-> new TopicNotFoundException(topicId));
 
         topicRepository.delete(topic);
     }
