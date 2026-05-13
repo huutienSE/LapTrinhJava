@@ -150,10 +150,10 @@ public class AssessmentServiceImpl implements AssessmentService {
         assessment.setSession(practiceSession);
         assessment.setUser(practiceSession.getUser());
         assessment.setScore(totalScore);
-        if(totalScore >= 80){
+        if(totalScore >= 70){
             assessment.setLevelAssigned(Level.ADVANCED);
         }
-        else if(totalScore >= 50){
+        else if(totalScore >= 40){
             assessment.setLevelAssigned(Level.INTERMEDIATE);
         }
         else{
