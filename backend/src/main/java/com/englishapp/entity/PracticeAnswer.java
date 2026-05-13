@@ -37,7 +37,5 @@ public class PracticeAnswer {
         return this.practiceQuestion.getQuestion();
     }
 
-    public PracticeSession getSession() {
-        return this.practiceQuestion.getSession();
-    }
+    public PracticeSession getSession() {return this.practiceQuestion.getSession();}
 }

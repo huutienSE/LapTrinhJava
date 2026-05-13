@@ -34,7 +34,6 @@ public class SecurityConfig {
                 .securityContext(s -> s.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-                        .requestMatchers("/api/user/me").hasRole("LEARNER")
                         .requestMatchers("/api/user/**").hasRole("LEARNER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

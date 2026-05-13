@@ -12,5 +12,4 @@ import java.util.List;
 @Setter
 public class CommitAssessmentRequest {
     private Integer sessionId;
-    private List<AnswerRequest> answers;
 }
