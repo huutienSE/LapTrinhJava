@@ -1,7 +1,8 @@
 /* eslint-disable no-undef */
 import { useEffect, useState } from "react";
 import { adminService } from "../../services/api";
-import ActionButton from "../../components/common/ActionButton.jsx";
+import ActionButton from "../../components/common/ActionButton";
+import SearchInput from "../../components/common/SearchInput.jsx";
 
 const ManageTopics = () => {
 
@@ -11,12 +12,46 @@ const ManageTopics = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [editingTopic, setEditingTopic] = useState(null);
+    const [searchTopicName, setSearchTopicName] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
 
     const [newTopic, setNewTopic] = useState({
         topicName: "",
         description: "",
         difficultyLevel: "BEGINNER",
     });
+
+    const handleSearch = async (value) => {
+        console.log("in handleSearch")
+        try {
+            setSearchTopicName(value);
+
+            setIsSearching(true);
+
+            if (!value.trim()) {
+                console.log("in trim")
+                const response = 
+                    await adminService.getTopics();
+
+                setTopics(response.data ?? [])    
+
+                return;
+            }
+
+            const response = await adminService.getTopicByTopicName(value);
+
+            setTopics(
+                response.data
+                    ? [response.data]
+                    : []
+            );
+        } catch (error) {
+            console.error(error);
+            setTopics([]);
+        } finally {
+            setIsSearching(false);
+        }
+    }
 
     const handleEdit = (topic) => {
 
@@ -185,6 +220,14 @@ const ManageTopics = () => {
                     + Add Topic
                 </ActionButton>
             </div>
+            <div className="mb-6">
+                <SearchInput
+                    placeholder="Search Topics by Topic Name..."
+                    onSearch={handleSearch}
+                    isSearching={isSearching}
+                    className="max-w-md"
+                />
+            </div>
             <div
                 className="
                     bg-zinc-900
@@ -210,8 +253,24 @@ const ManageTopics = () => {
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {topics.map((topic) => (
+                    <tbody> 
+                        {topics.length === 0 ? (
+                            <tr>
+                                <td
+                                    colSpan={7}
+                                    className="
+                                        p-10
+                                        text-center
+                                        text-zinc-500
+                                    "
+                                >
+                                    {
+                                     `No user found with email "${searchTopicName}"`
+                                    }
+                                </td>
+                            </tr>
+                        )
+                        : (topics.map((topic) => (
                             <tr
                                 key={topic.topicId}
                                 className="
@@ -259,7 +318,7 @@ const ManageTopics = () => {
                                     </div>
                                 </td>           
                             </tr>
-                        ))}
+                        )))}
                     </tbody>
                 </table>
             </div>

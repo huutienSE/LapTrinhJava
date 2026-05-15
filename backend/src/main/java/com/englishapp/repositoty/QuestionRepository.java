@@ -33,5 +33,5 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     )
     List<Question> findAllWithTopic();
 
-
+    Question findByDescriptionIgnoreCase(String description);
 }

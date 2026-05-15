@@ -23,6 +23,12 @@ public class QuestionController {
         return new ApiResponse<>(true, questionResponses, "success");
     }
 
+    @GetMapping("/search")
+    public ApiResponse<QuestionResponse> getAllQuestionsByDescription(@RequestParam("description") String description) {
+        QuestionResponse questionResponses = questionService.getQuestionsByDescription(description);
+        return new ApiResponse<>(true, questionResponses, "get all questions by description successfully");
+    }
+
     @PostMapping
     public ApiResponse<QuestionResponse> createQuestion( @Valid @RequestBody QuestionRequest questionRequest) {
         return new ApiResponse<>(

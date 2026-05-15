@@ -13,4 +13,5 @@ public interface QuestionService {
     void deleteQuestionById(Integer topicId);
     QuestionResponse createQuestion(QuestionRequest question);
     QuestionResponse updateQuestion(QuestionRequest question, Integer questionId);
+    QuestionResponse getQuestionsByDescription(String description);
 }

@@ -119,6 +119,18 @@ export const adminService = {
         return response.data;
     },
 
+    getTopicByTopicName: async (topicName) => {
+        const response = await apiClient.get(
+          "/topics/search",
+          { 
+            params: {
+              topicName: topicName
+            }
+          }
+        );
+        return response.data;
+    },
+
     createTopic: async (topicData) => {
       console.log("in createTopic")
         const response = await apiClient.post(
@@ -152,6 +164,18 @@ export const adminService = {
         const response = await apiClient.get('/questions');
         return response.data;
     },
+    
+    getQuestionsByDescription: async (value) => {
+        const response = await apiClient.get(
+          "/questions/search", {
+            params: {
+              description: value
+            }
+          }
+        );
+        return response.data;
+    }
+    ,
 
     createQuestion: async (questionData) => {
         const response = await apiClient.post('/questions', questionData);
@@ -172,7 +196,25 @@ export const adminService = {
           questionId
         );
         return response.data;
-    }
+    },
+
+    // User
+    getAllUsers: async () => {
+      const response = await apiClient.get("/users");
+      return response.data;
+    },
+
+    getUserByEmail: async (email) => {
+      const response = await apiClient.get(
+        `/users/${email}`
+      );
+      return response.data;
+    },
+
+    updateUserStatus: async (userId) => {
+      const response = await apiClient.patch(`/users/${userId}/status`);
+      return response.data;
+    },
 };
 
 

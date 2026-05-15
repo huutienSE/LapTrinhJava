@@ -41,13 +41,24 @@ public class TopicServiceImpl implements TopicService {
 
         return topicMapper.topicToTopicResponse(topic);
     }
+
+    @Override
+    public TopicResponse getTopicByTopicName(String topicName) {
+        Topic topic = topicRepository.findByTopicName(topicName);
+        if (topic == null) {
+            return null;
+        }
+        return topicMapper.topicToTopicResponse(topic);
+    }
+
     @Override
     public TopicResponse createTopic(TopicRequest topicRequest) {
-        if (topicRepository.existsByTopicName(topicRequest.getTopicName())) {
+
+        Topic topic = topicRepository.findByTopicName(topicRequest.getTopicName());
+        if (topic == null) {
             throw new TopicAlreadyExistsException(topicRequest.getTopicName());
         }
 
-        Topic topic = new Topic();
         topic.setTopicName(topicRequest.getTopicName());
         topic.setDescription(topicRequest.getDescription());
         topic.setLevel(topicRequest.getDifficultyLevel());

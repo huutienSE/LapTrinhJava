@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { adminService } from "../../services/api";
 import ActionButton from "../../components/common/ActionButton";
+import SearchInput from "../../components/common/SearchInput";
 
 const ManageQuestions = () => {
 
@@ -12,6 +13,8 @@ const ManageQuestions = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [editingQuestion, setEditingQuestion] = useState(null);
+    const [isSearching, setIsSearching] =useState(false);
+    const [searchQuestion, setSearchQuestion] =useState("");
 
     const [newQuestion, setNewQuestion] = useState({
         topicId: "",
@@ -24,6 +27,33 @@ const ManageQuestions = () => {
         setEditingQuestion(question);
         setShowEditModal(true);
     };
+
+    const handleSearch = async (value) => {
+        
+        try {
+            setIsSearching(true);
+            setSearchQuestion(value);
+
+            if (!value.trim()) {
+                const response = await adminService.getQuestions();
+
+                setQuestions(response.data ?? [])
+                return;
+            }
+
+            const response = await adminService.getQuestionsByDescription(value);
+
+            setQuestions(response.data ? [response.data] : []);
+
+        } catch (error) {
+            console.error(error);
+            setQuestions([]);
+        } finally {
+            setIsSearching(false)
+        }
+
+
+    }
 
     const handleUpdateQuestion = async () => {
         try {
@@ -169,6 +199,15 @@ const ManageQuestions = () => {
                 </ActionButton>
             </div>
 
+            <div className="mb-6">
+                <SearchInput
+                    placeholder="Search question by description... "
+                    onSearch={handleSearch}
+                    isSearching={isSearching}
+                    className="max-w-md"
+                />
+            </div>
+
             {/* ── TABLE ──────────────────────────────────────────────────── */}
             <div
                 className="
@@ -189,7 +228,22 @@ const ManageQuestions = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {questions.map((question) => (
+                        {questions.length === 0 ? (
+                           <tr>
+                                <td
+                                    colSpan={7}
+                                    className="
+                                        p-10
+                                        text-center
+                                        text-zinc-500
+                                    "
+                                >
+                                    {
+                                     `No user found with email "${searchQuestion}"`
+                                    }
+                                </td>
+                            </tr> 
+                        ) : (questions.map((question) => (
                             <tr
                                 key={question.questionId}
                                 className="
@@ -241,7 +295,7 @@ const ManageQuestions = () => {
                                     </div>
                                 </td>
                             </tr>
-                        ))}
+                        )))}
                     </tbody>
                 </table>
             </div>

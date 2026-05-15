@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/topics")
@@ -37,6 +38,11 @@ public class TopicController {
     @GetMapping("/{topicId}")
     public ApiResponse<TopicResponse> getTopicById(@PathVariable Integer topicId) {
         return new ApiResponse<>(true, topicService.getTopicById(topicId), "get Topic successfully");
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<TopicResponse> getTopicByTopicName(@RequestParam String topicName) {
+        return new ApiResponse<>(true, topicService.getTopicByTopicName(topicName), "get Topic successfully");
     }
 
     @PostMapping

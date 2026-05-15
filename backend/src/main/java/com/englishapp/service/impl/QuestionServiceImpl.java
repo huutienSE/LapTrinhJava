@@ -56,6 +56,8 @@ public class QuestionServiceImpl implements QuestionService {
         return questions.stream().map(questionMapper::toQuestionResponse).toList();
     }
 
+
+
     @Override
     public QuestionResponse getQuestionById(Integer topicId) {
         Question question = questionRepository.findById(topicId)
@@ -104,5 +106,11 @@ public class QuestionServiceImpl implements QuestionService {
         question.setCreatedDate(LocalDateTime.now());
         Question questionUpdated = questionRepository.save(question);
         return questionMapper.toQuestionResponse(questionUpdated);
+    }
+
+    @Override
+    public QuestionResponse getQuestionsByDescription(String description) {
+        Question question = questionRepository.findByDescriptionIgnoreCase(description);
+        return questionMapper.toQuestionResponse(question);
     }
 }

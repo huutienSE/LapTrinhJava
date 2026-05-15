@@ -10,6 +10,7 @@ public interface TopicService {
     List<TopicResponse> getAllTopics();
 
     TopicResponse getTopicById(Integer topicId);
+    TopicResponse getTopicByTopicName(String topicName);
 
     TopicResponse createTopic(TopicRequest topicRequest);
 
