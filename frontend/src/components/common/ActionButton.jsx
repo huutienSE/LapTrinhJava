@@ -22,6 +22,8 @@ const ActionButton = ({
         primary: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20 hover:bg-indigo-500 hover:text-white",
 
         add: "bg-indigo-500 text-white border-indigo-500 hover:bg-indigo-600",
+        
+        logout: "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500 hover:text-white",
     };
 
     return (
