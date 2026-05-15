@@ -1,7 +1,11 @@
 package com.englishapp.service.impl;
 
+import com.englishapp.dto.topic.TopicRequest;
 import com.englishapp.dto.topic.TopicResponse;
 import com.englishapp.entity.Topic;
+import com.englishapp.exception.TopicAlreadyExistsException;
+import com.englishapp.exception.TopicNotFoundException;
+import com.englishapp.mapper.TopicMapper;
 import com.englishapp.repositoty.TopicRepository;
 import com.englishapp.service.TopicService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +18,7 @@ import java.util.List;
 public class TopicServiceImpl implements TopicService {
 
     private final TopicRepository topicRepository;
+    private final TopicMapper topicMapper;
 
     @Override
     public List<TopicResponse> getAllTopics() {
@@ -25,8 +30,58 @@ public class TopicServiceImpl implements TopicService {
             topicResponse.setTopicId(topic.getTopicId());
             topicResponse.setTopicName(topic.getTopicName());
             topicResponse.setDescription(topic.getDescription());
-            topicResponse.setDifficultyLevel(topic.getDifficultyLevel().name());
+            topicResponse.setDifficultyLevel(topic.getLevel());
             return topicResponse;
         }).toList();
+    }
+    @Override
+    public TopicResponse getTopicById(Integer topicId) {
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new TopicNotFoundException(topicId));
+
+        return topicMapper.topicToTopicResponse(topic);
+    }
+
+    @Override
+    public TopicResponse getTopicByTopicName(String topicName) {
+        Topic topic = topicRepository.findByTopicName(topicName);
+        if (topic == null) {
+            return null;
+        }
+        return topicMapper.topicToTopicResponse(topic);
+    }
+
+    @Override
+    public TopicResponse createTopic(TopicRequest topicRequest) {
+
+        Topic topic = topicRepository.findByTopicName(topicRequest.getTopicName());
+        if (topic == null) {
+            throw new TopicAlreadyExistsException(topicRequest.getTopicName());
+        }
+
+        topic.setTopicName(topicRequest.getTopicName());
+        topic.setDescription(topicRequest.getDescription());
+        topic.setLevel(topicRequest.getDifficultyLevel());
+        Topic savedTopic = topicRepository.save(topic);
+        return  topicMapper.topicToTopicResponse(savedTopic);
+    }
+    @Override
+    public TopicResponse updateTopic(Integer topicId, TopicRequest topicRequest) {
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new TopicNotFoundException(topicId));
+
+        topic.setTopicName(topicRequest.getTopicName());
+        topic.setDescription(topicRequest.getDescription());
+        topic.setLevel(topicRequest.getDifficultyLevel());
+        Topic savedTopic = topicRepository.save(topic);
+        return  topicMapper.topicToTopicResponse(savedTopic);
+    }
+
+    @Override
+    public void deleteTopic(Integer topicId) {
+        Topic  topic = topicRepository.findById(topicId)
+                .orElseThrow(()-> new TopicNotFoundException(topicId));
+
+        topicRepository.delete(topic);
     }
 }

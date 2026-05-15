@@ -29,7 +29,7 @@ public class Topic {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "difficulty_level")
-    private Level difficultyLevel;
+    private Level level;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { userService } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { userService } from "../../services/api.jsx";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +13,6 @@ const History = () => {
     // Không cần truyền Email nữa, Backend sẽ đọc từ Token
     const fetchHistory = async () => {
 
-      console.log("running");
       
         try {
             const response = await userService.getPracticeHistory();

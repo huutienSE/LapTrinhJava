@@ -153,6 +153,8 @@ public class AuthServiceImpl implements AuthService {
 
         response.setToken(token);
 
+        response.setRole(role);
+
         return response;
     }
 
