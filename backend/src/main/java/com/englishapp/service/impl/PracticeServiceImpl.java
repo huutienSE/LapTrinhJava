@@ -1,18 +1,17 @@
 package com.englishapp.service.impl;
 
-import com.englishapp.dto.practice.PracticeHistoryResponse;
-import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
-import com.englishapp.dto.practice.PracticeQuestionResponse;
-import com.englishapp.dto.practice.PracticeSessionDetailResponse;
+import com.englishapp.dto.practice.*;
 import com.englishapp.entity.*;
-import com.englishapp.exception.ForbiddenException;
-import com.englishapp.exception.SessionNotFoundException;
-import com.englishapp.exception.TopicNotFoundException;
+import com.englishapp.entity.enums.SessionType;
+import com.englishapp.exception.*;
+import com.englishapp.mapper.PracticeMapper;
 import com.englishapp.repositoty.*;
 import com.englishapp.service.PracticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,11 +19,20 @@ import java.util.List;
 public class PracticeServiceImpl implements PracticeService {
 
     private final PracticeQuestionRepository practiceQuestionRepository;
+
     private final TopicRepository topicRepository;
+
     private final QuestionRepository questionRepository;
+
     private final PracticeSessionRepository practiceSessionRepository;
+
     private final PracticeAnswerRepository practiceAnswerRepository;
+
     private final UserRepository userRepository;
+
+    private final PracticeMapper practiceMapper;
+
+
     @Override
     public List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId) {
 
@@ -98,4 +106,52 @@ public class PracticeServiceImpl implements PracticeService {
 
         return res;
     }
+
+    @Transactional
+    @Override
+    public StartPracticeResponse startPractice(Integer topicId, Integer userId) {
+
+        Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TopicNotFoundException(topicId));
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+        List<Question> questions = questionRepository.findByTopic_TopicId(topicId);
+
+        if(questions.isEmpty()){
+            throw new QuestionNotFoundException();
+        }
+
+
+        PracticeSession session = new PracticeSession();
+
+        session.setUser(user);
+
+        session.setTopic(topic);
+
+        session.setSessionType(SessionType.PRACTICE);
+
+        session.setStartedTime(LocalDateTime.now());
+
+        PracticeSession savedSession = practiceSessionRepository.save(session); // luu session truoc de lay sessionId
+
+        // lay question
+        List<PracticeQuestion> practiceQuestions = questions.stream()
+                                                .map(question -> new PracticeQuestion(savedSession, question))
+                                                .toList();
+
+        practiceQuestionRepository.saveAll(practiceQuestions); // save mapping
+
+        // chuyen sang list question response
+        List<PracticeQuestionResponse> questionResponses = practiceMapper.toPracticeQuestionResponses(questions);
+
+        // tra ve response
+        StartPracticeResponse response = new StartPracticeResponse();
+        response.setSessionId(savedSession.getSessionId());
+        response.setTopicName(topic.getTopicName());
+        response.setQuestions(questionResponses);
+
+        return response;
+    }
+
+
 }
