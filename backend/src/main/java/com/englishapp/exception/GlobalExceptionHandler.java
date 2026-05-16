@@ -53,6 +53,11 @@ public class GlobalExceptionHandler {
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
 
+    @ExceptionHandler(TopicNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleTopicNotFound(TopicNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
 
     //user khonng ton tai voi id
     @ExceptionHandler(UserNotFoundException.class)
@@ -122,4 +127,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
+
+
+
 }
