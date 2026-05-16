@@ -1,6 +1,7 @@
 package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
+import com.englishapp.dto.practice.AnswerRequest;
 import com.englishapp.dto.assessment.CommitAssessmentRequest;
 import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.AssessmentService;
@@ -18,11 +19,9 @@ public class AssessmentController {
 
     @PostMapping("/start")
     public ApiResponse<Object> startAssessment(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        Integer sessionId = assessmentService.startAssessment(userPrincipal.getUserId());
-
         return new ApiResponse<>(
                 true,
-                sessionId,
+                assessmentService.startAssessment(userPrincipal.getUserId()),
                 "Start assessment successfully"
         );
     }
@@ -46,12 +45,20 @@ public class AssessmentController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<Object> getAssessmentDetail(@PathVariable Integer id,
-                                                 @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ApiResponse<Object> getAssessmentDetail(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         return new ApiResponse<>(
                 true,
                 assessmentService.getAssessmentDetail(id, userPrincipal.getUserId()),
                 "Get assessment detail successfully"
+        );
+    }
+
+    @PostMapping("/{sessionId}/answers")
+    public ApiResponse<Object> AnswerQuestionAssessment(@PathVariable Integer sessionId, @RequestBody AnswerRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return new ApiResponse<>(
+                true,
+                assessmentService.AnswerQuestionAssessment(userPrincipal.getUserId() , request , sessionId),
+                "Commit assessment successfully"
         );
     }
 }
