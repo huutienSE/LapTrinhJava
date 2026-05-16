@@ -81,13 +81,54 @@ export const userService = {
     return response.data;
   },
 
-  getProfile: async (profileId) => {
-    const response = await apiClient.get(`/profile/${profileId}`);
+};
+
+export const profileService = {
+  create: async (profileData) => {
+    const response = await apiClient.post("/user/profile/create", profileData);
     return response.data;
   },
 
-  updateProfile: async (profileId, profileData) => {
-    const response = await apiClient.put(`/profile/${profileId}`, profileData);
+  getById: async (profileId) => {
+    const response = await apiClient.get(`/user/profile/${profileId}`);
+    return response.data;
+  },
+
+  update: async (profileId, profileData) => {
+    const response = await apiClient.put(
+      `/user/profile/${profileId}`,
+      profileData
+    );
+    return response.data;
+  },
+};
+
+export const assessmentService = {
+  start: async () => {
+    const response = await apiClient.post("/user/assessment/start");
+    return response.data;
+  },
+
+  commit: async (payload) => {
+    const response = await apiClient.post("/user/assessment/commit", payload);
+    return response.data;
+  },
+
+  getHistory: async () => {
+    const response = await apiClient.get("/user/assessment/history");
+    return response.data;
+  },
+
+  getDetail: async (assessmentId) => {
+    const response = await apiClient.get(`/user/assessment/${assessmentId}`);
+    return response.data;
+  },
+
+  submitAnswer: async (sessionId, answerData) => {
+    const response = await apiClient.post(
+      `/user/assessment/${sessionId}/answers`,
+      answerData
+    );
     return response.data;
   },
 };

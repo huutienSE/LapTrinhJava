@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { authService } from "../services/api"; // Đảm bảo đường dẫn import đúng
+import { authService } from "../services/api";
+import { clearStoredProfile } from "../utils/learnerProfileStorage";
 
 const AuthContext = createContext();
 
@@ -58,9 +59,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleLogOut = () => {
-    // Phải xóa token để cắt đứt quyền truy cập
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    clearStoredProfile();
 
     setCurrentUser(null);
     setIsLoggedIn(false);
