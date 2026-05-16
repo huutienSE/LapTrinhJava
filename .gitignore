@@ -74,3 +74,11 @@ backend/BACKEND_FULL_DOCUMENTATION.md
 # API KEY AI
 # =========================
 AIzaSyBPnNaM2M5BaNcVbp5QZAebiCmkwYt6lIM
+docs\api-flow.md
+docs\architecture.md
+docs\business-domain.md
+docs\database-overview.md
+docs\frontend-structure.md
+.cursor/rules/frontend-api.mdc
+.cursor/rules/frontend-core.mdc
+.cursor/rules/frontend-ui.mdc
