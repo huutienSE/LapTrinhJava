@@ -22,13 +22,13 @@ public class PracticeController {
 
     private final PracticeService practiceService;
 
-//    @PostMapping("/start")
-//    public ApiResponse<StartPracticeResponse> startPractice(@RequestBody StartPracticeRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-//
-//        StartPracticeResponse response = practiceService.startPractice(request.getTopicId(), userPrincipal.getUserId());
-//
-//        return new ApiResponse<>(true, response, "Start practice successfully");
-//    }
+    @PostMapping("/start")
+    public ApiResponse<StartPracticeResponse> startPractice(@RequestBody StartPracticeRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        StartPracticeResponse response = practiceService.startPractice(request.getTopicId(), userPrincipal.getUserId());
+
+        return new ApiResponse<>(true, response, "Start practice successfully");
+    }
 
     @GetMapping("/history")
     public ApiResponse<List<PracticeHistoryResponse>> getHistory(@AuthenticationPrincipal UserPrincipal userPrincipal) {

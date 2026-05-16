@@ -98,7 +98,7 @@ public class QuestionServiceImpl implements QuestionService {
                 .orElseThrow(() -> new TopicNotFoundException(questionRequest.getTopicId()));
 
         if (!questionRepository.existsById(questionId)) {
-            throw new QuestionNotFoundException(questionId);
+            throw new QuestionNotFoundException();
         }
 
         Question question = questionMapper.toQuestion(questionRequest);

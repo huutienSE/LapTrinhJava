@@ -1,17 +1,14 @@
 package com.englishapp.service.impl;
 
-import com.englishapp.dto.practice.PracticeHistoryResponse;
-import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
+import com.englishapp.dto.practice.*;
 import com.englishapp.dto.Question.QuestionResponse;
-import com.englishapp.dto.practice.PracticeSessionDetailResponse;
 import com.englishapp.dto.practice.PracticeHistoryResponse;
 import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
-import com.englishapp.dto.practice.PracticeQuestionResponse;
 import com.englishapp.dto.practice.PracticeSessionDetailResponse;
 import com.englishapp.entity.*;
-import com.englishapp.exception.ForbiddenException;
-import com.englishapp.exception.SessionNotFoundException;
-import com.englishapp.exception.TopicNotFoundException;
+import com.englishapp.entity.enums.SessionType;
+import com.englishapp.exception.*;
+import com.englishapp.mapper.PracticeMapper;
 import com.englishapp.mapper.QuestionMapper;
 import com.englishapp.repositoty.*;
 import com.englishapp.service.PracticeService;
@@ -40,6 +37,7 @@ public class PracticeServiceImpl implements PracticeService {
 
     private final PracticeMapper practiceMapper;
 
+    private final QuestionMapper questionMapper;
 
     @Override
     public List<QuestionResponse> getQuestionsByTopicId(Integer topicId) {
