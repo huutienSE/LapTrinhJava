@@ -37,4 +37,10 @@ public class ProfileController {
         ProfileResponse response = profileService.update(request, id);
         return new ApiResponse<>(true, response, "Update profile success");
     }
+
+    @GetMapping("/me")
+    public ApiResponse<ProfileResponse> getMyProfile(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        ProfileResponse response = profileService.findByUserId(userPrincipal.getUserId());
+        return new ApiResponse<>(true, response, "Get my profile success");
+    }
 }

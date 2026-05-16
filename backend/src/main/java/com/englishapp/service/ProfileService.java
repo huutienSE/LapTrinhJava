@@ -13,5 +13,6 @@ public interface ProfileService {
     ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer profileId);
 
     ProfileResponse findById(Integer id);
+    ProfileResponse findByUserId(Integer userId);
 
 }

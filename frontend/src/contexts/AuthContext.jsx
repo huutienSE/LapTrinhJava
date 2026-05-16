@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { authService } from "../services/api";
-import { clearStoredProfile } from "../utils/learnerProfileStorage";
+import { authService, profileService } from "../services/api";
+import { clearStoredProfile, saveStoredProfile } from "../utils/learnerProfileStorage";
 
 const AuthContext = createContext();
 
@@ -26,6 +26,15 @@ export const AuthProvider = ({ children }) => {
         if (user) {
             setCurrentUser(JSON.parse(user));
         }
+        
+        // Fetch profile to verify
+        profileService.getMe().then(res => {
+            if (res.success && res.data) {
+                saveStoredProfile(res.data);
+            }
+        }).catch(err => {
+            clearStoredProfile();
+        });
     }
   }, []);
 
@@ -48,6 +57,15 @@ export const AuthProvider = ({ children }) => {
 
           setCurrentUser(userData);
           setIsLoggedIn(true);
+
+          try {
+             const profileRes = await profileService.getMe();
+             if (profileRes.success && profileRes.data) {
+                 saveStoredProfile(profileRes.data);
+             }
+          } catch(e) {
+             clearStoredProfile();
+          }
       }
 
       return response;

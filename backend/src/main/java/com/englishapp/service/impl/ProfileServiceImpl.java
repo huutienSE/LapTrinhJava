@@ -96,4 +96,11 @@ public class ProfileServiceImpl implements ProfileService {
         profileResponse.setOccupation(profile.getOccupation());
         return profileResponse;
     }
+
+    @Override
+    public ProfileResponse findByUserId(Integer userId) {
+        Profile profile = profileRepository.findByUser_UserId(userId)
+                .orElseThrow(ProfileNotFoundException::new);
+        return mapToProfileResponse(profile);
+    }
 }

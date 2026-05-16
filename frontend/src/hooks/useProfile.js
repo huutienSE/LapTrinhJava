@@ -15,15 +15,8 @@ export function useProfile() {
     setIsLoading(true);
     setError(null);
 
-    const profileId = getStoredProfileId();
-    if (!profileId) {
-      setProfile(null);
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const response = await profileService.getById(profileId);
+      const response = await profileService.getMe();
       if (response.success && response.data) {
         setProfile(response.data);
         saveStoredProfile(response.data);

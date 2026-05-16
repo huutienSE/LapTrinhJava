@@ -101,6 +101,11 @@ export const profileService = {
     );
     return response.data;
   },
+
+  getMe: async () => {
+    const response = await apiClient.get("/user/profile/me");
+    return response.data;
+  },
 };
 
 export const assessmentService = {
