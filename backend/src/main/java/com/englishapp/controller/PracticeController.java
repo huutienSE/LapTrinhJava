@@ -8,14 +8,14 @@ import com.englishapp.dto.practice.StartPracticeResponse;
 import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.PracticeService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
-
+@RequiredArgsConstructor
 @RequestMapping("/api/user/practice")
 
 public class PracticeController {

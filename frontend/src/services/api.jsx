@@ -1,13 +1,4 @@
-// Giả lập một database nhỏ trong bộ nhớ
-// const MOCK_USER = {
-//   email: "admin@gmail.com",
-//   password: "123"
-// };
-import { MOCK_USER, MOCK_TOPICS, MOCK_SENTENCES, MOCK_HISTORY } from "./mockData"
 import axios from "axios";
-
-const API_BASE_URL_AUTH = "http://localhost:8080/api/auth";
-const API_BASE_URL_PRACTICE = "http://localhost:8080/api/user/practice";
 
 // 1. Khởi tạo apiClient cho các request cần xác thực (History, Speaking...)
 const apiClient = axios.create({
@@ -90,23 +81,34 @@ export const userService = {
     return response.data;
   },
 
-  getProfile: async () => {
-    const response = await apiClient.get('/user/profile');
-    return response.data;
-  }
-};
-
-// --- SPEAKING SERVICE (Dữ liệu chung về bài học) ---
-export const speakingService = {
-  getTopics: async () => {
-    // Gọi đến /api/topics (hoặc /api/speaking/topics tùy backend)
-    const response = await apiClient.get('/topics');
+  getProfile: async (profileId) => {
+    const response = await apiClient.get(`/profile/${profileId}`);
     return response.data;
   },
-  getSentences: async (topicId) => {
-    const response = await apiClient.get(`/topics/${topicId}/sentences`);
+
+  updateProfile: async (profileId, profileData) => {
+    const response = await apiClient.put(`/profile/${profileId}`, profileData);
     return response.data;
-  }
+  },
+};
+
+// --- SPEAKING SERVICE (learner topics & questions) ---
+export const speakingService = {
+  getTopics: async () => {
+    const response = await apiClient.get("/topics");
+    return response.data;
+  },
+
+  getQuestionsByTopic: async (topicId) => {
+    const response = await apiClient.get(`/topics/${topicId}/questions`);
+    return response.data;
+  },
+
+  /** @deprecated Use getQuestionsByTopic */
+  getSentences: async (topicId) => {
+    const response = await apiClient.get(`/topics/${topicId}/questions`);
+    return response.data;
+  },
 };
 
 
@@ -218,36 +220,3 @@ export const adminService = {
 };
 
 
-
-
-
-// // Cập nhật file src/services/api.jsx để thêm các hàm lấy dữ liệu và lưu lịch sử. Sau này bạn chỉ cần đổi ruột các hàm này thành axios.get/post.
-// export const speakingService = {
-//   // Thay thế toàn bộ Promise Mock bằng apiClient (Axios)
-//   getTopics: async () => {
-//     // Gọi: GET http://localhost:8080/api/topics
-//     const response = await apiClient.get('/topics');
-//     return response.data;
-//   },
-
-//   getSentencesByTopic: async (topicId) => {
-//     // Gọi: GET http://localhost:8080/api/sentences?topicId=1
-//     const response = await apiClient.get(`/sentences?topicId=${topicId}`);
-//     return response.data;
-//   },
-
-//   saveRecord: async (recordData) => {
-//     // Gọi: POST http://localhost:8080/api/history
-//     // Nhờ có apiClient, request này đã tự động mang theo JWT token
-//     const response = await apiClient.post('/history', recordData);
-//     return { success: true, message: "Đã lưu kết quả thành công!", data: response.data };
-//   },
-
-//   // SỬA ĐỔI LỚN: Không cần truyền tham số email nữa
-//   getHistory: async () => {
-//     // Gọi đến /api/user/practice/history
-//     // Token đã được Interceptor tự động thêm vào Header rồi
-//     const response = await apiClient.get('/user/practice/history');
-//     return response.data;
-//   }
-// }
