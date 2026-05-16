@@ -70,7 +70,7 @@ public class AssessmentServiceImpl implements AssessmentService {
     }
 
     @Override
-    public PracticeQuestionDetailResponse AnswerQuestionAssessment(Integer UserId, AnswerRequest answerRequest, Integer SessionId)
+    public PracticeQuestionDetailResponse answerQuestionAssessment(Integer UserId, AnswerRequest answerRequest, Integer SessionId)
     {
         User user = userRepository.findById(UserId).orElseThrow(() -> new UserNotFoundException(UserId));
 
@@ -150,14 +150,20 @@ public class AssessmentServiceImpl implements AssessmentService {
         int countAnswer = 0;
         for(PracticeAnswer answer : answers){
             if(answer.getFeedback() != null) {
-                totalScore += answer.getFeedback().getOverallScore();
-                countAnswer++;
-            }
-            if(answer.getFeedback().equals("AI evaluation is temporarily unavailable. Please try again later.")) {
-                countAnswer--;
+                // Kiểm tra xem feedback có phải là lỗi AI hay không
+                if (!"AI evaluation is temporarily unavailable. Please try again later.".equals(answer.getFeedback().getFeedbackText())) {
+                    totalScore += answer.getFeedback().getOverallScore();
+                    countAnswer++;
+                }
             }
         }
-        totalScore = totalScore / countAnswer;
+        
+        if (countAnswer > 0) {
+            totalScore = totalScore / countAnswer;
+        } else {
+            totalScore = 0;
+        }
+        
         practiceSession.setEndedTime(LocalDateTime.now());
         practiceSession.setScore(totalScore);
         practiceSessionRepository.save(practiceSession);
@@ -180,23 +186,22 @@ public class AssessmentServiceImpl implements AssessmentService {
         Assessment savedAssessment = assessmentRepository.save(assessment);
 
         Profile profile = profileRepository.findByUser_UserId(userId).orElseThrow(ProfileNotFoundException::new);
+        
+        // Cập nhật level cho Profile dựa trên kết quả Assessment
+        Level assignedLevel = assessment.getLevelAssigned();
         if(profile.getLevel() == null) {
-            profile.setLevel(assessment.getLevelAssigned());
+            profile.setLevel(assignedLevel);
         }
         else {
-            if(assessment.getLevelAssigned() == Level.ADVANCED)
-            {
+            // Chỉ nâng cấp level, không hạ cấp hoặc giữ nguyên nếu đã cao hơn
+            if (assignedLevel == Level.ADVANCED) {
                 profile.setLevel(Level.ADVANCED);
-            }
-            else if(assessment.getLevelAssigned() == Level.INTERMEDIATE && profile.getLevel() != Level.ADVANCED)
-            {
+            } else if (assignedLevel == Level.INTERMEDIATE && profile.getLevel() == Level.BEGINNER) {
                 profile.setLevel(Level.INTERMEDIATE);
             }
-            else if(assessment.getLevelAssigned() == Level.BEGINNER && profile.getLevel() != Level.INTERMEDIATE)
-            {
-                profile.setLevel(Level.BEGINNER);
-            }
         }
+        profileRepository.save(profile);
+        
         return mapToAssessmentResponse(savedAssessment);
 
     }
@@ -214,7 +219,7 @@ public class AssessmentServiceImpl implements AssessmentService {
                 .orElseThrow(AssessmentNotFoundException::new);
 
         if (!assessment.getUser().getUserId().equals(userId)) {
-            throw new RuntimeException("You do not have permission to view this assessment");
+            throw new ForbiddenException();
         }
 
         List<PracticeAnswer> answers = practiceAnswerRepository.findBySessionWithDetails(assessment.getSession().getSessionId());

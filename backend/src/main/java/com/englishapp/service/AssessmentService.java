@@ -20,6 +20,6 @@ public interface AssessmentService {
 
     AssessmentDetailResponse getAssessmentDetail(Integer assessmentId, Integer userId);
 
-    PracticeQuestionDetailResponse AnswerQuestionAssessment(Integer userId, AnswerRequest request, Integer sessionId);
+    PracticeQuestionDetailResponse answerQuestionAssessment(Integer userId, AnswerRequest request, Integer sessionId);
 
 }

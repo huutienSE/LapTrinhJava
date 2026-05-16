@@ -54,11 +54,11 @@ public class AssessmentController {
     }
 
     @PostMapping("/{sessionId}/answers")
-    public ApiResponse<Object> AnswerQuestionAssessment(@PathVariable Integer sessionId, @RequestBody AnswerRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ApiResponse<Object> answerQuestionAssessment(@PathVariable Integer sessionId, @RequestBody AnswerRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         return new ApiResponse<>(
                 true,
-                assessmentService.AnswerQuestionAssessment(userPrincipal.getUserId() , request , sessionId),
-                "Commit assessment successfully"
+                assessmentService.answerQuestionAssessment(userPrincipal.getUserId() , request , sessionId),
+                "Answer question successfully"
         );
     }
 }

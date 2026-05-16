@@ -4,10 +4,12 @@ import com.englishapp.common.ApiResponse;
 import com.englishapp.dto.profile.ProfileRequest;
 import com.englishapp.dto.profile.ProfileResponse;
 import com.englishapp.dto.profile.ProfileUpdateRequest;
+import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,8 +21,8 @@ public class ProfileController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<ProfileResponse> create(@Valid @RequestBody ProfileRequest request) {
-        ProfileResponse response = profileService.create(request);
+    public ApiResponse<ProfileResponse> create(@Valid @RequestBody ProfileRequest request , @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        ProfileResponse response = profileService.create(request , userPrincipal.getUserId());
         return new ApiResponse<>(true, response, "Create profile success");
     }
 
