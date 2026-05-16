@@ -1,0 +1,101 @@
+---
+description: Axios services, backend ApiResponse shape, and field mapping for Spring Boot APIs
+globs: frontend/src/services/**/*,frontend/src/hooks/**/*
+alwaysApply: false
+---
+
+# Frontend API Integration
+
+## Single HTTP layer
+
+- All backend calls go through `src/services/api.jsx` (`apiClient` + exported `*Service` objects).
+- Do **not** add Axios/fetch in pages or components.
+- JWT: already attached via request interceptor; 401/403 clears auth and redirects to `/login`.
+
+## Base URL
+
+- Dev: `http://localhost:8080/api` (matches backend; Vite proxy is optional).
+- When adding env support later, change only `apiClient` baseURL — not per call site.
+
+## Response contract
+
+Backend wraps data in:
+
+```json
+{ "success": true, "data": { ... }, "message": "..." }
+```
+
+- Service methods return `response.data` (the full envelope).
+- Pages/hooks check `response.success` then use `response.data`.
+- Surface errors from `error.response?.data?.message` or a generic Vietnamese fallback.
+
+```jsx
+// ✅ Pattern (match History.jsx)
+const response = await userService.getPracticeHistory();
+if (response.success) setItems(response.data ?? []);
+```
+
+## Service modules (extend, don't scatter)
+
+| Export | Use for |
+|--------|---------|
+| `authService` | login, register |
+| `userService` | practice history, session detail, profile |
+| `speakingService` | topics, questions by topic (learner practice) |
+| `adminService` | admin CRUD only |
+
+Add **`assessmentService`** for `/user/assessment/*` when building level test — do not overload `speakingService`.
+
+Naming: `getX`, `createX`, `updateX`; async functions return envelope from `response.data`.
+
+## Backend field names (critical)
+
+Use API shapes, not legacy mock names:
+
+| Backend | Not |
+|---------|-----|
+| `topicId` | `id` |
+| `topicName` | `title` |
+| `questionId` | `id` |
+| `description` | `text` (question prompt) |
+| `difficultyLevel` | `level` |
+| `overallScore` / feedback fields | hardcoded random score |
+
+**Questions by topic:** `GET /topics/{topicId}/questions` — not `/sentences`.
+
+## Learner endpoints (reference)
+
+| Feature | Method | Path |
+|---------|--------|------|
+| Topics list | GET | `/topics` |
+| Questions | GET | `/topics/:topicId/questions` |
+| Practice history | GET | `/user/practice/history` |
+| Session detail | GET | `/user/practice/session/:sessionId` |
+| Assessment start | POST | `/user/assessment/start` |
+| Assessment commit | POST | `/user/assessment/commit` |
+| Assessment history | GET | `/user/assessment/history` |
+| Profile | GET/PUT | `/profile/:id` (verify backend before wiring) |
+
+Align `userService.getProfile` with actual backend path when implementing profile.
+
+## Hooks pattern
+
+Extract when a page needs loading + error + data:
+
+```jsx
+// src/hooks/useTopics.js
+export function useTopics() {
+  const [topics, setTopics] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // call speakingService.getTopics() in useEffect
+  return { topics, isLoading, error, refetch };
+}
+```
+
+Pages: `const { topics, isLoading, error } = useTopics();` — no raw `useEffect` + service in every page.
+
+## Cleanup
+
+- Remove unused `mockData` imports from `api.jsx` when touching that file.
+- Do not add `console.log` for successful responses in new code.
