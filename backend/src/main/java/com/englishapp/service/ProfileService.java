@@ -8,9 +8,9 @@ import com.englishapp.entity.Profile;
 import java.util.List;
 
 public interface ProfileService {
-    ProfileResponse create(ProfileRequest profileRequest);
+    ProfileResponse create(ProfileRequest profileRequest , Integer userId);
 
-    ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer id);
+    ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer profileId);
 
     ProfileResponse findById(Integer id);
 
