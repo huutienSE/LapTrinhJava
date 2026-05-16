@@ -11,10 +11,13 @@ import java.time.LocalDate;
 @Setter
 public class ProfileRequest {
 
+    @NotBlank(message = "First name is required")
     private String firstName;
 
+    @NotBlank(message = "Last name is required")
     private String lastName;
 
+    @NotNull(message = "Birth date is required")
     private LocalDate birthDate;
 
     private String targetGoal;
