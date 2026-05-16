@@ -1,10 +1,18 @@
 package com.englishapp.service.impl;
 
-import com.englishapp.dto.practice.*;
+import com.englishapp.dto.practice.PracticeHistoryResponse;
+import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
+import com.englishapp.dto.Question.QuestionResponse;
+import com.englishapp.dto.practice.PracticeSessionDetailResponse;
+import com.englishapp.dto.practice.PracticeHistoryResponse;
+import com.englishapp.dto.practice.PracticeQuestionDetailResponse;
+import com.englishapp.dto.practice.PracticeQuestionResponse;
+import com.englishapp.dto.practice.PracticeSessionDetailResponse;
 import com.englishapp.entity.*;
-import com.englishapp.entity.enums.SessionType;
-import com.englishapp.exception.*;
-import com.englishapp.mapper.PracticeMapper;
+import com.englishapp.exception.ForbiddenException;
+import com.englishapp.exception.SessionNotFoundException;
+import com.englishapp.exception.TopicNotFoundException;
+import com.englishapp.mapper.QuestionMapper;
 import com.englishapp.repositoty.*;
 import com.englishapp.service.PracticeService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +42,7 @@ public class PracticeServiceImpl implements PracticeService {
 
 
     @Override
-    public List<PracticeQuestionResponse> getQuestionsByTopicId(Integer topicId) {
+    public List<QuestionResponse> getQuestionsByTopicId(Integer topicId) {
 
         if (!topicRepository.existsById(topicId)) {
             throw new TopicNotFoundException(topicId);
@@ -43,12 +51,7 @@ public class PracticeServiceImpl implements PracticeService {
         List<Question> questions =
                 questionRepository.findByTopic_TopicId(topicId);
 
-        return questions.stream().map(q -> {
-            PracticeQuestionResponse res = new PracticeQuestionResponse();
-            res.setQuestionId(q.getQuestionId());
-            res.setDescription(q.getDescription());
-            return res;
-        }).toList();
+        return questions.stream().map(questionMapper::toQuestionResponse).toList();
     }
 
     @Override

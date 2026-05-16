@@ -6,6 +6,9 @@ import com.englishapp.dto.profile.ProfileUpdateRequest;
 import com.englishapp.entity.Profile;
 import com.englishapp.entity.User;
 import com.englishapp.entity.enums.Level;
+import com.englishapp.exception.ProfileAlreadyExistsException;
+import com.englishapp.exception.ProfileNotFoundException;
+import com.englishapp.exception.UserNotFoundException;
 import com.englishapp.repositoty.ProfileRepository;
 import com.englishapp.repositoty.UserRepository;
 import com.englishapp.service.ProfileService;
@@ -21,16 +24,16 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
 
     @Override
-    public ProfileResponse create(ProfileRequest profileRequest)
+    public ProfileResponse create(ProfileRequest profileRequest , Integer userId)
     {
-        User user = userRepository.findById(profileRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+        profileRepository.findByUser_UserId(userId).ifPresent(p -> {throw new ProfileAlreadyExistsException(userId);});
 
         var profile = new Profile();
         profile.setFirstName(profileRequest.getFirstName());
         profile.setLastName(profileRequest.getLastName());
         profile.setBirthDate(profileRequest.getBirthDate());
-        profile.setLevel(Level.valueOf(profileRequest.getLevel()));
         profile.setTargetGoal(profileRequest.getTargetGoal());
         profile.setOccupation(profileRequest.getOccupation());
         profile.setUser(user);
@@ -40,13 +43,16 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer id) {
+    public ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer profileId) {
 
-        Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        Profile profile = profileRepository.findById(profileId).orElseThrow(ProfileNotFoundException::new);
 
         if (profileUpdateRequest.getFirstName() != null) {
             profile.setFirstName(profileUpdateRequest.getFirstName());
+        }
+
+        if (profileUpdateRequest.getLastName() != null) {
+            profile.setLastName(profileUpdateRequest.getLastName());
         }
 
         if (profileUpdateRequest.getBirthDate() != null) {
@@ -74,7 +80,7 @@ public class ProfileServiceImpl implements ProfileService {
     public ProfileResponse findById(Integer id)
     {
         Profile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(ProfileNotFoundException::new);
         return mapToProfileResponse(profile);
     }
 
@@ -82,7 +88,6 @@ public class ProfileServiceImpl implements ProfileService {
     {
         ProfileResponse profileResponse = new ProfileResponse();
         profileResponse.setProfileId(profile.getProfileId());
-        profileResponse.setUserId(profile.getUser().getUserId());
         profileResponse.setFirstName(profile.getFirstName());
         profileResponse.setLastName(profile.getLastName());
         profileResponse.setBirthDate(profile.getBirthDate());

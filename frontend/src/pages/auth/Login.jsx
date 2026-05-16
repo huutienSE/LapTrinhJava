@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { authService } from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+// eslint-disable-next-line no-unused-vars
+import { authService } from "../../services/api.jsx";
+import { useAuth } from "../../contexts/AuthContext.jsx";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -28,7 +29,13 @@ const Login = () => {
             
             alert(response.message);
             console.log("login success")
-            navigate("/");
+            // Lấy user từ localStorage hoặc response
+            const user = response.data || JSON.parse(localStorage.getItem("user"));
+            if (user?.role === "ADMIN") {
+                navigate("/admin");
+            } else {
+                navigate("/");
+            }
         } catch (err) {
             // Hiển thị message lỗi từ backend trả về
             setError(err.response?.data?.message || err.message || "Đăng nhập thất bại");
