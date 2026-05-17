@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useProfile } from "../../hooks/useProfile.js";
 import ProfileForm from "../../components/learner/profile/ProfileForm.jsx";
 import { PageLoading } from "../../components/learner/layout/PageStates.jsx";
+import AssessmentActiveTest from "../../components/learner/assessment/AssessmentActiveTest.jsx";
 
 const Assessment = () => {
   const { hasProfile, isLoading, setProfileFromResponse, reload } = useProfile();
@@ -53,27 +54,12 @@ const Assessment = () => {
       <header className="mb-8">
         <h2 className="text-3xl font-bold text-white">Đánh giá trình độ</h2>
         <p className="text-zinc-500 mt-2">
-          Bài kiểm tra đầu vào gồm 10 câu hỏi ngẫu nhiên. Hồ sơ của bạn đã sẵn
-          sàng để nộp kết quả.
+          Bài kiểm tra đầu vào gồm 10 câu hỏi ngẫu nhiên. Trả lời bằng giọng nói
+          và xem nhận xét sau từng câu.
         </p>
       </header>
 
-      <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800 p-8 text-center">
-        <span className="text-4xl mb-4 block">🎯</span>
-        <h3 className="text-xl font-semibold text-white mb-2">
-          Sắp ra mắt
-        </h3>
-        <p className="text-zinc-400 text-sm max-w-md mx-auto mb-6">
-          Giao diện làm bài đánh giá (ghi âm, nộp câu trả lời, xem kết quả) sẽ
-          được triển khai ở bước tiếp theo. API backend đã sẵn sàng.
-        </p>
-        <Link
-          to="/profile"
-          className="inline-block px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl transition-all"
-        >
-          Xem hồ sơ
-        </Link>
-      </div>
+      <AssessmentActiveTest />
     </div>
   );
 };
