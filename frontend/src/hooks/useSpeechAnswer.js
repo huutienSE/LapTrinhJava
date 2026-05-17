@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 
 export function useSpeechAnswer() {
@@ -10,20 +10,8 @@ export function useSpeechAnswer() {
   } = useSpeechRecognition();
 
   const [capturedText, setCapturedText] = useState("");
-  const transcriptRef = useRef("");
-  const pendingStopRef = useRef(false);
-
-  transcriptRef.current = transcript;
-
-  useEffect(() => {
-    if (!listening && pendingStopRef.current) {
-      pendingStopRef.current = false;
-      setCapturedText(transcriptRef.current.trim());
-    }
-  }, [listening]);
 
   const startRecording = () => {
-    pendingStopRef.current = false;
     setCapturedText("");
     resetTranscript();
     SpeechRecognition.startListening({
@@ -33,12 +21,12 @@ export function useSpeechAnswer() {
   };
 
   const stopRecording = () => {
-    pendingStopRef.current = true;
     SpeechRecognition.stopListening();
+    setCapturedText(transcript);
+    resetTranscript();
   };
 
   const clearRecording = () => {
-    pendingStopRef.current = false;
     SpeechRecognition.abortListening();
     resetTranscript();
     setCapturedText("");
