@@ -6,15 +6,18 @@ import com.englishapp.dto.profile.ProfileUpdateRequest;
 import com.englishapp.entity.Profile;
 import com.englishapp.entity.User;
 import com.englishapp.entity.enums.Level;
+import com.englishapp.exception.ForbiddenException;
 import com.englishapp.exception.ProfileAlreadyExistsException;
 import com.englishapp.exception.ProfileNotFoundException;
 import com.englishapp.exception.UserNotFoundException;
+import com.englishapp.repositoty.AssessmentRepository;
 import com.englishapp.repositoty.ProfileRepository;
 import com.englishapp.repositoty.UserRepository;
 import com.englishapp.service.ProfileService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,6 +25,7 @@ import java.util.List;
 public class ProfileServiceImpl implements ProfileService {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
+    private final AssessmentRepository assessmentRepository;
 
     @Override
     public ProfileResponse create(ProfileRequest profileRequest , Integer userId)
@@ -29,6 +33,10 @@ public class ProfileServiceImpl implements ProfileService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         profileRepository.findByUser_UserId(userId).ifPresent(p -> {throw new ProfileAlreadyExistsException(userId);});
+
+        if (profileRequest.getBirthDate() != null && profileRequest.getBirthDate().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Birth date cannot be in the future");
+        }
 
         var profile = new Profile();
         profile.setFirstName(profileRequest.getFirstName());
@@ -43,9 +51,13 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer profileId) {
+    public ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer profileId, Integer userId) {
 
         Profile profile = profileRepository.findById(profileId).orElseThrow(ProfileNotFoundException::new);
+
+        if (!profile.getUser().getUserId().equals(userId)) {
+            throw new ForbiddenException();
+        }
 
         if (profileUpdateRequest.getFirstName() != null) {
             profile.setFirstName(profileUpdateRequest.getFirstName());
@@ -56,11 +68,17 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         if (profileUpdateRequest.getBirthDate() != null) {
+            if (profileUpdateRequest.getBirthDate().isAfter(LocalDate.now())) {
+                throw new IllegalArgumentException("Birth date cannot be in the future");
+            }
             profile.setBirthDate(profileUpdateRequest.getBirthDate());
         }
 
         if (profileUpdateRequest.getLevel() != null) {
-            profile.setLevel(Level.valueOf(profileUpdateRequest.getLevel().toUpperCase()));
+            boolean hasTakenAssessment = !assessmentRepository.findByUser_UserIdOrderByTakenDateDesc(userId).isEmpty();
+            if (!hasTakenAssessment) {
+                profile.setLevel(Level.valueOf(profileUpdateRequest.getLevel().toUpperCase()));
+            }
         }
 
         if (profileUpdateRequest.getTargetGoal() != null) {
@@ -88,10 +106,12 @@ public class ProfileServiceImpl implements ProfileService {
     {
         ProfileResponse profileResponse = new ProfileResponse();
         profileResponse.setProfileId(profile.getProfileId());
+        profileResponse.setUserId(profile.getUser().getUserId());
+        profileResponse.setEmail(profile.getUser().getEmail());
         profileResponse.setFirstName(profile.getFirstName());
         profileResponse.setLastName(profile.getLastName());
         profileResponse.setBirthDate(profile.getBirthDate());
-        profileResponse.setLevel(String.valueOf(profile.getLevel()));
+        profileResponse.setLevel(profile.getLevel() != null ? String.valueOf(profile.getLevel()) : null);
         profileResponse.setTargetGoal(profile.getTargetGoal());
         profileResponse.setOccupation(profile.getOccupation());
         return profileResponse;
