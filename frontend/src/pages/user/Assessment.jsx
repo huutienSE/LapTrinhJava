@@ -1,10 +1,18 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useProfile } from "../../hooks/useProfile.js";
 import ProfileForm from "../../components/learner/profile/ProfileForm.jsx";
 import { PageLoading } from "../../components/learner/layout/PageStates.jsx";
-import AssessmentActiveTest from "../../components/learner/assessment/AssessmentActiveTest.jsx";
+import AssessmentTestTab from "../../components/learner/assessment/AssessmentTestTab.jsx";
+import AssessmentHistoryTab from "../../components/learner/assessment/AssessmentHistoryTab.jsx";
+
+const TABS = [
+  { id: "test", label: "Làm bài" },
+  { id: "history", label: "Lịch sử" },
+];
 
 const Assessment = () => {
+  const [tab, setTab] = useState("test");
   const { hasProfile, isLoading, setProfileFromResponse, reload } = useProfile();
 
   if (isLoading) {
@@ -17,19 +25,15 @@ const Assessment = () => {
         <header className="mb-8">
           <h2 className="text-3xl font-bold text-white">Đánh giá trình độ</h2>
           <p className="text-zinc-500 mt-2">
-            Bạn cần tạo hồ sơ trước khi bắt đầu và nộp bài đánh giá.
+            Bạn cần tạo hồ sơ trước khi bắt đầu bài đánh giá.
           </p>
         </header>
 
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 mb-6 text-amber-200 text-sm">
-          Hồ sơ giúp hệ thống lưu trình độ sau khi bạn hoàn thành bài đánh giá
-          đầu vào.
+          Hồ sơ giúp hệ thống lưu trình độ sau khi hoàn thành bài đánh giá.
         </div>
 
         <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800 p-8">
-          <h3 className="text-lg font-semibold text-white mb-4">
-            Tạo hồ sơ ngay
-          </h3>
           <ProfileForm
             mode="create"
             submitLabel="Tạo hồ sơ và tiếp tục"
@@ -51,15 +55,31 @@ const Assessment = () => {
 
   return (
     <div className="max-w-3xl mx-auto py-8">
-      <header className="mb-8">
+      <header className="mb-6">
         <h2 className="text-3xl font-bold text-white">Đánh giá trình độ</h2>
         <p className="text-zinc-500 mt-2">
-          Bài kiểm tra đầu vào gồm 10 câu hỏi ngẫu nhiên. Trả lời bằng giọng nói
-          và xem nhận xét sau từng câu.
+          Làm bài kiểm tra và xem lại lịch sử đánh giá tại đây.
         </p>
       </header>
 
-      <AssessmentActiveTest />
+      <div className="flex gap-2 mb-8 p-1 bg-zinc-900/50 border border-zinc-800 rounded-xl">
+        {TABS.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => setTab(id)}
+            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+              tab === id
+                ? "bg-indigo-500 text-white"
+                : "text-zinc-400 hover:text-white"
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {tab === "test" ? <AssessmentTestTab /> : <AssessmentHistoryTab />}
     </div>
   );
 };
