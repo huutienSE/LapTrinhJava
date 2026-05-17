@@ -1,6 +1,6 @@
 import { useState } from "react";
-import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import { useAssessmentSession } from "../../../hooks/useAssessmentSession.js";
+import { useSpeechAnswer } from "../../../hooks/useSpeechAnswer.js";
 import AssessmentIntro from "./AssessmentIntro.jsx";
 import SpeechAnswerPanel from "./SpeechAnswerPanel.jsx";
 import AssessmentAnswerFeedback from "./AssessmentAnswerFeedback.jsx";
@@ -26,36 +26,22 @@ const AssessmentActiveTest = () => {
   } = useAssessmentSession();
 
   const {
-    transcript,
-    listening,
-    resetTranscript,
     browserSupportsSpeechRecognition,
-  } = useSpeechRecognition();
+    isMicrophoneAvailable,
+    listening,
+    displayText,
+    capturedText,
+    canSubmit,
+    micError,
+    startRecording,
+    stopRecording,
+    clearRecording,
+  } = useSpeechAnswer();
 
-  const [finalTranscript, setFinalTranscript] = useState("");
   const [submitError, setSubmitError] = useState(null);
 
-  const clearRecording = () => {
-    setFinalTranscript("");
-    resetTranscript();
-    setSubmitError(null);
-  };
-
-  const handleStartRecord = () => {
-    setSubmitError(null);
-    setFinalTranscript("");
-    resetTranscript();
-    SpeechRecognition.startListening({ continuous: true, language: "en-US" });
-  };
-
-  const handleStopRecord = () => {
-    SpeechRecognition.stopListening();
-    setFinalTranscript(transcript.trim());
-    resetTranscript();
-  };
-
   const handleSubmitAnswer = async () => {
-    const text = finalTranscript.trim();
+    const text = capturedText.trim();
     if (!text) {
       setSubmitError("Vui lòng ghi âm và dừng thu trước khi nộp câu trả lời.");
       return;
@@ -65,12 +51,21 @@ const AssessmentActiveTest = () => {
     if (ok) clearRecording();
   };
 
-  const displayError = error || submitError;
+  const displayError = error || submitError || micError;
 
   if (!browserSupportsSpeechRecognition) {
     return (
       <p className="text-red-400 text-center py-12">
         Trình duyệt không hỗ trợ nhận diện giọng nói. Hãy dùng Chrome.
+      </p>
+    );
+  }
+
+  if (isMicrophoneAvailable === false) {
+    return (
+      <p className="text-red-400 text-center py-12">
+        Microphone bị chặn. Hãy bật quyền micro cho trang này trong cài đặt
+        trình duyệt.
       </p>
     );
   }
@@ -110,9 +105,6 @@ const AssessmentActiveTest = () => {
   }
 
   if (view === "question" && currentQuestion) {
-    const displayText = listening ? transcript : finalTranscript;
-    const canSubmit = Boolean(finalTranscript.trim()) && !listening;
-
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between text-sm text-zinc-500">
@@ -145,8 +137,8 @@ const AssessmentActiveTest = () => {
         <SpeechAnswerPanel
           listening={listening}
           displayText={displayText}
-          onStart={handleStartRecord}
-          onStop={handleStopRecord}
+          onStart={startRecording}
+          onStop={stopRecording}
           onSubmit={handleSubmitAnswer}
           canSubmit={canSubmit}
           isSubmitting={isLoading}
@@ -156,7 +148,6 @@ const AssessmentActiveTest = () => {
           <ActionButton
             variant="primary"
             onClick={() => {
-              SpeechRecognition.stopListening();
               clearRecording();
               setError(null);
               reset();
