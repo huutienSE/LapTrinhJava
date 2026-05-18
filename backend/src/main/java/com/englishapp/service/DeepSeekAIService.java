@@ -4,8 +4,5 @@ import com.englishapp.entity.Feedback;
 
 public interface DeepSeekAIService {
 
-    Feedback evaluateAnswer(
-            String question,
-            String answer
-    );
+    Feedback evaluateAnswer(String question, String answer);
 }
