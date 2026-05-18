@@ -3,7 +3,9 @@ import { useAuth } from '../contexts/AuthContext';
 import History from '../pages/user/History.jsx';
 import Login from '../pages/auth/Login.jsx';
 import Register from '../pages/auth/Register.jsx';
-import Speaking from '../pages/user/Speaking.jsx';
+import PracticeTopics from '../pages/user/PracticeTopics.jsx';
+import PracticeTopicDetail from '../pages/user/PracticeTopicDetail.jsx';
+import PracticeSession from '../pages/user/PracticeSession.jsx';
 import Home from '../pages/user/Home.jsx';
 import SessionDetail from '../pages/user/SessionDetail.jsx';
 import Profile from '../pages/user/Profile.jsx';
@@ -50,7 +52,10 @@ const AppRouter = () => {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/assessment" element={<Assessment />} />
                     <Route path="/history" element={<History />} />
-                    <Route path="/speaking" element={<Speaking />} />
+                    <Route path="/practice" element={<PracticeTopics />} />
+                    <Route path="/practice/:topicId" element={<PracticeTopicDetail />} />
+                    <Route path="/practice/:topicId/session" element={<PracticeSession />} />
+                    <Route path="/speaking" element={<Navigate to="/practice" replace />} />
                     <Route path="/history/:sessionId" element={<SessionDetail />} />
                 </Route>
 

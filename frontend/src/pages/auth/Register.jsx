@@ -52,9 +52,11 @@ const Register = () => {
         password
       };
 
-      const response = await authService.register(payload);
-      alert(response.message);
-      navigate("/login"); // Đăng ký thành công thì đá sang Login
+      await authService.register(payload);
+      navigate("/login", {
+        replace: true,
+        state: { registered: true },
+      });
     } catch (err) {
       const { formError, fieldErrors: errors } = parseApiError(err);
       setFieldErrors(errors || {});
@@ -65,7 +67,6 @@ const Register = () => {
   };
 
   return (
-    // Copy y hệt UI Register cũ của bạn vào đây
     <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-zinc-200 font-sans p-4">
       {/* Card Register - Rộng hơn Login một chút (max-w-xl) vì có nhiều field hơn */}
       <div className="bg-zinc-900/50 p-8 md:p-10 rounded-2xl border border-zinc-800 shadow-2xl w-full max-w-xl">

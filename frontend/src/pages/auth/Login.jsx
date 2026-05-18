@@ -1,17 +1,27 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import { fieldErrorClass, getApiErrorMessage, parseApiError } from "../../utils/apiError.js";
 
 const Login = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { isLoggedIn, currentUser, handleLogin } = useAuth();
+
+    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
         if (!isLoggedIn) return;
         const user = currentUser ?? JSON.parse(localStorage.getItem("user") || "null");
         navigate(user?.role === "ADMIN" ? "/admin" : "/", { replace: true });
     }, [isLoggedIn, currentUser, navigate]);
+
+    useEffect(() => {
+        if (location.state?.registered) {
+            setSuccessMessage("Đăng ký thành công. Vui lòng đăng nhập.");
+            navigate("/login", { replace: true, state: null });
+        }
+    }, [location.state, navigate]);
 
     const [formData, setFormData] = useState({ email: "", password: "" });
 
@@ -24,6 +34,7 @@ const Login = () => {
     const onChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
         if (error) setError("");
+        if (successMessage) setSuccessMessage("");
         if (fieldErrors[e.target.name]) {
             setFieldErrors((prev) => {
                 const next = { ...prev };
@@ -56,10 +67,6 @@ const Login = () => {
     };
 
     return (
-        // Code HTML/UI của bạn giữ nguyên, tôi chỉ cắt bớt đi ở đây cho gọn
-        // Hãy copy y hệt phần return (...) cũ của bạn vào đây, 
-        // nó sẽ hoạt động bình thường với các biến mới này.
-        // Chỉ cần nhớ gọi onSubmit, onChange như cũ là được.
         <div className="min-h-screen flex items-center justify-center bg-zinc-950 text-zinc-200 font-sans">
             <div className="bg-zinc-900/50 p-10 rounded-2xl border border-zinc-800 shadow-2xl w-full max-w-md mx-4">
                 <div className="mb-10 text-center">
@@ -68,6 +75,11 @@ const Login = () => {
                 </div>
 
                 <form onSubmit={onSubmit} className="space-y-6">
+                    {successMessage && (
+                        <div className="bg-green-500/10 border border-green-500/50 text-green-400 p-3 rounded-xl text-sm">
+                            {successMessage}
+                        </div>
+                    )}
                     {error && (
                         <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-sm">
                             {error}

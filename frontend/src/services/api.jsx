@@ -1,8 +1,10 @@
 import axios from "axios";
 
-// 1. Khởi tạo apiClient cho các request cần xác thực (History, Speaking...)
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
+
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api', // URL gốc của Backend
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },

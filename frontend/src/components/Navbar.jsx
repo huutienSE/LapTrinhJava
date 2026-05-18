@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/AuthContext";
 const navLinks = [
   { path: "/", label: "Home", requiresAuth: false },
   { path: "/profile", label: "Hồ sơ", icon: "👤", requiresAuth: true },
+  { path: "/practice", label: "Luyện tập", icon: "🎙️", requiresAuth: true },
   { path: "/assessment", label: "Đánh giá", icon: "🎯", requiresAuth: true },
   { path: "/history", label: "History", requiresAuth: true },
 ];
