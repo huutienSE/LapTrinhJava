@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { adminService } from "../../services/api";
+import { adminQuestionService, topicService } from "../../services";
 import { getApiErrorMessage } from "../../utils/apiError.js";
 import ActionButton from "../../components/common/ActionButton";
 import SearchInput from "../../components/common/SearchInput";
@@ -36,13 +36,13 @@ const ManageQuestions = () => {
             setSearchQuestion(value);
 
             if (!value.trim()) {
-                const response = await adminService.getQuestions();
+                const response = await adminQuestionService.getQuestions();
 
                 setQuestions(response.data ?? [])
                 return;
             }
 
-            const response = await adminService.getQuestionsByDescription(value);
+            const response = await adminQuestionService.getQuestionsByDescription(value);
 
             setQuestions(response.data ? [response.data] : []);
 
@@ -60,7 +60,7 @@ const ManageQuestions = () => {
         try {
             setIsUpdating(true);
 
-            const response = await adminService.updateQuestion(
+            const response = await adminQuestionService.updateQuestion(
                 editingQuestion,
                 editingQuestion.questionId   // fix #9: was topicId
             );
@@ -90,7 +90,7 @@ const ManageQuestions = () => {
         if (!confirmDelete) return;
 
         try {
-            const response = await adminService.deleteQuestion(questionId);  // fix #11
+            const response = await adminQuestionService.deleteQuestion(questionId);  // fix #11
 
             if (response.success) {
                 setQuestions((prev) =>
@@ -120,7 +120,7 @@ const ManageQuestions = () => {
         try {
             setIsCreating(true);
 
-            const response = await adminService.createQuestion(newQuestion);
+            const response = await adminQuestionService.createQuestion(newQuestion);
 
             if (response.success) {
                 alert("Create question success");
@@ -147,7 +147,7 @@ const ManageQuestions = () => {
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
-                const response = await adminService.getQuestions();
+                const response = await adminQuestionService.getQuestions();
                 if (response.success) {
                     setQuestions(response.data);
                 }
@@ -160,12 +160,12 @@ const ManageQuestions = () => {
 
         const fetchTopics = async () => {
             try {
-                const response = await adminService.getTopics();
+                const response = await topicService.getTopics();
                 if (response.success) {
-                    setTopics(response.data);
+                    setTopics(response.data ?? []);
                 }
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         };
 

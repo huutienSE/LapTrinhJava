@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { practiceService } from "../../services/api.jsx";
+import { topicService, practiceService } from "../../services";
 import { formatLevel } from "../../utils/assessmentLevels.js";
 import { PageLoading } from "../../components/learner/layout/PageStates.jsx";
 
@@ -23,12 +23,12 @@ const PracticeSession = () => {
         let loadedQuestions = location.state?.questions ?? [];
 
         if (!loadedTopic) {
-          const topicRes = await practiceService.getTopicById(topicId);
+          const topicRes = await topicService.getTopicById(topicId);
           if (topicRes.success) loadedTopic = topicRes.data;
         }
 
         if (loadedQuestions.length === 0) {
-          const qRes = await practiceService.getQuestionsByTopic(topicId);
+          const qRes = await topicService.getQuestionsByTopic(topicId);
           if (qRes.success) loadedQuestions = qRes.data ?? [];
         }
 

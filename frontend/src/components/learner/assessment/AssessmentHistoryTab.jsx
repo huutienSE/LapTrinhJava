@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
-import { assessmentService } from "../../../services/api.jsx";
-import { PageLoading, PageEmpty } from "../layout/PageStates.jsx";
+import { assessmentService } from "../../../services";
+import {
+  getEnvelopeError,
+  getHttpAwareErrorMessage,
+} from "../../../utils/apiError.js";
+import {
+  PageLoading,
+  PageEmpty,
+  PageError,
+  PageInlineError,
+} from "../layout/PageStates.jsx";
 import ScoreBadge from "../session/ScoreBadge.jsx";
 import QuestionResultCard from "../session/QuestionResultCard.jsx";
 import { formatLevel } from "../../../utils/assessmentLevels.js";
@@ -12,68 +21,95 @@ const formatDate = (value) => {
 
 const AssessmentHistoryTab = () => {
   const [items, setItems] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
-  const [detail, setDetail] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [detailLoading, setDetailLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await assessmentService.getHistory();
-        if (response.success) {
-          setItems(response.data ?? []);
-        } else {
-          setError(response.message || "Không thể tải lịch sử.");
-        }
-      } catch {
-        setError("Không thể tải lịch sử đánh giá.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
+  const [selectedId, setSelectedId] = useState(null);
+  const [detail, setDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState(null);
 
-  const handleSelect = async (assessmentId) => {
-    if (selectedId === assessmentId) {
-      setSelectedId(null);
-      setDetail(null);
-      return;
-    }
-
-    setSelectedId(assessmentId);
-    setDetailLoading(true);
+  const loadHistory = async () => {
+    setIsLoading(true);
     setError(null);
+    try {
+      const response = await assessmentService.getHistory();
+      if (response.success) {
+        setItems(response.data ?? []);
+      } else {
+        setItems([]);
+        setError(
+          getEnvelopeError(response, "Không thể tải lịch sử đánh giá.")
+        );
+      }
+    } catch (err) {
+      setItems([]);
+      setError(
+        getHttpAwareErrorMessage(err, "Không thể tải lịch sử đánh giá.")
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadDetail = async (assessmentId) => {
+    setDetailLoading(true);
+    setDetailError(null);
     try {
       const response = await assessmentService.getDetail(assessmentId);
       if (response.success) {
         setDetail(response.data);
       } else {
-        setError(response.message || "Không thể tải chi tiết.");
         setDetail(null);
+        setDetailError(
+          getEnvelopeError(response, "Không thể tải chi tiết bài đánh giá.")
+        );
       }
-    } catch {
-      setError("Không thể tải chi tiết bài đánh giá.");
+    } catch (err) {
       setDetail(null);
+      setDetailError(
+        getHttpAwareErrorMessage(err, "Không thể tải chi tiết bài đánh giá.")
+      );
     } finally {
       setDetailLoading(false);
     }
   };
 
-  if (loading) {
-    return <PageLoading />;
+  useEffect(() => {
+    loadHistory();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedId) {
+      setDetail(null);
+      setDetailError(null);
+      return;
+    }
+    loadDetail(selectedId);
+  }, [selectedId]);
+
+  const handleSelect = (assessmentId) => {
+    if (selectedId === assessmentId) {
+      setSelectedId(null);
+      return;
+    }
+    setSelectedId(assessmentId);
+  };
+
+  if (isLoading) {
+    return <PageLoading message="Đang tải lịch sử đánh giá..." />;
+  }
+
+  if (error && items.length === 0) {
+    return <PageError message={error} onRetry={loadHistory} />;
   }
 
   return (
     <div className="space-y-6">
-      {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+      <PageInlineError message={error} onRetry={loadHistory} />
 
       {items.length === 0 ? (
-        <PageEmpty message="Bạn chưa có bài đánh giá nào." />
+        <PageEmpty icon="📋" message="Bạn chưa có bài đánh giá nào." />
       ) : (
         <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800 overflow-hidden">
           <table className="w-full text-left text-sm text-zinc-400">
@@ -114,7 +150,11 @@ const AssessmentHistoryTab = () => {
         </div>
       )}
 
-      {detailLoading && <PageLoading />}
+      {selectedId && detailError && !detailLoading && (
+        <PageInlineError message={detailError} onRetry={() => loadDetail(selectedId)} />
+      )}
+
+      {detailLoading && <PageLoading message="Đang tải chi tiết..." />}
 
       {detail && !detailLoading && (
         <div className="space-y-4">
@@ -133,9 +173,19 @@ const AssessmentHistoryTab = () => {
             Trình độ: {formatLevel(detail.levelAssigned)} ·{" "}
             {formatDate(detail.takenDate)}
           </p>
-          {(detail.questions ?? []).map((q, index) => (
-            <QuestionResultCard key={q.questionId ?? index} index={index} question={q} />
-          ))}
+          {(detail.questions ?? []).length === 0 ? (
+            <p className="text-zinc-500 text-sm text-center py-8">
+              Không có câu trả lời trong bài đánh giá này.
+            </p>
+          ) : (
+            detail.questions.map((q, index) => (
+              <QuestionResultCard
+                key={q.questionId ?? index}
+                index={index}
+                question={q}
+              />
+            ))
+          )}
         </div>
       )}
     </div>

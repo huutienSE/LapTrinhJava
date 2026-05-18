@@ -1,42 +1,64 @@
-import { useState, useEffect } from "react";
-import { userService } from "../../services/api.jsx";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { practiceService } from "../../services";
+import {
+  getEnvelopeError,
+  getHttpAwareErrorMessage,
+} from "../../utils/apiError.js";
 import {
   PageLoading,
   PageEmpty,
+  PageError,
 } from "../../components/learner/layout/PageStates.jsx";
 import ScoreBadge from "../../components/learner/session/ScoreBadge.jsx";
 
 const History = () => {
   const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const response = await userService.getPracticeHistory();
-        if (response.success) {
-          setHistory(response.data ?? []);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy lịch sử:", error);
-      } finally {
-        setIsLoading(false);
+  const loadHistory = async () => {
+    if (!isLoggedIn) {
+      setHistory([]);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await practiceService.getHistory();
+      if (response.success) {
+        setHistory(response.data ?? []);
+      } else {
+        setHistory([]);
+        setError(
+          getEnvelopeError(response, "Không thể tải lịch sử luyện tập.")
+        );
       }
-    };
-
-    if (isLoggedIn) {
-      fetchHistory();
-    } else {
+    } catch (err) {
+      setHistory([]);
+      setError(
+        getHttpAwareErrorMessage(err, "Không thể tải lịch sử luyện tập.")
+      );
+    } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    loadHistory();
   }, [isLoggedIn]);
 
   if (isLoading) {
-    return <PageLoading />;
+    return <PageLoading message="Đang tải lịch sử luyện tập..." />;
+  }
+
+  if (error) {
+    return <PageError message={error} onRetry={loadHistory} />;
   }
 
   return (

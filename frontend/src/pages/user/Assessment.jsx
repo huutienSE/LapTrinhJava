@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useProfile } from "../../hooks/useProfile.js";
+import { profileService } from "../../services";
+import {
+  saveStoredProfile,
+  clearStoredProfile,
+} from "../../utils/learnerProfileStorage.js";
 import ProfileForm from "../../components/learner/profile/ProfileForm.jsx";
 import { PageLoading } from "../../components/learner/layout/PageStates.jsx";
 import AssessmentTestTab from "../../components/learner/assessment/AssessmentTestTab.jsx";
@@ -13,7 +17,35 @@ const TABS = [
 
 const Assessment = () => {
   const [tab, setTab] = useState("test");
-  const { hasProfile, isLoading, setProfileFromResponse, reload } = useProfile();
+  const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const hasProfile = Boolean(profile?.profileId);
+
+  const loadProfile = async () => {
+    setIsLoading(true);
+    try {
+      const response = await profileService.getMe();
+      if (response.success && response.data) {
+        setProfile(response.data);
+        saveStoredProfile(response.data);
+      } else {
+        setProfile(null);
+        clearStoredProfile();
+      }
+    } catch (err) {
+      setProfile(null);
+      if (err.response?.status === 404) {
+        clearStoredProfile();
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
 
   if (isLoading) {
     return <PageLoading />;
@@ -38,8 +70,10 @@ const Assessment = () => {
             mode="create"
             submitLabel="Tạo hồ sơ và tiếp tục"
             onSuccess={(response) => {
-              setProfileFromResponse(response);
-              reload();
+              if (response?.success && response.data) {
+                setProfile(response.data);
+                saveStoredProfile(response.data);
+              }
             }}
           />
           <p className="text-zinc-500 text-sm mt-4 text-center">

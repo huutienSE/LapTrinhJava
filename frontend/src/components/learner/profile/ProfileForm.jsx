@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { profileService } from "../../../services/api.jsx";
+import { profileService } from "../../../services";
 import { fieldErrorClass, getApiErrorMessage, parseApiError } from "../../../utils/apiError.js";
 
 const LEVEL_OPTIONS = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];

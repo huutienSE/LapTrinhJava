@@ -41,4 +41,35 @@ export function getApiErrorMessage(
   return fallback;
 }
 
+/** Message from ApiResponse when success === false */
+export function getEnvelopeError(
+  response,
+  fallback = "Đã xảy ra lỗi. Vui lòng thử lại."
+) {
+  if (response?.success) return null;
+  return response?.message || fallback;
+}
+
+/** Axios errors with HTTP status + network awareness */
+export function getHttpAwareErrorMessage(
+  error,
+  fallback = "Đã xảy ra lỗi. Vui lòng thử lại."
+) {
+  const status = error?.response?.status;
+
+  if (status === 403) {
+    return "Bạn không có quyền thực hiện thao tác này.";
+  }
+
+  if (status === 401) {
+    return "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.";
+  }
+
+  if (!error?.response) {
+    return "Không thể kết nối máy chủ. Kiểm tra mạng hoặc thử lại sau.";
+  }
+
+  return getApiErrorMessage(error, fallback);
+}
+
 export const fieldErrorClass = "text-red-400 text-sm mt-1";

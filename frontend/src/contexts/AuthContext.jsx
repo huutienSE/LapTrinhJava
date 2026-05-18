@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { authService, profileService } from "../services/api";
+import { authService, profileService } from "../services";
 import { clearStoredProfile, saveStoredProfile } from "../utils/learnerProfileStorage";
 
 const AuthContext = createContext();

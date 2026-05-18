@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { practiceService } from "../../services/api.jsx";
+import { topicService } from "../../services";
 import { getApiErrorMessage } from "../../utils/apiError.js";
 import { formatLevel } from "../../utils/assessmentLevels.js";
 import {
@@ -22,8 +22,8 @@ const PracticeTopicDetail = () => {
     setError(null);
     try {
       const [topicRes, questionsRes] = await Promise.all([
-        practiceService.getTopicById(topicId),
-        practiceService.getQuestionsByTopic(topicId),
+        topicService.getTopicById(topicId),
+        topicService.getQuestionsByTopic(topicId),
       ]);
 
       if (topicRes.success) {

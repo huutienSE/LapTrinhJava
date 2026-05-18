@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useProfile } from "../../hooks/useProfile.js";
+import { profileService } from "../../services";
+import { getHttpAwareErrorMessage } from "../../utils/apiError.js";
+import {
+  saveStoredProfile,
+  clearStoredProfile,
+} from "../../utils/learnerProfileStorage.js";
 import ProfileForm from "../../components/learner/profile/ProfileForm.jsx";
 import {
   PageLoading,
@@ -11,12 +16,48 @@ import ActionButton from "../../components/common/ActionButton.jsx";
 const Profile = () => {
   const [searchParams] = useSearchParams();
   const returnTo = searchParams.get("returnTo");
-  const { profile, hasProfile, isLoading, error, reload, setProfileFromResponse } =
-    useProfile();
+  const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  const hasProfile = Boolean(profile?.profileId);
+
+  const loadProfile = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await profileService.getMe();
+      if (response.success && response.data) {
+        setProfile(response.data);
+        saveStoredProfile(response.data);
+      } else {
+        setProfile(null);
+        clearStoredProfile();
+      }
+    } catch (err) {
+      setProfile(null);
+      if (err.response?.status === 404) {
+        clearStoredProfile();
+      } else {
+        setError(
+          getHttpAwareErrorMessage(err, "Không thể tải hồ sơ người dùng")
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
   const handleSuccess = (response) => {
-    setProfileFromResponse(response);
+    if (response?.success && response.data) {
+      setProfile(response.data);
+      saveStoredProfile(response.data);
+    }
     setIsEditing(false);
     if (returnTo) {
       window.location.href = returnTo;
@@ -28,7 +69,7 @@ const Profile = () => {
   }
 
   if (error && !hasProfile) {
-    return <PageError message={error} onRetry={reload} />;
+    return <PageError message={error} onRetry={loadProfile} />;
   }
 
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { userService } from "../../services/api.jsx";
+import { practiceService } from "../../services";
 import { getApiErrorMessage } from "../../utils/apiError.js";
 import { PageLoading, PageError } from "../../components/learner/layout/PageStates.jsx";
 import ScoreBadge from "../../components/learner/session/ScoreBadge.jsx";
@@ -16,7 +16,7 @@ const SessionDetail = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await userService.getPracticeHistoryDetail(sessionId);
+      const response = await practiceService.getSessionDetail(sessionId);
       if (response.success) {
         setSession(response.data);
       } else {

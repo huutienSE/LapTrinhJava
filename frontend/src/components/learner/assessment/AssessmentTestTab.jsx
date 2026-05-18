@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { assessmentService } from "../../../services/api.jsx";
+import { assessmentService } from "../../../services";
 import {
   getSpeechRecognition,
   isSpeechRecognitionSupported,
 } from "../../../utils/speechRecognition.js";
-import { getApiErrorMessage } from "../../../utils/apiError.js";
+import {
+  getEnvelopeError,
+  getHttpAwareErrorMessage,
+} from "../../../utils/apiError.js";
+import { PageInlineError } from "../layout/PageStates.jsx";
 import ScoreBadge from "../session/ScoreBadge.jsx";
 import ActionButton from "../../common/ActionButton.jsx";
 import { formatLevel } from "../../../utils/assessmentLevels.js";
@@ -101,8 +105,12 @@ const AssessmentTestTab = () => {
     setError(null);
     try {
       const response = await assessmentService.start();
-      if (!response.success) {
-        setError(response.message || "Không thể bắt đầu bài đánh giá.");
+      const envelopeError = getEnvelopeError(
+        response,
+        "Không thể bắt đầu bài đánh giá."
+      );
+      if (envelopeError) {
+        setError(envelopeError);
         return;
       }
       const { sessionId: id, questions: list } = response.data ?? {};
@@ -115,7 +123,7 @@ const AssessmentTestTab = () => {
       setCurrentIndex(0);
       setStep("question");
     } catch (err) {
-      setError(getApiErrorMessage(err));
+      setError(getHttpAwareErrorMessage(err, "Không thể bắt đầu bài đánh giá."));
     } finally {
       setLoading(false);
     }
@@ -164,8 +172,12 @@ const AssessmentTestTab = () => {
         questionId: question.questionId,
         answer: text,
       });
-      if (!response.success) {
-        setError(response.message || "Không thể nộp câu trả lời.");
+      const envelopeError = getEnvelopeError(
+        response,
+        "Không thể nộp câu trả lời."
+      );
+      if (envelopeError) {
+        setError(envelopeError);
         return;
       }
       setFeedback(response.data);
@@ -174,7 +186,7 @@ const AssessmentTestTab = () => {
       transcriptRef.current = "";
       setStep("feedback");
     } catch (err) {
-      setError(getApiErrorMessage(err));
+      setError(getHttpAwareErrorMessage(err, "Không thể nộp câu trả lời."));
     } finally {
       setLoading(false);
     }
@@ -193,14 +205,20 @@ const AssessmentTestTab = () => {
     setError(null);
     try {
       const response = await assessmentService.commit({ sessionId });
-      if (!response.success) {
-        setError(response.message || "Không thể hoàn tất bài đánh giá.");
+      const envelopeError = getEnvelopeError(
+        response,
+        "Không thể hoàn tất bài đánh giá."
+      );
+      if (envelopeError) {
+        setError(envelopeError);
         return;
       }
       setResult(response.data);
       setStep("result");
     } catch (err) {
-      setError(getApiErrorMessage(err));
+      setError(
+        getHttpAwareErrorMessage(err, "Không thể hoàn tất bài đánh giá.")
+      );
     } finally {
       setLoading(false);
     }
@@ -220,7 +238,18 @@ const AssessmentTestTab = () => {
 
   return (
     <div className="space-y-6">
-      {error && <p className="text-red-400 text-sm text-center">{error}</p>}
+      <PageInlineError
+        message={error}
+        onRetry={
+          step === "intro"
+            ? handleStart
+            : step === "question"
+              ? handleSubmitAnswer
+              : step === "feedback"
+                ? handleContinue
+                : undefined
+        }
+      />
 
       {step === "intro" && (
         <div className="bg-zinc-900/50 rounded-2xl border border-zinc-800 p-8 text-center">
@@ -232,7 +261,12 @@ const AssessmentTestTab = () => {
             10 câu hỏi ngẫu nhiên. Trả lời bằng giọng nói, xem nhận xét sau mỗi
             câu.
           </p>
-          <ActionButton variant="add" size="lg" onClick={handleStart}>
+          <ActionButton
+            variant="add"
+            size="lg"
+            onClick={handleStart}
+            disabled={loading}
+          >
             {loading ? "Đang tạo bài..." : "Bắt đầu đánh giá"}
           </ActionButton>
         </div>

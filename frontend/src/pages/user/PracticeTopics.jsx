@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { practiceService } from "../../services/api.jsx";
-import { getApiErrorMessage } from "../../utils/apiError.js";
+import { topicService } from "../../services";
+import {
+  getEnvelopeError,
+  getHttpAwareErrorMessage,
+} from "../../utils/apiError.js";
 import TopicCard from "../../components/learner/practice/TopicCard.jsx";
 import {
   PageLoading,
@@ -13,27 +16,31 @@ const PracticeTopics = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchTopics = async () => {
+  const loadTopics = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await practiceService.getTopics();
+      const response = await topicService.getTopics();
       if (response.success) {
         setTopics(response.data ?? []);
       } else {
         setTopics([]);
-        setError(response.message || "Không thể tải danh sách chủ đề.");
+        setError(
+          getEnvelopeError(response, "Không thể tải danh sách chủ đề.")
+        );
       }
     } catch (err) {
       setTopics([]);
-      setError(getApiErrorMessage(err, "Không thể tải danh sách chủ đề."));
+      setError(
+        getHttpAwareErrorMessage(err, "Không thể tải danh sách chủ đề.")
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchTopics();
+    loadTopics();
   }, []);
 
   if (isLoading) {
@@ -41,7 +48,7 @@ const PracticeTopics = () => {
   }
 
   if (error) {
-    return <PageError message={error} onRetry={fetchTopics} />;
+    return <PageError message={error} onRetry={loadTopics} />;
   }
 
   return (

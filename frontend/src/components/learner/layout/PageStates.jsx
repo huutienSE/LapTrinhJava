@@ -29,4 +29,26 @@ const PageError = ({ message = "Đã xảy ra lỗi.", onRetry }) => (
   </div>
 );
 
-export { PageLoading, PageEmpty, PageError };
+const PageInlineError = ({ message, onRetry }) => {
+  if (!message) return null;
+
+  return (
+    <div
+      role="alert"
+      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm"
+    >
+      <p>{message}</p>
+      {onRetry && (
+        <button
+          type="button"
+          onClick={onRetry}
+          className="shrink-0 text-sm font-medium px-3 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors"
+        >
+          Thử lại
+        </button>
+      )}
+    </div>
+  );
+};
+
+export { PageLoading, PageEmpty, PageError, PageInlineError };
