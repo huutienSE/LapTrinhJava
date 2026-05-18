@@ -24,17 +24,19 @@ export const AuthProvider = ({ children }) => {
         const user = localStorage.getItem("user");
 
         if (user) {
-            setCurrentUser(JSON.parse(user));
-        }
-        
-        // Fetch profile to verify
-        profileService.getMe().then(res => {
-            if (res.success && res.data) {
-                saveStoredProfile(res.data);
+            const parsed = JSON.parse(user);
+            setCurrentUser(parsed);
+
+            if (parsed.role === "LEARNER") {
+                profileService.getMe().then(res => {
+                    if (res.success && res.data) {
+                        saveStoredProfile(res.data);
+                    }
+                }).catch(() => {
+                    clearStoredProfile();
+                });
             }
-        }).catch(err => {
-            clearStoredProfile();
-        });
+        }
     }
   }, []);
 
@@ -58,13 +60,15 @@ export const AuthProvider = ({ children }) => {
           setCurrentUser(userData);
           setIsLoggedIn(true);
 
-          try {
-             const profileRes = await profileService.getMe();
-             if (profileRes.success && profileRes.data) {
-                 saveStoredProfile(profileRes.data);
-             }
-          } catch(e) {
-             clearStoredProfile();
+          if (userData.role === "LEARNER") {
+              try {
+                  const profileRes = await profileService.getMe();
+                  if (profileRes.success && profileRes.data) {
+                      saveStoredProfile(profileRes.data);
+                  }
+              } catch {
+                  clearStoredProfile();
+              }
           }
       }
 

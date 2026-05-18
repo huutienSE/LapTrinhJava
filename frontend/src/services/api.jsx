@@ -30,13 +30,8 @@ apiClient.interceptors.response.use(
       
       const isAuthRequest = requestUrl.includes("/auth/login");
 
-      // Chỉ logout khi:
-      // - token hết hạn / không hợp lệ
-      // - KHÔNG phải request login/register
-      if (
-          (status === 401 || status === 403) &&
-          !isAuthRequest
-      ) {
+      // Chỉ logout khi token hết hạn / không hợp lệ (403 = thiếu quyền, không logout)
+      if (status === 401 && !isAuthRequest) {
 
           // Xóa dữ liệu đăng nhập
           localStorage.removeItem("token");
@@ -138,10 +133,15 @@ export const assessmentService = {
   },
 };
 
-// --- SPEAKING SERVICE (learner topics & questions) ---
-export const speakingService = {
+// --- PRACTICE SERVICE (learner practice flow) ---
+export const practiceService = {
   getTopics: async () => {
     const response = await apiClient.get("/topics");
+    return response.data;
+  },
+
+  getTopicById: async (topicId) => {
+    const response = await apiClient.get(`/topics/${topicId}`);
     return response.data;
   },
 
@@ -150,11 +150,18 @@ export const speakingService = {
     return response.data;
   },
 
-  /** @deprecated Use getQuestionsByTopic */
-  getSentences: async (topicId) => {
-    const response = await apiClient.get(`/topics/${topicId}/questions`);
+  /** Backend chưa bật — gọi khi POST /user/practice/start sẵn sàng */
+  start: async (topicId) => {
+    const response = await apiClient.post("/user/practice/start", { topicId });
     return response.data;
   },
+};
+
+// --- SPEAKING SERVICE (deprecated — dùng practiceService) ---
+export const speakingService = {
+  getTopics: practiceService.getTopics,
+  getQuestionsByTopic: practiceService.getQuestionsByTopic,
+  getSentences: practiceService.getQuestionsByTopic,
 };
 
 

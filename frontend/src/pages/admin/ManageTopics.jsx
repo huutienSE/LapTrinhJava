@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { useEffect, useState } from "react";
 import { adminService } from "../../services/api";
+import { getApiErrorMessage } from "../../utils/apiError.js";
 import ActionButton from "../../components/common/ActionButton";
 import SearchInput from "../../components/common/SearchInput.jsx";
 
@@ -89,7 +90,7 @@ const ManageTopics = () => {
 
             console.error(error);
 
-            alert("Update failed");
+            alert(getApiErrorMessage(error, "Update failed"));
         }
     };
 
@@ -121,7 +122,7 @@ const ManageTopics = () => {
 
             console.error(error);
 
-            alert("Delete failed");
+            alert(getApiErrorMessage(error, "Delete failed"));
         }
     };
 
@@ -165,7 +166,7 @@ const ManageTopics = () => {
 
             console.error(error);
 
-            alert("Create topic failed");
+            alert(getApiErrorMessage(error, "Create topic failed"));
 
         } finally {
             setIsCreating(false);

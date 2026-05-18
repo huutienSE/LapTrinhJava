@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { profileService } from "../services/api.jsx";
+import { getApiErrorMessage } from "../utils/apiError.js";
 import {
   getStoredProfileId,
   saveStoredProfile,
@@ -29,9 +30,7 @@ export function useProfile() {
       if (err.response?.status === 404) {
         clearStoredProfile();
       } else {
-        setError(
-          err.response?.data?.message || "Không thể tải hồ sơ người dùng"
-        );
+        setError(getApiErrorMessage(err, "Không thể tải hồ sơ người dùng"));
       }
     } finally {
       setIsLoading(false);

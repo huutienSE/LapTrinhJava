@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../services/api.jsx";
+import { fieldErrorClass, getApiErrorMessage, parseApiError } from "../../utils/apiError.js";
 
 const Register = () => {
 
@@ -13,11 +14,27 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const navigate = useNavigate();
 
   const onChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError("");
+    if (fieldErrors[e.target.name]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[e.target.name];
+        return next;
+      });
+    }
+    if (fieldErrors.userName && (e.target.name === "firstName" || e.target.name === "lastName")) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next.userName;
+        return next;
+      });
+    }
   };
 
   const onSubmit = async (e) => {
@@ -25,6 +42,8 @@ const Register = () => {
     e.preventDefault();
 
     setIsLoading(true);
+    setError("");
+    setFieldErrors({});
     try {
 
       const payload = {
@@ -37,9 +56,9 @@ const Register = () => {
       alert(response.message);
       navigate("/login"); // Đăng ký thành công thì đá sang Login
     } catch (err) {
-      setError(
-        err.response?.data?.message || err.message || "Đăng ký thất bại"
-      );
+      const { formError, fieldErrors: errors } = parseApiError(err);
+      setFieldErrors(errors || {});
+      setError(formError || (errors ? "" : getApiErrorMessage(err, "Đăng ký thất bại")));
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +76,11 @@ const Register = () => {
         </div>
 
         <form onSubmit={onSubmit} className="space-y-5">
-            {error && <div>{error}</div> }
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-xl text-sm">
+                {error}
+              </div>
+            )}
           
           {/* Group: First Name & Last Name */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -73,6 +96,9 @@ const Register = () => {
                 className="w-full p-3 bg-zinc-800/50 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-zinc-600"
                 required
               />
+              {fieldErrors.userName && (
+                <p className={fieldErrorClass}>{fieldErrors.userName}</p>
+              )}
             </div>
             <div className="space-y-2">
               <label htmlFor="lastName" className="text-sm font-medium text-zinc-400 ml-1">Tên</label>
@@ -117,6 +143,9 @@ const Register = () => {
               className="w-full p-3 bg-zinc-800/50 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-zinc-600"
               required
             />
+            {fieldErrors.email && (
+              <p className={fieldErrorClass}>{fieldErrors.email}</p>
+            )}
           </div>
 
           {/* Mật khẩu */}
@@ -132,6 +161,9 @@ const Register = () => {
               className="w-full p-3 bg-zinc-800/50 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all placeholder:text-zinc-600"
               required
             />
+            {fieldErrors.password && (
+              <p className={fieldErrorClass}>{fieldErrors.password}</p>
+            )}
           </div>
 
           <button

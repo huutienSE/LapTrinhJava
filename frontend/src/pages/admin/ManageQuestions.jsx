@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { adminService } from "../../services/api";
+import { getApiErrorMessage } from "../../utils/apiError.js";
 import ActionButton from "../../components/common/ActionButton";
 import SearchInput from "../../components/common/SearchInput";
 
@@ -77,7 +78,7 @@ const ManageQuestions = () => {
             }
         } catch (error) {
             console.error(error);
-            alert("Update failed");
+            alert(getApiErrorMessage(error, "Update failed"));
         } finally {
             setIsUpdating(false);
         }
@@ -101,7 +102,7 @@ const ManageQuestions = () => {
             }
         } catch (error) {
             console.error(error);
-            alert("Delete failed");
+            alert(getApiErrorMessage(error, "Delete failed"));
         }
     };
 
@@ -136,7 +137,7 @@ const ManageQuestions = () => {
             }
         } catch (error) {
             console.error(error);
-            alert("Create question failed");
+            alert(getApiErrorMessage(error, "Create question failed"));
         } finally {
             setIsCreating(false);
         }

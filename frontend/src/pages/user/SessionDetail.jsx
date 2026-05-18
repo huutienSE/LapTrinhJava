@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { userService } from "../../services/api.jsx";
+import { getApiErrorMessage } from "../../utils/apiError.js";
 import { PageLoading, PageError } from "../../components/learner/layout/PageStates.jsx";
 import ScoreBadge from "../../components/learner/session/ScoreBadge.jsx";
 import QuestionResultCard from "../../components/learner/session/QuestionResultCard.jsx";
@@ -24,9 +25,7 @@ const SessionDetail = () => {
       }
     } catch (err) {
       setSession(null);
-      setError(
-        err.response?.data?.message || "Không thể tải chi tiết buổi luyện tập"
-      );
+      setError(getApiErrorMessage(err, "Không thể tải chi tiết buổi luyện tập"));
     } finally {
       setIsLoading(false);
     }

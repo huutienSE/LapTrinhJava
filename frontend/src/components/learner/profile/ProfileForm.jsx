@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { profileService } from "../../../services/api.jsx";
+import { fieldErrorClass, getApiErrorMessage, parseApiError } from "../../../utils/apiError.js";
 
 const LEVEL_OPTIONS = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
 
@@ -29,17 +30,26 @@ const ProfileForm = ({
   }));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     if (error) setError("");
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError("");
+    setFieldErrors({});
 
     const payload = {
       firstName: form.firstName.trim() || null,
@@ -65,7 +75,9 @@ const ProfileForm = ({
         setError(response.message || "Không thể lưu hồ sơ");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Không thể lưu hồ sơ");
+      const { formError, fieldErrors: errors } = parseApiError(err);
+      setFieldErrors(errors || {});
+      setError(formError || (errors ? "" : getApiErrorMessage(err, "Không thể lưu hồ sơ")));
     } finally {
       setIsSubmitting(false);
     }
@@ -92,6 +104,9 @@ const ProfileForm = ({
             className={inputClass}
             placeholder="Nguyễn"
           />
+          {fieldErrors.firstName && (
+            <p className={fieldErrorClass}>{fieldErrors.firstName}</p>
+          )}
         </div>
         <div className="space-y-2">
           <label className="text-sm text-zinc-400">Tên</label>
@@ -102,6 +117,9 @@ const ProfileForm = ({
             className={inputClass}
             placeholder="Văn A"
           />
+          {fieldErrors.lastName && (
+            <p className={fieldErrorClass}>{fieldErrors.lastName}</p>
+          )}
         </div>
       </div>
 
@@ -114,6 +132,9 @@ const ProfileForm = ({
           onChange={handleChange}
           className={inputClass}
         />
+        {fieldErrors.birthDate && (
+          <p className={fieldErrorClass}>{fieldErrors.birthDate}</p>
+        )}
       </div>
 
       <div className="space-y-2">

@@ -4,12 +4,10 @@ import {
   getSpeechRecognition,
   isSpeechRecognitionSupported,
 } from "../../../utils/speechRecognition.js";
+import { getApiErrorMessage } from "../../../utils/apiError.js";
 import ScoreBadge from "../session/ScoreBadge.jsx";
 import ActionButton from "../../common/ActionButton.jsx";
 import { formatLevel } from "../../../utils/assessmentLevels.js";
-
-const getErrorMessage = (error) =>
-  error.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại.";
 
 const AssessmentTestTab = () => {
   const [step, setStep] = useState("intro");
@@ -117,7 +115,7 @@ const AssessmentTestTab = () => {
       setCurrentIndex(0);
       setStep("question");
     } catch (err) {
-      setError(getErrorMessage(err));
+      setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -176,7 +174,7 @@ const AssessmentTestTab = () => {
       transcriptRef.current = "";
       setStep("feedback");
     } catch (err) {
-      setError(getErrorMessage(err));
+      setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -202,7 +200,7 @@ const AssessmentTestTab = () => {
       setResult(response.data);
       setStep("result");
     } catch (err) {
-      setError(getErrorMessage(err));
+      setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
