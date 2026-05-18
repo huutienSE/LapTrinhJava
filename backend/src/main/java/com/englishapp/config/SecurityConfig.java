@@ -33,10 +33,10 @@ public class SecurityConfig {
 //            .anonymous(anonymous -> anonymous.disable())
                 .securityContext(s -> s.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
-                        .requestMatchers("/api/user/me").hasRole("LEARNER")
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/user/**").hasRole("LEARNER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/**").hasAnyRole("LEARNER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterAfter(jwtAuthFilter, AnonymousAuthenticationFilter.class);

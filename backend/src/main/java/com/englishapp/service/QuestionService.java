@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface QuestionService {
     List<Question> generateQuestionAssessment(Integer topicId);
+    List<QuestionResponse> getQuestionsByTopicId(Integer topicId);
     List<QuestionResponse> getAllQuestions();
     QuestionResponse getQuestionById(Integer topicId);
     void deleteQuestionById(Integer topicId);

@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface PracticeService {
 
-    List<QuestionResponse> getQuestionsByTopicId(Integer topicId);
-
     List<PracticeHistoryResponse> getPracticeHistory(Integer userId);
 
     PracticeSessionDetailResponse getSessionDetail(Integer sessionId,

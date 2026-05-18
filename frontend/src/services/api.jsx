@@ -172,13 +172,13 @@ export const adminService = {
     // TOPICS
 
     getTopics: async () => {
-        const response = await apiClient.get("/topics");
+        const response = await apiClient.get("/admin/topics");
         return response.data;
     },
 
     getTopicByTopicName: async (topicName) => {
         const response = await apiClient.get(
-          "/topics/search",
+          "/admin/topics/search",
           { 
             params: {
               topicName: topicName
@@ -191,7 +191,7 @@ export const adminService = {
     createTopic: async (topicData) => {
       console.log("in createTopic")
         const response = await apiClient.post(
-            "/topics",
+            "/admin/topics",
             topicData
         );
 
@@ -200,7 +200,7 @@ export const adminService = {
 
     updateTopic: async (topicId, topicData) => {
         const response = await apiClient.put(
-            `/topics/${topicId}`,
+            `/admin/topics/${topicId}`,
             topicData
         );
 
@@ -209,7 +209,7 @@ export const adminService = {
 
     deleteTopic: async (topicId) => {
         const response = await apiClient.delete(
-            `/topics/${topicId}`
+            `/admin/topics/${topicId}`
         );
 
         return response.data;
@@ -257,19 +257,19 @@ export const adminService = {
 
     // User
     getAllUsers: async () => {
-      const response = await apiClient.get("/users");
+      const response = await apiClient.get("/admin/users");
       return response.data;
     },
 
     getUserByEmail: async (email) => {
       const response = await apiClient.get(
-        `/users/${email}`
+        `/admin/users/${email}`
       );
       return response.data;
     },
 
     updateUserStatus: async (userId) => {
-      const response = await apiClient.patch(`/users/${userId}/status`);
+      const response = await apiClient.patch(`/admin/users/${userId}/status`);
       return response.data;
     },
 };

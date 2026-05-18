@@ -24,25 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PracticeServiceImpl implements PracticeService {
 
-    private final PracticeQuestionRepository practiceQuestionRepository;
-    private final TopicRepository topicRepository;
-    private final QuestionRepository questionRepository;
     private final PracticeSessionRepository practiceSessionRepository;
     private final PracticeAnswerRepository practiceAnswerRepository;
-    private final UserRepository userRepository;
-    private final QuestionMapper questionMapper;
-    @Override
-    public List<QuestionResponse> getQuestionsByTopicId(Integer topicId) {
 
-        if (!topicRepository.existsById(topicId)) {
-            throw new TopicNotFoundException(topicId);
-        }
-
-        List<Question> questions =
-                questionRepository.findByTopic_TopicId(topicId);
-
-        return questions.stream().map(questionMapper::toQuestionResponse).toList();
-    }
 
     @Override
     public List<PracticeHistoryResponse> getPracticeHistory(Integer userId) {

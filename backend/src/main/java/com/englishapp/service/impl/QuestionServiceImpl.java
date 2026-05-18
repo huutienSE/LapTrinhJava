@@ -50,6 +50,19 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public List<QuestionResponse> getQuestionsByTopicId(Integer topicId) {
+
+        if (!topicRepository.existsById(topicId)) {
+            throw new TopicNotFoundException(topicId);
+        }
+
+        List<Question> questions =
+                questionRepository.findByTopic_TopicId(topicId);
+
+        return questions.stream().map(questionMapper::toQuestionResponse).toList();
+    }
+
+    @Override
     public List<QuestionResponse> getAllQuestions() {
         List<Question> questions = questionRepository.findAllWithTopic();
 
