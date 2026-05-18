@@ -5,16 +5,15 @@ import com.englishapp.service.GeminiAIService;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class GeminiAIServiceImpl implements GeminiAIService {
+public class GeminiAIServiceImpl
+        implements GeminiAIService {
 
     @Value("${gemini.api.key}")
     private String apiKey;
@@ -30,7 +29,10 @@ public class GeminiAIServiceImpl implements GeminiAIService {
     }
 
     @Override
-    public Feedback evaluateAnswer(String question, String answer) {
+    public Feedback evaluateAnswer(
+            String question,
+            String answer
+    ) {
 
         String prompt = """
                 You are an IELTS speaking examiner.
@@ -48,7 +50,7 @@ public class GeminiAIServiceImpl implements GeminiAIService {
                 Return EXACTLY in this format:
 
                 SCORE: number
-                FEEDBACK: short feedback
+                FEEDBACK: short feedback only
                 """.formatted(question, answer);
 
         GenerateContentResponse response =
@@ -60,18 +62,19 @@ public class GeminiAIServiceImpl implements GeminiAIService {
 
         String result = response.text();
 
-//        System.out.println("========== GEMINI RESPONSE ==========");
-//        System.out.println(result);
-
         int score = extractScore(result);
 
-//        System.out.println("========== PARSED SCORE ==========");
-//        System.out.println(score);
+        String feedbackText =
+                extractFeedback(result);
 
-        Feedback feedback = new Feedback();
+        Feedback feedback =
+                new Feedback();
 
-        feedback.setFeedbackText(result);
         feedback.setOverallScore(score);
+
+        feedback.setFeedbackText(
+                feedbackText
+        );
 
         return feedback;
     }
@@ -80,16 +83,25 @@ public class GeminiAIServiceImpl implements GeminiAIService {
 
         try {
 
-            Pattern pattern = Pattern.compile("SCORE:\\s*(\\d+)");
-            Matcher matcher = pattern.matcher(text);
+            Pattern pattern =
+                    Pattern.compile(
+                            "SCORE:\\s*(\\d+)"
+                    );
+
+            Matcher matcher =
+                    pattern.matcher(text);
 
             if (matcher.find()) {
 
-                int score = Integer.parseInt(matcher.group(1));
+                int score =
+                        Integer.parseInt(
+                                matcher.group(1)
+                        );
 
-                score = Math.max(0, Math.min(score, 100));
-
-                return score;
+                return Math.max(
+                        0,
+                        Math.min(score, 100)
+                );
             }
 
         } catch (Exception e) {
@@ -98,5 +110,35 @@ public class GeminiAIServiceImpl implements GeminiAIService {
         }
 
         return 0;
+    }
+
+    private String extractFeedback(
+            String text
+    ) {
+
+        try {
+
+            Pattern pattern =
+                    Pattern.compile(
+                            "FEEDBACK:\\s*(.*)",
+                            Pattern.DOTALL
+                    );
+
+            Matcher matcher =
+                    pattern.matcher(text);
+
+            if (matcher.find()) {
+
+                return matcher
+                        .group(1)
+                        .trim();
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return text;
     }
 }

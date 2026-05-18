@@ -11,6 +11,7 @@ import com.englishapp.entity.PracticeQuestionId;
 import com.englishapp.exception.*;
 import com.englishapp.repositoty.*;
 import com.englishapp.service.AssessmentService;
+import com.englishapp.service.DeepSeekAIService;
 import com.englishapp.service.GeminiAIService;
 import com.englishapp.service.QuestionService;
 import jakarta.transaction.Transactional;
@@ -35,6 +36,7 @@ public class AssessmentServiceImpl implements AssessmentService {
 
     private final QuestionService questionService;
     private final GeminiAIService geminiAIService;
+    private final DeepSeekAIService deepSeekAIService;
     @Transactional
     @Override
     public StartAssessmentResponse startAssessment(Integer userId) {
@@ -104,15 +106,31 @@ public class AssessmentServiceImpl implements AssessmentService {
                     answerRequest.getAnswer()
             );
 
-        } catch (Exception e) {
+        } catch (Exception geminiException) {
+//            System.out.println(
+//                    "Gemini failed: "
+//                            + geminiException.getMessage()
+//            );
 
-            System.out.println("AI evaluation failed: " + e.getMessage());
+            try {
 
-            feedback = new Feedback();
-            feedback.setFeedbackText(
-                    "AI evaluation is temporarily unavailable. Please try again later."
-            );
-            feedback.setOverallScore(0);
+                feedback = deepSeekAIService.evaluateAnswer(
+                        practiceQuestion.getQuestion().getDescription(),
+                        answerRequest.getAnswer()
+                );
+
+            } catch (Exception deepSeekException) {
+
+//                System.out.println(
+//                        "DeepSeek failed: " + deepSeekException.getMessage()
+//                );
+
+                feedback = new Feedback();
+                feedback.setFeedbackText(
+                        "AI evaluation is temporarily unavailable. Please try again later."
+                );
+                feedback.setOverallScore(0);
+            }
         }
         /*catch (Exception e) {
             e.printStackTrace();
