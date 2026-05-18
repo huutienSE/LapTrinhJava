@@ -224,7 +224,7 @@ export const adminService = {
     
     getQuestionsByDescription: async (value) => {
         const response = await apiClient.get(
-          "/questions/search", {
+          "/admin/questions/search", {
             params: {
               description: value
             }
@@ -235,13 +235,13 @@ export const adminService = {
     ,
 
     createQuestion: async (questionData) => {
-        const response = await apiClient.post('/questions', questionData);
+        const response = await apiClient.post('/admin/questions', questionData);
         return response.data;
     },
 
     updateQuestion: async (questionData, questionId) => {
         const response = await apiClient.put(
-          `/questions/${questionId}`,
+          `/admin/questions/${questionId}`,
           questionData
         );
         return response.data
@@ -249,7 +249,7 @@ export const adminService = {
 
     deleteQuestion: async (questionId) => {
         const response = await apiClient.delete(
-          `/questions/${questionId}`,
+          `/admin/questions/${questionId}`,
           questionId
         );
         return response.data;
