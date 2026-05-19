@@ -196,7 +196,7 @@ CREATE TABLE practice_answer
     answer_id    INT PRIMARY KEY AUTO_INCREMENT,
     session_id   INT NOT NULL,
     question_id  INT NOT NULL,
-    user_answer  VARCHAR(100),
+    user_answer  TEXT,
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
 
     FOREIGN KEY (session_id, question_id)
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS feedback
     feedback_id   INT PRIMARY KEY AUTO_INCREMENT,
     answer_id     INT UNIQUE,
     overall_score INT CHECK (overall_score BETWEEN 0 AND 100),
-    feedback_text VARCHAR(200),
+    feedback_text TEXT,
     created_date  DATETIME DEFAULT (CURRENT_TIMESTAMP()),
     FOREIGN KEY (answer_id)
         REFERENCES practice_answer (answer_id)
