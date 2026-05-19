@@ -85,7 +85,7 @@ public class AssessmentServiceImpl implements AssessmentService {
         }
 
         PracticeQuestion practiceQuestion =
-                practiceQuestionRepository.findById(new PracticeQuestionId(SessionId, answerRequest.getQuestionId())).orElseThrow(() -> new QuestionNotFoundException(answerRequest.getQuestionId()));
+                practiceQuestionRepository.findById(new PracticeQuestionId(SessionId, answerRequest.getQuestionId())).orElseThrow(() -> new QuestionNotFoundException());
 
         PracticeAnswer practiceAnswer = new PracticeAnswer();
         practiceAnswer.setPracticeQuestion(practiceQuestion);

@@ -59,10 +59,21 @@ public class GlobalExceptionHandler {
     // user bị disable
     @ExceptionHandler(UserDisabledException.class)
     public ResponseEntity<ApiResponse<?>> handleUserDisabled(UserDisabledException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN) 
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
 
+    @ExceptionHandler(TopicNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleTopicNotFound(TopicNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
+
+    @ExceptionHandler(QuestionAlreadyAnsweredException.class)
+    public ResponseEntity<ApiResponse<?>> handleQuestionAlreadyAnswered(QuestionAlreadyAnsweredException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
 
     //user khonng ton tai voi id
     @ExceptionHandler(UserNotFoundException.class)
@@ -132,4 +143,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse<>(false, null, ex.getMessage()));
     }
+
+
+
 }

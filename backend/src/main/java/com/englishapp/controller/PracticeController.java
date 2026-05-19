@@ -1,10 +1,7 @@
 package com.englishapp.controller;
 
 import com.englishapp.common.ApiResponse;
-import com.englishapp.dto.practice.PracticeHistoryResponse;
-import com.englishapp.dto.practice.PracticeSessionDetailResponse;
-import com.englishapp.dto.practice.StartPracticeRequest;
-import com.englishapp.dto.practice.StartPracticeResponse;
+import com.englishapp.dto.practice.*;
 import com.englishapp.security.UserPrincipal;
 import com.englishapp.service.PracticeService;
 import lombok.AllArgsConstructor;
@@ -22,13 +19,29 @@ public class PracticeController {
 
     private final PracticeService practiceService;
 
-//    @PostMapping("/start")
-//    public ApiResponse<StartPracticeResponse> startPractice(@RequestBody StartPracticeRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-//
-//        StartPracticeResponse response = practiceService.startPractice(request.getTopicId(), userPrincipal.getUserId());
-//
-//        return new ApiResponse<>(true, response, "Start practice successfully");
-//    }
+    @PostMapping("/start")
+    public ApiResponse<StartPracticeResponse> startPractice(@RequestBody StartPracticeRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        StartPracticeResponse response = practiceService.startPractice(request.getTopicId(), userPrincipal.getUserId());
+
+        return new ApiResponse<>(true, response, "Start practice successfully");
+    }
+
+    @PostMapping("/{sessionId}/answers")
+    public ApiResponse<PracticeQuestionDetailResponse> answerQuestion(@PathVariable Integer sessionId, @RequestBody AnswerRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        PracticeQuestionDetailResponse response = practiceService.answerQuestion(userPrincipal.getUserId(), sessionId, request);
+
+        return new ApiResponse<>(true, response, "Answer question successfully");
+    }
+
+    @PostMapping("/commit")
+    public ApiResponse<CommitPracticeResponse> commitPractice(@RequestBody CommitPracticeRequest request, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+
+        CommitPracticeResponse response = practiceService.commitPractice(request, userPrincipal.getUserId());
+
+        return new ApiResponse<>(true, response, "Commit practice successfully");
+    }
 
     @GetMapping("/history")
     public ApiResponse<List<PracticeHistoryResponse>> getHistory(@AuthenticationPrincipal UserPrincipal userPrincipal) {
