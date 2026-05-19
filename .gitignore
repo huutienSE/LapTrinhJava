@@ -83,3 +83,6 @@ docs\frontend-structure.md
 .cursor/rules/frontend-api.mdc
 .cursor/rules/frontend-core.mdc
 .cursor/rules/frontend-ui.mdc
+docs/03_use_case_diagrams.md
+docs/02_system_design.md
+docs/01_requirements.md
