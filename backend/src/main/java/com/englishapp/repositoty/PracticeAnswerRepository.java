@@ -1,6 +1,7 @@
 package com.englishapp.repositoty;
 
 import com.englishapp.entity.PracticeAnswer;
+import com.englishapp.entity.PracticeQuestionId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -26,4 +27,6 @@ public interface PracticeAnswerRepository extends JpaRepository<PracticeAnswer, 
 //    WHERE s.sessionId = :sessionId
 //""")
     List<PracticeAnswer> findBySessionWithDetails(Integer sessionId);
+
+    boolean existsByPracticeQuestion_Id(PracticeQuestionId id);
 }
