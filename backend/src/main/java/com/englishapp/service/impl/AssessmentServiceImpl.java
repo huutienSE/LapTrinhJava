@@ -101,9 +101,7 @@ public class AssessmentServiceImpl implements AssessmentService {
         //AI sẽ dựa vào câu trả loời để cho feedback và điểm
         try {
 
-            feedback = geminiAIService.evaluateAnswer(
-                    practiceQuestion.getQuestion().getDescription(),
-                    answerRequest.getAnswer()
+            feedback = geminiAIService.evaluateAnswer(practiceQuestion.getQuestion().getDescription(), answerRequest.getAnswer()
             );
 
         } catch (Exception geminiException) {
@@ -113,12 +111,7 @@ public class AssessmentServiceImpl implements AssessmentService {
 //            );
 
             try {
-
-                feedback = deepSeekAIService.evaluateAnswer(
-                        practiceQuestion.getQuestion().getDescription(),
-                        answerRequest.getAnswer()
-                );
-
+                feedback = deepSeekAIService.evaluateAnswer(practiceQuestion.getQuestion().getDescription(), answerRequest.getAnswer());
             } catch (Exception deepSeekException) {
 
 //                System.out.println(
@@ -126,9 +119,7 @@ public class AssessmentServiceImpl implements AssessmentService {
 //                );
 
                 feedback = new Feedback();
-                feedback.setFeedbackText(
-                        "AI evaluation is temporarily unavailable. Please try again later."
-                );
+                feedback.setFeedbackText("AI evaluation is temporarily unavailable. Please try again later.");
                 feedback.setOverallScore(0);
             }
         }
