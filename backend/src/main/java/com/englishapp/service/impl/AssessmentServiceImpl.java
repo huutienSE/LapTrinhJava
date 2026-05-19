@@ -105,18 +105,18 @@ public class AssessmentServiceImpl implements AssessmentService {
             );
 
         } catch (Exception geminiException) {
-//            System.out.println(
-//                    "Gemini failed: "
-//                            + geminiException.getMessage()
-//            );
+            System.out.println(
+                    "Gemini failed: "
+                            + geminiException.getMessage()
+            );
 
             try {
                 feedback = deepSeekAIService.evaluateAnswer(practiceQuestion.getQuestion().getDescription(), answerRequest.getAnswer());
             } catch (Exception deepSeekException) {
 
-//                System.out.println(
-//                        "DeepSeek failed: " + deepSeekException.getMessage()
-//                );
+                System.out.println(
+                        "DeepSeek failed: " + deepSeekException.getMessage()
+                );
 
                 feedback = new Feedback();
                 feedback.setFeedbackText("AI evaluation is temporarily unavailable. Please try again later.");
