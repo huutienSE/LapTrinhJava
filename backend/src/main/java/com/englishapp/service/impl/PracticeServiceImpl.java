@@ -46,18 +46,6 @@ public class PracticeServiceImpl implements PracticeService {
 
     private final GeminiAIService geminiAIService;
 
-    @Override
-    public List<QuestionResponse> getQuestionsByTopicId(Integer topicId) {
-
-        if (!topicRepository.existsById(topicId)) {
-            throw new TopicNotFoundException(topicId);
-        }
-
-        List<Question> questions =
-                questionRepository.findByTopic_TopicId(topicId);
-
-        return questions.stream().map(questionMapper::toQuestionResponse).toList();
-    }
 
     @Override
     public List<PracticeHistoryResponse> getPracticeHistory(Integer userId) {
@@ -131,7 +119,7 @@ public class PracticeServiceImpl implements PracticeService {
 
         questions.addAll(questionRepository.findRandomByLevel(topicId, "ADVANCED", 3));
 
-        questions.sort(Comparator.comparing(q -> q.getDifficultyLevel().name()));
+        questions.sort(Comparator.comparing(q -> q.getDifficultyLevel().ordinal()));
 
         if(questions.isEmpty()){
             throw new QuestionNotFoundException();
