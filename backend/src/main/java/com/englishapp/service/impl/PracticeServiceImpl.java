@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -60,7 +62,7 @@ public class PracticeServiceImpl implements PracticeService {
     @Override
     public List<PracticeHistoryResponse> getPracticeHistory(Integer userId) {
 
-        List<PracticeSession> sessions = practiceSessionRepository.findByUserIdWithTopic(userId);
+        List<PracticeSession> sessions = practiceSessionRepository.findByUser_UserIdAndSessionTypeAndEndedTimeIsNotNullOrderByEndedTimeDesc(userId, SessionType.PRACTICE);
 
         return sessions.stream().map(session -> {
             PracticeHistoryResponse res = new PracticeHistoryResponse();
@@ -121,12 +123,19 @@ public class PracticeServiceImpl implements PracticeService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
-        List<Question> questions = questionRepository.findByTopic_TopicId(topicId);
+        List<Question> questions = new ArrayList<>();
+
+        questions.addAll(questionRepository.findRandomByLevel(topicId, "BEGINNER", 4));
+
+        questions.addAll(questionRepository.findRandomByLevel(topicId, "INTERMEDIATE", 3));
+
+        questions.addAll(questionRepository.findRandomByLevel(topicId, "ADVANCED", 3));
+
+        questions.sort(Comparator.comparing(q -> q.getDifficultyLevel().name()));
 
         if(questions.isEmpty()){
             throw new QuestionNotFoundException();
         }
-
 
         PracticeSession session = new PracticeSession();
 
@@ -174,6 +183,7 @@ public class PracticeServiceImpl implements PracticeService {
         if (session.getEndedTime() != null) {
             throw new AssessmentAlreadyCommittedException();
         }
+
         // tìm question trong session
         PracticeQuestion practiceQuestion = practiceQuestionRepository.findById(new PracticeQuestionId(sessionId, request.getQuestionId())).orElseThrow(QuestionNotFoundException::new);
 
@@ -183,7 +193,20 @@ public class PracticeServiceImpl implements PracticeService {
             throw new QuestionAlreadyAnsweredException();
         }
 
-        // tạo answer
+        Feedback feedback;
+
+        try {
+            feedback = geminiAIService.evaluateAnswer(
+                    practiceQuestion.getQuestion().getDescription(),
+                    request.getAnswer()
+            );
+        } catch (Exception e) {
+
+            System.out.println("AI evaluation failed: " + e.getMessage());
+
+            throw new RuntimeException("AI evaluation failed. Please try again later.");
+        }
+
         PracticeAnswer answer = new PracticeAnswer();
 
         answer.setPracticeQuestion(practiceQuestion);
@@ -193,24 +216,6 @@ public class PracticeServiceImpl implements PracticeService {
         answer.setCreatedDate(LocalDateTime.now());
 
         PracticeAnswer savedAnswer = practiceAnswerRepository.save(answer);
-
-        // feedback từ AI
-        Feedback feedback;
-
-        try {
-            feedback = geminiAIService.evaluateAnswer(practiceQuestion.getQuestion().getDescription(), request.getAnswer());
-        } catch (Exception e) {
-
-            System.out.println("AI evaluation failed: " + e.getMessage());
-
-            feedback = new Feedback();
-
-            feedback.setFeedbackText(
-                    "AI evaluation is temporarily unavailable. Please try again later."
-            );
-
-            feedback.setOverallScore(0);
-        }
 
         feedback.setAnswer(savedAnswer);
 
