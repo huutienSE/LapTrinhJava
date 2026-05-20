@@ -1,7 +1,7 @@
 package com.englishapp.service.impl;
 
 import com.englishapp.entity.Feedback;
-import com.englishapp.service.DeepSeekAIService;
+import com.englishapp.service.AIService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.client.OpenAIClient;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DeepSeekAIServiceImpl implements DeepSeekAIService {
+public class DeepSeekAIServiceImpl implements AIService {
 
     @Value("${deepseek.api.key}")
     private String apiKey;

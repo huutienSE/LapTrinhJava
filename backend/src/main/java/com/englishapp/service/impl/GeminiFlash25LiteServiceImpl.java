@@ -1,7 +1,7 @@
 package com.englishapp.service.impl;
 
 import com.englishapp.entity.Feedback;
-import com.englishapp.service.GeminiAIService;
+import com.englishapp.service.AIService;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import jakarta.annotation.PostConstruct;
@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class GeminiAIServiceImpl implements GeminiAIService {
+public class GeminiFlash25LiteServiceImpl implements AIService {
     @Value("${gemini.api.key}")
     private String apiKey;
     private Client client;
@@ -43,7 +43,7 @@ public class GeminiAIServiceImpl implements GeminiAIService {
                 FEEDBACK: short feedback only
                 """.formatted(question, answer);
 
-        GenerateContentResponse response = client.models.generateContent("gemini-flash-latest", prompt, null);
+        GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash-lite", prompt, null);
 
         String result = response.text();
 
