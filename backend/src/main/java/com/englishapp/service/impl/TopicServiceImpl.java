@@ -58,14 +58,9 @@ public class TopicServiceImpl implements TopicService {
     }
     @Override
     public TopicResponse updateTopic(Integer topicId, TopicRequest topicRequest) {
-        Topic topic = topicRepository.findById(topicId)
-                .orElseThrow(() -> new TopicNotFoundException(topicId));
-
-        topic.setTopicName(topicRequest.getTopicName());
-        topic.setDescription(topicRequest.getDescription());
-        topic.setLevel(topicRequest.getDifficultyLevel());
-        Topic savedTopic = topicRepository.save(topic);
-        return  topicMapper.topicToTopicResponse(savedTopic);
+        Topic topic = topicMapper.topicRequestToTopic(topicRequest);
+        topicRepository.save(topic);
+        return  topicMapper.topicToTopicResponse(topic);
     }
 
     @Override
