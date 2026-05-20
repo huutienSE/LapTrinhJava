@@ -25,7 +25,7 @@ public class Feedback {
     @Column(name = "overall_score")
     private Integer overallScore;
 
-    @Column(name = "feedback_text")
+    @Column(name = "feedback_text", length = 4000)
     private String feedbackText;
 
     @Column(name = "created_date")

@@ -9,12 +9,18 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "assessment")
+@Getter
+@Setter
 public class Assessment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "assessment_id")
     private Integer assessmentId;
+
+    @OneToOne
+    @JoinColumn(name = "session_id")
+    private PracticeSession session;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

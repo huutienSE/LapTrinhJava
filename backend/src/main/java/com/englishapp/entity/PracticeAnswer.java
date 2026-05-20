@@ -18,16 +18,26 @@ public class PracticeAnswer {
     private Integer answerId;
 
     @ManyToOne
-    @JoinColumn(name = "session_id")
-    private PracticeSession session;
+    @JoinColumns({
+            @JoinColumn(name = "session_id", referencedColumnName = "session_id"),
+            @JoinColumn(name = "question_id", referencedColumnName = "question_id")
+    })
+    private PracticeQuestion practiceQuestion;
 
-    @ManyToOne
-    @JoinColumn(name = "question_id")
-    private PracticeQuestion question;
-
-    @Column(name = "user_answer")
+    @Column(name = "user_answer", length = 2000)
     private String userAnswer;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
+
+    @OneToOne(mappedBy = "answer")
+    private Feedback feedback;
+
+    public Question getQuestion() {
+        return this.practiceQuestion.getQuestion();
+    }
+
+    public PracticeSession getSession() {
+        return this.practiceQuestion.getSession();
+    }
 }
