@@ -617,7 +617,7 @@ const ManageTopics = () => {
                                     variant="add"
                                     onClick={handleUpdateTopic}
                                 >
-                                    {isCreating ? "Creating..." : "Create"}
+                                    {isCreating ? "Updating..." : "Update"}
                                 </ActionButton>
                             </div>
                         </div>
