@@ -89,3 +89,20 @@ docs/01_requirements.md
 docs/frontend-changelog.md
 docs/frontend-structure.md
 docs/frontend-beginner-guide.md
+
+# =========================
+# ROOT NODE MODULES
+# =========================
+node_modules/
+
+# =========================
+# LOCAL APPLICATION CONFIG
+# =========================
+backend/src/main/resources/application.yml
+backend/src/main/resources/application-local.yml
+
+# =========================
+# AI / SECRET FILES
+# =========================
+*.key
+*.secret
