@@ -3,6 +3,7 @@ const ActionButton = ({
     onClick,
     variant = "primary",
     size = "md",
+    disabled = false,
 }) => {
 
     const baseStyle =
@@ -28,8 +29,12 @@ const ActionButton = ({
 
     return (
         <button
+            type="button"
             onClick={onClick}
-            className={`${baseStyle} ${sizes[size]} ${variants[variant]}`}
+            disabled={disabled}
+            className={`${baseStyle} ${sizes[size]} ${variants[variant]} ${
+                disabled ? "opacity-50 cursor-not-allowed hover:scale-100" : ""
+            }`}
         >
             {children}
         </button>

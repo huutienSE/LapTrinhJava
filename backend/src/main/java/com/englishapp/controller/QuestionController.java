@@ -12,24 +12,24 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/questions")
+@RequestMapping("/api")
 public class QuestionController {
 
     private final QuestionService questionService;
 
-    @GetMapping
+    @GetMapping("/questions")
     public ApiResponse<List<QuestionResponse>> getAllQuestions() {
         List<QuestionResponse> questionResponses = questionService.getAllQuestions();
         return new ApiResponse<>(true, questionResponses, "success");
     }
 
-    @GetMapping("/search")
+    @GetMapping("/admin/questions/search")
     public ApiResponse<QuestionResponse> getAllQuestionsByDescription(@RequestParam("description") String description) {
         QuestionResponse questionResponses = questionService.getQuestionsByDescription(description);
         return new ApiResponse<>(true, questionResponses, "get all questions by description successfully");
     }
 
-    @PostMapping
+    @PostMapping("/admin/questions")
     public ApiResponse<QuestionResponse> createQuestion( @Valid @RequestBody QuestionRequest questionRequest) {
         return new ApiResponse<>(
                 true,
@@ -38,7 +38,7 @@ public class QuestionController {
         );
     }
 
-    @DeleteMapping("/{questionId}")
+    @DeleteMapping("/admin/questions/{questionId}")
     public ApiResponse<Void> deleteQuestion( @PathVariable Integer questionId) {
         questionService.deleteQuestionById(questionId);
         return new ApiResponse<>(
@@ -48,7 +48,7 @@ public class QuestionController {
         );
     }
 
-    @GetMapping("/{questionId}")
+    @GetMapping("/questions/{questionId}")
     public ApiResponse<QuestionResponse> getQuestionById(@PathVariable Integer questionId) {
         return new ApiResponse<>(
                 true,
@@ -57,7 +57,7 @@ public class QuestionController {
         );
     }
 
-    @PutMapping("/{questionId}")
+    @PutMapping("/admin/questions/{questionId}")
     public ApiResponse<QuestionResponse> updateQuestion(@Valid @RequestBody QuestionRequest questionRequest, @PathVariable Integer questionId) {
         return new ApiResponse<>(
                 true,

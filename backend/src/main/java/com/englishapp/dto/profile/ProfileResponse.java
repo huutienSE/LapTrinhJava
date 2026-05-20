@@ -10,6 +10,8 @@ import java.time.LocalDate;
 @Setter
 public class ProfileResponse {
     private Integer profileId;
+    private Integer userId;
+    private String email;
     private String firstName;
     private String lastName;
     private LocalDate birthDate;

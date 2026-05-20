@@ -6,6 +6,7 @@ import com.englishapp.dto.Question.QuestionResponse;
 import com.englishapp.dto.topic.TopicRequest;
 import com.englishapp.dto.topic.TopicResponse;
 import com.englishapp.service.PracticeService;
+import com.englishapp.service.QuestionService;
 import com.englishapp.service.TopicService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,47 +16,49 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/topics")
+@RequestMapping("/api/")
 @RequiredArgsConstructor
 public class TopicController {
 
     private final TopicService topicService;
-    private final PracticeService practiceService;
+    private final QuestionService questionService;
 
-    @GetMapping
+    // lấy question
+    @GetMapping("/topics/{topicId}/questions")
+    public ApiResponse<List<QuestionResponse>> getQuestions(@PathVariable Integer topicId) {
+        List<QuestionResponse> practiceQuestionResponses =  questionService.getQuestionsByTopicId(topicId);
+        return new ApiResponse<>(true, practiceQuestionResponses, "get Questions successfully");
+    }
+
+    @GetMapping("/topics")
     public ApiResponse<List<TopicResponse>> getAllTopics() {
         List<TopicResponse> topicResponse = topicService.getAllTopics();
         return new ApiResponse<>(true, topicResponse, "get AllTopics successfully");
     }
 
-    // lấy question
-    @GetMapping("/{topicId}/questions")
-    public ApiResponse<List<QuestionResponse>> getQuestions(@PathVariable Integer topicId) {
-        List<QuestionResponse> practiceQuestionResponses =  practiceService.getQuestionsByTopicId(topicId);
-        return new ApiResponse<>(true, practiceQuestionResponses, "get Questions successfully");
-    }
-
-    @GetMapping("/{topicId}")
+    @GetMapping("/topics/{topicId}")
     public ApiResponse<TopicResponse> getTopicById(@PathVariable Integer topicId) {
         return new ApiResponse<>(true, topicService.getTopicById(topicId), "get Topic successfully");
     }
 
-    @GetMapping("/search")
+    //------------
+
+    @GetMapping("/admin/topics/search")
     public ApiResponse<TopicResponse> getTopicByTopicName(@RequestParam String topicName) {
         return new ApiResponse<>(true, topicService.getTopicByTopicName(topicName), "get Topic successfully");
     }
 
-    @PostMapping
+    @PostMapping("/admin/topics")
     public ApiResponse<TopicResponse> createTopic(@Valid @RequestBody TopicRequest topicRequest) {
         return new ApiResponse<>(true, topicService.createTopic(topicRequest), "create Topic successfully");
     }
 
-    @PutMapping("/{topicId}")
+    @PutMapping("/admin/topics/{topicId}")
     public ApiResponse<TopicResponse> updateTopic(@PathVariable Integer topicId, @Valid @RequestBody TopicRequest topicRequest) {
         return new ApiResponse<>(true, topicService.updateTopic(topicId, topicRequest), "update Topic successfully");
     }
 
-    @DeleteMapping("/{topicId}")
+    @DeleteMapping("/admin/topics/{topicId}")
     public ApiResponse<Void> deleteTopic(@PathVariable Integer topicId) {
         topicService.deleteTopic(topicId);
 

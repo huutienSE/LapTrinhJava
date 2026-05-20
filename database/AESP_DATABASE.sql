@@ -196,7 +196,7 @@ CREATE TABLE practice_answer
     answer_id    INT PRIMARY KEY AUTO_INCREMENT,
     session_id   INT NOT NULL,
     question_id  INT NOT NULL,
-    user_answer  VARCHAR(100),
+    user_answer  VARCHAR(2000),
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
 
     FOREIGN KEY (session_id, question_id)
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS feedback
     feedback_id   INT PRIMARY KEY AUTO_INCREMENT,
     answer_id     INT UNIQUE,
     overall_score INT CHECK (overall_score BETWEEN 0 AND 100),
-    feedback_text VARCHAR(200),
+    feedback_text VARCHAR(4000),
     created_date  DATETIME DEFAULT (CURRENT_TIMESTAMP()),
     FOREIGN KEY (answer_id)
         REFERENCES practice_answer (answer_id)
@@ -301,7 +301,10 @@ BEGIN
 
 
     INSERT INTO topic (creator_id, topic_name, description, difficulty_level)
-    VALUES (2, 'daily life', 'Topics about everyday conversations', 'BEGINNER');
+    VALUES (2, 'daily life', 'Topics about everyday conversations', 'BEGINNER'),
+           (2, 'travel', 'Topics about trips, destinations, and transport', 'INTERMEDIATE'),
+           (2, 'technology', 'Topics about apps, devices, and online habits', 'INTERMEDIATE'),
+           (2, 'career', 'Topics about study plans, jobs, and future goals', 'ADVANCED');
 
 
     INSERT INTO practice_session(user_id, topic_id, session_type, ended_time, score)
@@ -318,15 +321,12 @@ BEGIN
            (1, 2, 'Do you like watching movies?', 'BEGINNER'),
            (1, 2, 'What kind of music do you like?', 'BEGINNER'),
            (1, 2, 'How often do you exercise?', 'BEGINNER'),
-
            (1, 2, 'Do you like studying English?', 'INTERMEDIATE'),
            (1, 2, 'What is your favorite place?', 'INTERMEDIATE'),
            (1, 2, 'Do you prefer city or countryside?', 'INTERMEDIATE'),
-
            (1, 2, 'What do you do after school?', 'ADVANCED'),
            (1, 2, 'Do you use social media every day?', 'ADVANCED'),
            (1, 2, 'What is your dream job?', 'ADVANCED'),
-
            (1, 2, 'Do you like traveling abroad?', 'BEGINNER'),
            (1, 2, 'What is your daily routine?', 'BEGINNER'),
            (1, 2, 'Do you like reading books?', 'INTERMEDIATE'),
@@ -336,7 +336,56 @@ BEGIN
            (1, 2, 'What is your favorite drink?', 'INTERMEDIATE'),
            (1, 2, 'Do you like sports?', 'ADVANCED'),
            (1, 2, 'What do you usually eat for breakfast?', 'BEGINNER'),
-           (1, 2, 'Do you like coffee?', 'INTERMEDIATE');
+           (1, 2, 'Do you like coffee?', 'INTERMEDIATE'),
+
+           (2, 2, 'What is your favorite place to visit in Vietnam?', 'BEGINNER'),
+           (2, 2, 'Do you prefer traveling by bus, train, or plane?', 'BEGINNER'),
+           (2, 2, 'How can travelers save money on transportation?', 'INTERMEDIATE'),
+           (2, 2, 'What should you do if you get lost in a new city?', 'INTERMEDIATE'),
+           (2, 2, 'How do you choose a good hotel or homestay?', 'INTERMEDIATE'),
+           (2, 2, 'How do you usually prepare for a trip?', 'INTERMEDIATE'),
+           (2, 2, 'Tell me about a memorable trip you had.', 'INTERMEDIATE'),
+           (2, 2, 'Do you like traveling with friends or family?', 'BEGINNER'),
+           (2, 2, 'What do you always pack before a trip?', 'BEGINNER'),
+           (2, 2, 'Which season is best for traveling in your opinion?', 'BEGINNER'),
+           (2, 2, 'What problems can people face while traveling abroad?', 'ADVANCED'),
+           (2, 2, 'How does tourism affect local culture?', 'ADVANCED'),
+           (2, 2, 'Should governments limit tourists in overcrowded places?', 'ADVANCED'),
+           (2, 2, 'What responsibilities should travelers have toward the environment?', 'ADVANCED'),
+
+           (3, 2, 'Which app do you use the most every day?', 'BEGINNER'),
+           (3, 2, 'How often do you shop online?', 'BEGINNER'),
+           (3, 2, 'How does technology help you study English?', 'INTERMEDIATE'),
+           (3, 2, 'What are the pros and cons of social media?', 'INTERMEDIATE'),
+           (3, 2, 'Do you think AI will change the way we work in the future?', 'ADVANCED'),
+           (3, 2, 'How many hours do you spend online each day?', 'BEGINNER'),
+           (3, 2, 'Do you prefer learning from videos or books?', 'BEGINNER'),
+           (3, 2, 'What device do you use most for studying?', 'BEGINNER'),
+           (3, 2, 'How can technology improve classroom learning?', 'INTERMEDIATE'),
+           (3, 2, 'What online tool helps you manage your time?', 'INTERMEDIATE'),
+           (3, 2, 'Should children have strict screen-time limits?', 'INTERMEDIATE'),
+           (3, 2, 'What cybersecurity habits should students have?', 'ADVANCED'),
+           (3, 2, 'Will robots replace all repetitive jobs?', 'ADVANCED'),
+           (3, 2, 'What are the risks of depending too much on AI?', 'ADVANCED'),
+
+           (4, 2, 'What job do you want to have in the future?', 'BEGINNER'),
+           (4, 2, 'What subject do you enjoy most at school?', 'BEGINNER'),
+           (4, 2, 'Do you want to work in your hometown or another city?', 'BEGINNER'),
+           (4, 2, 'What motivates you to study hard?', 'BEGINNER'),
+           (4, 2, 'What skills are important for your dream job?', 'INTERMEDIATE'),
+           (4, 2, 'Do you prefer working alone or in a team? Why?', 'INTERMEDIATE'),
+           (4, 2, 'How do internships help students build careers?', 'INTERMEDIATE'),
+           (4, 2, 'Which soft skills are essential in modern workplaces?', 'INTERMEDIATE'),
+           (4, 2, 'How do you prepare for a job interview?', 'INTERMEDIATE'),
+           (4, 2, 'How should people balance salary and passion when choosing a job?', 'ADVANCED'),
+           (4, 2, 'What makes a good leader in a team?', 'ADVANCED'),
+           (4, 2, 'How can someone recover after failing an interview?', 'ADVANCED'),
+           (4, 2, 'How do you handle pressure at work or school?', 'ADVANCED'),
+           (4, 2, 'What is your 5-year career plan?', 'ADVANCED');
+
+
+
+
 
 
     INSERT INTO practice_question (session_id, question_id)

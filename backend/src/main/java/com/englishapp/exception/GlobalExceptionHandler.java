@@ -12,6 +12,12 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<?>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponse<>(false, null, ex.getMessage()));
+    }
+
     // validation lỗi
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleValidation(MethodArgumentNotValidException ex) {
@@ -21,8 +27,12 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage())
         );
 
+        String message = errors.isEmpty()
+                ? "Validation failed"
+                : String.join("; ", errors.values());
+
         return ResponseEntity.badRequest().body(
-                new ApiResponse<>(false, errors, "Validation failed"));
+                new ApiResponse<>(false, errors, message));
     }
 
     // email đã tồn tại

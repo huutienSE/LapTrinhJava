@@ -33,8 +33,14 @@ public class ProfileController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse<ProfileResponse> update(@RequestBody ProfileUpdateRequest request, @PathVariable Integer id) {
-        ProfileResponse response = profileService.update(request, id);
+    public ApiResponse<ProfileResponse> update(@RequestBody ProfileUpdateRequest request, @PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        ProfileResponse response = profileService.update(request, id, userPrincipal.getUserId());
         return new ApiResponse<>(true, response, "Update profile success");
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<ProfileResponse> getMyProfile(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        ProfileResponse response = profileService.findByUserId(userPrincipal.getUserId());
+        return new ApiResponse<>(true, response, "Get my profile success");
     }
 }

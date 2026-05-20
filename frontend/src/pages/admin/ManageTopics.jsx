@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import { useEffect, useState } from "react";
-import { adminService } from "../../services/api";
+import { topicService, adminTopicService } from "../../services";
+import { getApiErrorMessage } from "../../utils/apiError.js";
 import ActionButton from "../../components/common/ActionButton";
 import SearchInput from "../../components/common/SearchInput.jsx";
 
@@ -31,14 +32,14 @@ const ManageTopics = () => {
             if (!value.trim()) {
                 console.log("in trim")
                 const response = 
-                    await adminService.getTopics();
+                    await topicService.getTopics();
 
                 setTopics(response.data ?? [])    
 
                 return;
             }
 
-            const response = await adminService.getTopicByTopicName(value);
+            const response = await adminTopicService.getTopicByTopicName(value);
 
             setTopics(
                 response.data
@@ -65,7 +66,7 @@ const ManageTopics = () => {
         try {
 
             const response =
-                await adminService.updateTopic(
+                await adminTopicService.updateTopic(
                     editingTopic.topicId,
                     editingTopic
                 );
@@ -89,7 +90,7 @@ const ManageTopics = () => {
 
             console.error(error);
 
-            alert("Update failed");
+            alert(getApiErrorMessage(error, "Update failed"));
         }
     };
 
@@ -103,7 +104,7 @@ const ManageTopics = () => {
         try {
 
             const response =
-                await adminService.deleteTopic(topicId);
+                await adminTopicService.deleteTopic(topicId);
 
             if (response.success) {
 
@@ -121,7 +122,7 @@ const ManageTopics = () => {
 
             console.error(error);
 
-            alert("Delete failed");
+            alert(getApiErrorMessage(error, "Delete failed"));
         }
     };
 
@@ -140,7 +141,7 @@ const ManageTopics = () => {
             setIsCreating(true);
 
             const response =
-                await adminService.createTopic(newTopic);
+                await adminTopicService.createTopic(newTopic);
 
             console.log("in handleCreateTopic")
             if (response.success) {
@@ -165,7 +166,7 @@ const ManageTopics = () => {
 
             console.error(error);
 
-            alert("Create topic failed");
+            alert(getApiErrorMessage(error, "Create topic failed"));
 
         } finally {
             setIsCreating(false);
@@ -178,7 +179,7 @@ const ManageTopics = () => {
 
             try {
                 const response =
-                    await adminService.getTopics();
+                    await topicService.getTopics();
 
                 if (response.success) {
                     setTopics(response.data);
@@ -616,7 +617,7 @@ const ManageTopics = () => {
                                     variant="add"
                                     onClick={handleUpdateTopic}
                                 >
-                                    {isCreating ? "Creating..." : "Create"}
+                                    {isCreating ? "Updating..." : "Update"}
                                 </ActionButton>
                             </div>
                         </div>

@@ -24,7 +24,7 @@ const Home = () => {
       
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <Link 
-          to="/speaking" 
+          to="/practice" 
           className="w-full sm:w-auto px-8 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl transition-all active:scale-95 shadow-lg shadow-indigo-500/25"
         >
           Bắt đầu luyện tập

@@ -25,14 +25,7 @@ public class TopicServiceImpl implements TopicService {
 
         List<Topic>  topics = topicRepository.findAll();
 
-        return topics.stream().map(topic -> {
-            TopicResponse topicResponse = new TopicResponse();
-            topicResponse.setTopicId(topic.getTopicId());
-            topicResponse.setTopicName(topic.getTopicName());
-            topicResponse.setDescription(topic.getDescription());
-            topicResponse.setDifficultyLevel(topic.getLevel());
-            return topicResponse;
-        }).toList();
+        return topics.stream().map(topicMapper::topicToTopicResponse).toList();
     }
     @Override
     public TopicResponse getTopicById(Integer topicId) {
@@ -54,27 +47,20 @@ public class TopicServiceImpl implements TopicService {
     @Override
     public TopicResponse createTopic(TopicRequest topicRequest) {
 
-        Topic topic = topicRepository.findByTopicName(topicRequest.getTopicName());
-        if (topic == null) {
+        if (topicRepository.findByTopicName(topicRequest.getTopicName()) != null) {
             throw new TopicAlreadyExistsException(topicRequest.getTopicName());
         }
 
-        topic.setTopicName(topicRequest.getTopicName());
-        topic.setDescription(topicRequest.getDescription());
-        topic.setLevel(topicRequest.getDifficultyLevel());
-        Topic savedTopic = topicRepository.save(topic);
-        return  topicMapper.topicToTopicResponse(savedTopic);
+        Topic topic = topicMapper.topicRequestToTopic(topicRequest);
+        topicRepository.save(topic);
+
+        return  topicMapper.topicToTopicResponse(topic);
     }
     @Override
     public TopicResponse updateTopic(Integer topicId, TopicRequest topicRequest) {
-        Topic topic = topicRepository.findById(topicId)
-                .orElseThrow(() -> new TopicNotFoundException(topicId));
-
-        topic.setTopicName(topicRequest.getTopicName());
-        topic.setDescription(topicRequest.getDescription());
-        topic.setLevel(topicRequest.getDifficultyLevel());
-        Topic savedTopic = topicRepository.save(topic);
-        return  topicMapper.topicToTopicResponse(savedTopic);
+        Topic topic = topicMapper.topicRequestToTopic(topicRequest);
+        topicRepository.save(topic);
+        return  topicMapper.topicToTopicResponse(topic);
     }
 
     @Override

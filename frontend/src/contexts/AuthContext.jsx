@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { authService } from "../services/api"; // Đảm bảo đường dẫn import đúng
+import { authService, profileService } from "../services";
+import { clearStoredProfile, saveStoredProfile } from "../utils/learnerProfileStorage";
 
 const AuthContext = createContext();
 
@@ -23,7 +24,18 @@ export const AuthProvider = ({ children }) => {
         const user = localStorage.getItem("user");
 
         if (user) {
-            setCurrentUser(JSON.parse(user));
+            const parsed = JSON.parse(user);
+            setCurrentUser(parsed);
+
+            if (parsed.role === "LEARNER") {
+                profileService.getMe().then(res => {
+                    if (res.success && res.data) {
+                        saveStoredProfile(res.data);
+                    }
+                }).catch(() => {
+                    clearStoredProfile();
+                });
+            }
         }
     }
   }, []);
@@ -47,6 +59,17 @@ export const AuthProvider = ({ children }) => {
 
           setCurrentUser(userData);
           setIsLoggedIn(true);
+
+          if (userData.role === "LEARNER") {
+              try {
+                  const profileRes = await profileService.getMe();
+                  if (profileRes.success && profileRes.data) {
+                      saveStoredProfile(profileRes.data);
+                  }
+              } catch {
+                  clearStoredProfile();
+              }
+          }
       }
 
       return response;
@@ -58,9 +81,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleLogOut = () => {
-    // Phải xóa token để cắt đứt quyền truy cập
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    clearStoredProfile();
 
     setCurrentUser(null);
     setIsLoggedIn(false);

@@ -10,8 +10,9 @@ import java.util.List;
 public interface ProfileService {
     ProfileResponse create(ProfileRequest profileRequest , Integer userId);
 
-    ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer profileId);
+    ProfileResponse update(ProfileUpdateRequest profileUpdateRequest, Integer profileId, Integer userId);
 
     ProfileResponse findById(Integer id);
+    ProfileResponse findByUserId(Integer userId);
 
 }

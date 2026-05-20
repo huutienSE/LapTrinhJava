@@ -24,7 +24,7 @@ public class PracticeAnswer {
     })
     private PracticeQuestion practiceQuestion;
 
-    @Column(name = "user_answer")
+    @Column(name = "user_answer", length = 2000)
     private String userAnswer;
 
     @Column(name = "created_date")

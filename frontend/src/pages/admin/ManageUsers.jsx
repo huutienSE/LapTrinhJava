@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { adminService } from "../../services/api";
+import { adminUserService } from "../../services";
 import ActionButton from "../../components/common/ActionButton";
 import SearchInput from "../../components/common/SearchInput";
 
@@ -183,7 +183,7 @@ const ManageUsers = () => {
                 setIsLoading(true);
 
                 const response =
-                    await adminService.getAllUsers();
+                    await adminUserService.getAllUsers();
 
                 if (response.success) {
                     setUsers(response.data ?? []);
@@ -218,7 +218,7 @@ const ManageUsers = () => {
             if (!value.trim()) {
 
                 const response =
-                    await adminService.getAllUsers();
+                    await adminUserService.getAllUsers();
 
                 setUsers(response.data ?? []);
 
@@ -226,7 +226,7 @@ const ManageUsers = () => {
             }
             
             const response =
-                await adminService.getUserByEmail(value);
+                await adminUserService.getUserByEmail(value);
 
             setUsers(
                 response.data
@@ -258,7 +258,7 @@ const ManageUsers = () => {
             setIsToggling(true);
 
             const response =
-                await adminService.updateUserStatus(
+                await adminUserService.updateUserStatus(
                     confirmUser.userId
                 );
 
