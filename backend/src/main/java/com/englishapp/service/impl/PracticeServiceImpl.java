@@ -192,7 +192,11 @@ public class PracticeServiceImpl implements PracticeService {
 
             System.out.println("AI evaluation failed: " + e.getMessage());
 
-            throw new RuntimeException("AI evaluation failed. Please try again later.");
+            feedback = new Feedback();
+            feedback.setFeedbackText(
+                    "AI evaluation is temporarily unavailable. Please try again later."
+            );
+            feedback.setOverallScore(0);
         }
 
         PracticeAnswer answer = new PracticeAnswer();

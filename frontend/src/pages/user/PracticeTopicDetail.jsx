@@ -7,6 +7,7 @@ import {
   PageLoading,
   PageError,
 } from "../../components/learner/layout/PageStates.jsx";
+import ActionButton from "../../components/common/ActionButton.jsx";
 
 const PracticeTopicDetail = () => {
   const { topicId } = useParams();
@@ -126,14 +127,14 @@ const PracticeTopicDetail = () => {
       </section>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        <button
-          type="button"
+        <ActionButton
+          variant="add"
+          size="lg"
           disabled={questions.length === 0}
           onClick={handleStartPractice}
-          className="w-full sm:w-auto px-8 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-indigo-500"
         >
           Bắt đầu luyện tập
-        </button>
+        </ActionButton>
         {questions.length === 0 && (
           <p className="text-sm text-zinc-500 self-center">
             Cần ít nhất một câu hỏi để bắt đầu.
