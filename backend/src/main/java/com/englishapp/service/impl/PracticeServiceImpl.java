@@ -11,6 +11,7 @@ import com.englishapp.exception.*;
 import com.englishapp.mapper.PracticeMapper;
 import com.englishapp.mapper.QuestionMapper;
 import com.englishapp.repositoty.*;
+import com.englishapp.service.AIService;
 import com.englishapp.service.GeminiAIService;
 import com.englishapp.service.PracticeService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,8 @@ public class PracticeServiceImpl implements PracticeService {
     private final FeedbackRepository feedbackRepository;
 
     private final GeminiAIService geminiAIService;
+
+    private final AIService aiService;
 
 
     @Override
@@ -183,21 +186,10 @@ public class PracticeServiceImpl implements PracticeService {
 
         Feedback feedback;
 
-        try {
-            feedback = geminiAIService.evaluateAnswer(
-                    practiceQuestion.getQuestion().getDescription(),
-                    request.getAnswer()
-            );
-        } catch (Exception e) {
+        feedback = aiService.evaluateAnswer(
+                practiceQuestion.getQuestion().getDescription(),
+                request.getAnswer());
 
-            System.out.println("AI evaluation failed: " + e.getMessage());
-
-            feedback = new Feedback();
-            feedback.setFeedbackText(
-                    "AI evaluation is temporarily unavailable. Please try again later."
-            );
-            feedback.setOverallScore(0);
-        }
 
         PracticeAnswer answer = new PracticeAnswer();
 
